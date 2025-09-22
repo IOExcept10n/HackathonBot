@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "HackathonBot": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,0 +1,139 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio code workspace settings
+.vscode/
+.vscode/*history/
+
+# Build results
+bin/
+obj/
+out/
+TestResults/
+
+# Publish output
+publish/
+wwwroot/
+publish/
+
+# Rider
+.idea/
+
+# .NET Core / ASP.NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NuGet
+*.nupkg
+# local package cache (don't commit)
+**/packages/
+.nuget/
+.nuget/packages/
+# lock file (commit if you intentionally track it)
+# packages.lock.json
+
+# DotCover
+*.dotCover
+
+# User secrets (Secret Manager)
+secrets.json
+secrets.*
+appsettings.Secrets.json
+appsettings.Local.json
+appsettings.*.Local.json
+
+# Environment files
+.env
+.env.*.local
+.env.local
+
+# Local config files that may contain tokens/keys
+local.settings.json
+appsettings.Development.json
+appsettings.*.Development.json
+
+# Logs
+*.log
+logs/
+LogFiles/
+
+# Database files
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker
+docker-compose.override.yml
+docker-compose.*.yml
+**/Dockerfile.*
+.dockerignore
+docker-compose.yml
+
+# Don't ignore Dockerfile by default (kept in repo), but ignore generated images/compose artifacts:
+**/docker-compose.override.*
+**/docker-compose.*.override.*
+
+# GitHub Actions artifacts / caches
+.github/workflows/*.local.yml
+.github/actions/_temp/
+.github/actions/_work/
+.github/actions/cache/
+
+# VS test result caches
+.vstest/
+
+# Rider and ReSharper caches
+_ReSharper*/
+*.DotSettings.user
+
+# Certificates
+*.pfx
+*.cer
+*.key
+
+# Sensitive files (explicit)
+# Add any custom token/credential files here to be safe
+telegram.token
+bot.token
+tokens.json
+credentials.json
+credentials.*
+keys.json
+private.* 
+secret.key
+*.secret
+
+# Compiled binaries and native libs
+*.dll
+*.exe
+*.so
+*.dylib
+*.lib
+
+# Package managers (none used now, but safe)
+node_modules/
+jspm_packages/
+
+# Optional: lockfiles if you don't want to commit them
+# yarn.lock
+# package-lock.json
+
+# End
