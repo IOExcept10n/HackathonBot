@@ -1,4 +1,4 @@
-namespace MyBots.Persistence.Repository;
+namespace MyBots.Core.Persistence.Repository;
 
 /// <summary>
 /// Defines a generic repository pattern interface for data access operations.

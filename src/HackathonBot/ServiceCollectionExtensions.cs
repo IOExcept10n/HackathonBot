@@ -1,14 +1,21 @@
+using System.Reflection;
+using System.Resources;
+using HackathonBot.Properties;
+using HackathonBot.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MyBots.Core.Configuration;
-using MyBots.Core.FSM;
+using MyBots.Core;
+using MyBots.Core.Fsm;
+using MyBots.Core.Fsm.States;
 using MyBots.Core.Localization;
-using MyBots.Core.Modules;
-using MyBots.Core.Repository;
-using MyBots.Core.Scheduling;
-using Quartz;
-using Telegram.Bot;
+using MyBots.Core.Persistence;
+using MyBots.Core.Persistence.DTO;
+using MyBots.Core.Persistence.Repository;
+using MyBots.Modules.Common;
+using MyBots.Modules.Common.Handling;
+using MyBots.Modules.Common.Interactivity;
+using MyBots.Modules.Common.Roles;
 
 namespace HackathonBot;
 
@@ -19,49 +26,40 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         // Configuration
-        services.Configure<BotConfiguration>(configuration.GetSection("Bot"));
-        services.Configure<DatabaseConfiguration>(configuration.GetSection("Database"));
-        services.Configure<ModulesConfiguration>(configuration.GetSection("Modules"));
-        services.Configure<LocalizationConfiguration>(configuration.GetSection("Localization"));
+        services.Configure<BotStartupConfig>(configuration.GetSection("StartupConfig"));
+        services.AddLogging();
 
         // Database
         services.AddDbContext<BotDbContext>(options =>
             options.UseSqlite(
-                configuration.GetSection("Database").Get<DatabaseConfiguration>()?.ConnectionString
+                configuration.GetConnectionString("Sqlite")
                 ?? throw new InvalidOperationException("Database connection string is not configured")));
-
-        // Bot Client
-        var token = configuration.GetSection("Bot").Get<BotConfiguration>()?.Token
-            ?? throw new InvalidOperationException("Bot token is not configured");
-        services.AddSingleton<ITelegramBotClient>(_ => new TelegramBotClient(token));
+        services.AddScoped<BasicBotDbContext>(ctx => ctx.GetRequiredService<BotDbContext>());
+        services.AddScoped<UserRepository>();
+        services.AddScoped<IRepository<User>>(ctx => ctx.GetRequiredService<UserRepository>());
 
         // Common Services
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        services.AddSingleton<IFiniteStateMachine, FiniteStateMachine>();
-        services.AddSingleton<IModuleManager, ModuleManager>();
+        services.AddSingleton<IFsmDispatcher, FsmDispatcher>();
         services.AddSingleton<ILocalizationService, LocalizationService>();
+        services.AddSingleton<IStateRegistry, StateRegistry>();
+        services.AddSingleton<IRoleProvider, RoleProvider>();
+        services.AddSingleton<IHandlerRegistrationService, HandlerRegistrationService>();
+        services.AddSingleton<IStateHandlerRegistry, StateHandlerRegistry>();
+        services.AddSingleton<IReplyService, ReplyService>();
+        services.AddSingleton<IButtonLabelProvider, ButtonLabelProvider>();
 
-        // Scheduling
-        services.AddQuartz(q =>
+        foreach (var moduleType in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsAssignableTo(typeof(ModuleBase))))
         {
-            var jobKey = new JobKey("SendMessageJob");
-            q.AddJob<MyBots.Core.Scheduling.Jobs.SendMessageJob>(opts => opts.WithIdentity(jobKey));
-            
-            q.AddTrigger(opts => opts
-                .ForJob(jobKey)
-                .WithIdentity("SendMessageJob-trigger")
-                .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(30)
-                    .RepeatForever()));
-        });
-        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
-        services.AddSingleton<IScheduleManager, QuartzScheduleManager>();
+            services.AddSingleton(typeof(ModuleBase), moduleType);
+        }
 
-        // Modules (будут добавлены позже)
-        // services.AddScoped<IModule, AdminModule>();
-        // services.AddScoped<IModule, OrganizerModule>();
-        // services.AddScoped<IModule, ParticipantModule>();
-        // services.AddScoped<IModule, ViewerModule>();
+        services.ConfigureRoleDispatcher(
+            new(Role.Unknown, "Idk u", "u shll nt pss"),
+            new(Roles.User, "Hello, user!", "U cant"),
+            new(Roles.Organizer, "Welcome, master ^_^", "baka!"),
+            new(Roles.Admin, "Hi adm :3", "sorry, nope"));
+
+        services.AddSingleton(Localization.ResourceManager);
 
         return services;
     }

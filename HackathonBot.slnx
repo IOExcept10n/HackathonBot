@@ -6,8 +6,11 @@
   </Configurations>
   <Folder Name="/src/">
     <Project Path="src/HackathonBot/HackathonBot.csproj" />
+    <Project Path="src/MyBots.Analyzers/MyBots.Analyzers.Test/MyBots.Analyzers.Test.csproj" />
+    <Project Path="src/MyBots.Analyzers/MyBots.Analyzers/MyBots.Analyzers.csproj" Id="b34d6342-113c-41b9-b9ed-5a1ef758d31a" />
     <Project Path="src/MyBots.Common/MyBots.Core.csproj" />
-    <Project Path="src/MyBots.Persistence/MyBots.Persistence.csproj" Id="83739b5f-1ccf-4226-a444-16bf468eb716" />
+    <Project Path="src/MyBots.Modules.Common/MyBots.Modules.Common.csproj" Id="db04305b-08c0-4ae3-a7a6-74a5df7444d8" />
+    <Project Path="src/MyBots.Persistence/MyBots.Core.Persistence.csproj" Id="83739b5f-1ccf-4226-a444-16bf468eb716" />
     <Project Path="src/MyBots.Scheduling/MyBots.Scheduling.csproj" />
   </Folder>
 </Solution>

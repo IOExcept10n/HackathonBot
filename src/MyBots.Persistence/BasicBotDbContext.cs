@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using MyBots.Persistence.DTO;
+using MyBots.Core.Persistence.DTO;
 
-namespace MyBots.Persistence;
+namespace MyBots.Core.Persistence;
 
 /// <summary>
 /// Database context for the bot system.
@@ -10,22 +10,12 @@ namespace MyBots.Persistence;
 /// Initializes a new instance of the <see cref="BasicBotDbContext"/> class.
 /// </remarks>
 /// <param name="options">The options for configuring the context.</param>
-public abstract class BasicBotDbContext(DbContextOptions<BasicBotDbContext> options) : DbContext(options)
+public abstract class BasicBotDbContext(DbContextOptions options) : DbContext(options)
 {
     /// <summary>
     /// Gets or sets the users in the system.
     /// </summary>
     public DbSet<User> Users => Set<User>();
-
-    /// <summary>
-    /// Gets or sets the roles in the system.
-    /// </summary>
-    public DbSet<Role> Roles => Set<Role>();
-
-    /// <summary>
-    /// Gets or sets the audit log entries.
-    /// </summary>
-    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyBots.Persistence\MyBots.Persistence.csproj" />
+    <ProjectReference Include="..\MyBots.Persistence\MyBots.Core.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

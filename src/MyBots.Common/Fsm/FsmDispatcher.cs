@@ -1,260 +1,117 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using MyBots.Core.Fsm.Persistency;
-using MyBots.Core.Models;
+using MyBots.Core.Fsm.States;
+using MyBots.Core.Persistence.Repository;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace MyBots.Core.Fsm;
 
 public class FsmDispatcher(
-    IStateStore stateStore,
     IStateRegistry registry,
-    IRoleProvider roleProvider,
-    IPromptService promptService,
-    ITelegramBotClient bot,
-    IServiceProvider services,
-    ILogger<FsmDispatcher> logger,
-    IStatsCollector? stats = null) : IFsmDispatcher
+    IStateHandlerProvider handlerProvider,
+    IReplyService replyService,
+    IUserStateService userStates,
+    UserRepository users,
+    ILogger<FsmDispatcher> logger) : IFsmDispatcher
 {
-    private readonly IStateStore _stateStore = stateStore;
-    private readonly IStateRegistry _registry = registry;
-    private readonly IRoleProvider _roleProvider = roleProvider;
-    private readonly IPromptService _promptService = promptService;
-    private readonly ITelegramBotClient _bot = bot;
-    private readonly IServiceProvider _services = services;
+    private readonly IStateHandlerProvider _handlerProvider = handlerProvider;
     private readonly ILogger<FsmDispatcher> _logger = logger;
-    private readonly IStatsCollector? _stats = stats;
+    private readonly IStateRegistry _registry = registry;
+    private readonly IReplyService _replyService = replyService;
+    private readonly UserRepository _users = users;
+    private readonly IUserStateService _userStates = userStates;
 
-    public async Task HandleUpdateAsync(Update update, CancellationToken ct = default)
+    private ITelegramBotClient? _client;
+
+    [MemberNotNullWhen(true, nameof(_client))]
+    public bool IsConfigured => _client != null;
+
+    public void Configure(ITelegramBotClient client) => _client = client;
+
+    public async Task HandleUpdateAsync(Update update, CancellationToken cancellationToken) => await (update.Type switch
     {
-        try
+        UpdateType.Message => HandleMessageAsync(update.Message!, cancellationToken),
+        //UpdateType.InlineQuery => HandleInlineQueryAsync(update.InlineQuery!, cancellationToken),
+        //UpdateType.CallbackQuery => HandleCallbackQueryAsync(update.CallbackQuery!, cancellationToken),
+        _ => Task.CompletedTask,
+    });
+
+    private async Task<StateDefinition> HandleCancelCommandAsync(StateContext ctx, StateDefinition currentState)
+    {
+        if (currentState.IsRoot)
+            return currentState;
+        if (currentState.IsSubRoot)
+            return await _userStates.GetUserRootStateAsync(ctx.User);
+
+        if (!_registry.TryGet(currentState.ParentStateId, out var parent))
         {
-            var userId = GetUserId(update);
-            if (userId == null)
-            {
-                _logger.LogWarning("Received update without user ID");
-                return;
-            }
-
-            var role = await _roleProvider.GetRoleAsync(userId.Value, ct);
-            if (role == null)
-            {
-                _logger.LogWarning("User {UserId} has no role assigned", userId.Value);
-                return;
-            }
-
-            // Handle /start command -> reset to role root
-            if (IsStartCommand(update))
-            {
-                await ResetToRoot(userId.Value, role, ct);
-                return;
-            }
-
-            // Check prompt first
-            var promptResp = await _promptService.TryResolvePromptAsync(userId.Value, update);
-
-            // Load or create session
-            var session = await _stateStore.GetAsync(userId.Value, ct) ?? await CreateRootSession(userId.Value, role, ct);
-
-            // If prompt resolved -> use synthetic update produced by prompt
-            var effectiveUpdate = promptResp.ToUpdate() ?? update;
-
-            // Resolve state definition, falling back to role root if not found or module disabled
-            if (!_registry.TryGet(session.StateId, out var def) || !_registry.IsModuleEnabled(def.Module))
-            {
-                var root = _registry.ListForRole(role).FirstOrDefault(d => d.IsRootForRole);
-                if (root == null)
-                {
-                    _logger.LogError("No root state found for role {RoleName}", role.Name);
-                    await _bot.SendMessage(userId.Value, "Произошла ошибка (нет корневого состояния).", cancellationToken: ct);
-                    return;
-                }
-
-                session.StateId = root.StateId;
-                session.StateDataJson = null;
-                session.UpdatedAt = DateTimeOffset.UtcNow;
-                session.Version++;
-                await _stateStore.SaveAsync(session, ct);
-                def = root;
-            }
-
-            // Access check
-            if (def == null || (def.AllowedRoles.Length > 0 && !def.AllowedRoles.Contains(role)))
-            {
-                _logger.LogWarning("User {UserId} with role {RoleName} denied access to state {StateId}", userId.Value, role.Name, def?.StateId);
-                await _bot.SendMessage(userId.Value, "Доступ запрещён", cancellationToken: ct);
-                return;
-            }
-
-            // Resolve handler instance
-            var handler = (IStateHandler)_services.GetRequiredService(def.HandlerType);
-
-            var ctx = new StateContext
-            {
-                Update = effectiveUpdate,
-                Session = session,
-                Role = role,
-                Services = _services,
-                CancellationToken = ct,
-                Prompt = _promptService,
-                Keyboard = _services.GetRequiredService<IKeyboardBuilder>()
-            };
-
-            var sw = Stopwatch.StartNew();
-            var result = await handler.HandleAsync(ctx);
-            sw.Stop();
-            _stats?.ObserveStateDuration(session.UserId, session.StateId, sw.Elapsed);
-
-            // Apply transition
-            if (result.NextStateId != null)
-            {
-                // validate next state exists and accessible
-                if (!_registry.TryGet(result.NextStateId, out var nextDef))
-                {
-                    _logger.LogError("Invalid next state {StateId}", result.NextStateId);
-                    // optionally notify user
-                }
-                else if (nextDef.AllowedRoles.Length > 0 && !nextDef.AllowedRoles.Contains(role))
-                {
-                    _logger.LogWarning("User {UserId} with role {RoleName} tried to transition to forbidden state {StateId}",
-                        userId.Value, role.Name, nextDef.StateId);
-                    await _bot.SendMessage(userId.Value, "Доступ запрещён", cancellationToken: ct);
-                    return;
-                }
-                else
-                {
-                    if (result.KeepHistory)
-                    {
-                        session.History.Add(new StateHistoryEntry { StateId = session.StateId, EnteredAt = DateTimeOffset.UtcNow });
-                    }
-
-                    session.StateId = result.NextStateId;
-                    session.StateDataJson = result.NextStateDataJson;
-                    session.UpdatedAt = DateTimeOffset.UtcNow;
-                    session.Version++;
-                    await _stateStore.SaveAsync(session, ct);
-                }
-            }
-
-            // Execute actions produced by handler
-            foreach (var action in result.Actions)
-            {
-                try
-                {
-                    await ExecuteActionAsync(session.UserId, action, ct);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error executing bot action {ActionType}", action.GetType());
-                }
-            }
+            parent = await _userStates.GetUserRootStateAsync(ctx.User);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling update");
-        }
+
+        return parent;
     }
 
-    private async Task ExecuteActionAsync(ChatId chatId, BotAction action, CancellationToken ct)
+    private async Task HandleMessageAsync(Message message, CancellationToken cancellationToken)
     {
-        // Basic implementation — expand based on BotAction shape
-        switch (action)
-        {
-            case SendMessageAction sendText:
-                await _bot.SendMessage(
-                    chatId: chatId,
-                    text: sendText.Text ?? string.Empty,
-                    replyMarkup: sendText.Markup,
-                    cancellationToken: ct);
-                break;
+        if (!IsConfigured)
+            throw new InvalidOperationException("Cannot handle incoming messages when bot client is not configured.");
 
-            //case BotActionType.EditMessage:
-            //    await _bot.EditMessageTextAsync(
-            //        chatId: action.ChatId ?? throw new InvalidOperationException("ChatId required"),
-            //        messageId: action.MessageId ?? throw new InvalidOperationException("MessageId required"),
-            //        text: action.Text ?? string.Empty,
-            //        replyMarkup: action.ReplyMarkup,
-            //        cancellationToken: ct);
-            //    break;
-
-            //case BotActionType.DeleteMessage:
-            //    if (action.ChatId != null && action.MessageId != null)
-            //        await _bot.DeleteMessageAsync(action.ChatId.Value, action.MessageId.Value, ct);
-            //    break;
-
-            // Add other action types as needed
-            default:
-                _logger.LogWarning("Unknown action type: {ActionType}", action.GetType());
-                break;
-        }
-    }
-
-    private async Task<SessionState> CreateRootSession(long userId, Role role, CancellationToken ct)
-    {
-        var root = _registry.ListForRole(role).FirstOrDefault(d => d.IsRootForRole);
-        var stateId = root?.StateId ?? "default:menu";
-        var session = new SessionState
-        {
-            UserId = userId,
-            StateId = stateId,
-            StateDataJson = null,
-            History = [],
-            UpdatedAt = DateTimeOffset.UtcNow,
-            Version = 1
-        };
-
-        await _stateStore.SaveAsync(session, ct);
-        return session;
-    }
-
-    private static bool IsStartCommand(Update update)
-    {
-        // Recognize /start in message text or deep-link start via entities
-        var msg = update.Message;
-        if (msg == null || string.IsNullOrWhiteSpace(msg.Text)) return false;
-        var text = msg.Text.Trim();
-        if (text.StartsWith("/start", StringComparison.OrdinalIgnoreCase)) return true;
-        return false;
-    }
-
-    private async Task ResetToRoot(long userId, Role role, CancellationToken ct)
-    {
-        var root = _registry.ListForRole(role).FirstOrDefault(d => d.IsRootForRole);
-        if (root == null)
-        {
-            _logger.LogError("No root state for role {RoleName} when resetting /start", role.Name);
-            await _bot.SendMessage(userId, "Произошла ошибка.", cancellationToken: ct);
+        if (message.From == null)
             return;
+
+        var user = await _users.GetOrCreateByTelegramIdAsync(message.From.Id, message.From.Username ?? string.Empty, cancellationToken);
+        var ctx = new StateContext(user, message.GetContent(), user.StateData, _client);
+
+        if (!_registry.TryGet(user.State, out var def))
+        {
+            def = await _userStates.GetUserRootStateAsync(user);
         }
 
-        var session = new SessionState
+        _logger.LogInformation("Got user state {State}, trying to handle", user.State);
+
+        var nextState = await TryHandleCommandAsync(message, ctx, def);
+        string? nextMessage = null;
+
+        // Branch if no commands handled
+        if (nextState == null)
         {
-            UserId = userId,
-            StateId = root.StateId,
-            StateDataJson = null,
-            History = new List<StateHistoryEntry>(),
-            UpdatedAt = DateTimeOffset.UtcNow,
-            Version = 1
-        };
+            if (!_handlerProvider.TryGetHandler(def, out var handler))
+            {
+                _logger.LogError("Couldn't get handler for the defined state {State}", def.StateId);
+                return;
+            }
 
-        await _stateStore.SaveAsync(session, ct);
+            var result = await handler.ExecuteAsync(ctx, cancellationToken);
+            nextMessage = result.OverrideNextStateMessage;
 
-        // Optionally send root welcome message — use prompt service or send static text
-        await _bot.SendMessage(userId, "Главное меню", cancellationToken: ct);
+            if (!_registry.TryGet(result.NextStateId, out nextState))
+            {
+                nextState = await _userStates.GetUserRootStateAsync(user);
+            }
+
+            user.StateData = result.NextStateData;
+        }
+
+        user.State = nextState.StateId;
+        await _users.UpdateAsync(user, cancellationToken);
+        await _users.SaveChangesAsync(cancellationToken);
+
+        await _replyService.SendReplyAsync(_client, user.TelegramId, nextState, nextMessage, cancellationToken);
     }
 
-    private static long? GetUserId(Update update)
+    private async Task<StateDefinition> HandleStartCommandAsync(StateContext ctx)
     {
-        return update.Message?.From?.Id
-            ?? update.CallbackQuery?.From?.Id
-            ?? update.InlineQuery?.From?.Id
-            ?? update.ChosenInlineResult?.From?.Id
-            ?? update.PreCheckoutQuery?.From?.Id
-            ?? update.ShippingQuery?.From?.Id
-            ?? update.MyChatMember?.From?.Id
-            ?? update.ChatMember?.From?.Id
-            ?? update.ChatJoinRequest?.From?.Id;
+        ctx.User.StateData = string.Empty;
+        return await _userStates.GetUserRootStateAsync(ctx.User);
     }
+
+    private async Task<StateDefinition?> TryHandleCommandAsync(Message message, StateContext ctx, StateDefinition currentState) => message.Text switch
+    {
+        "/cancel" => await HandleCancelCommandAsync(ctx, currentState),
+        "/start" => await HandleStartCommandAsync(ctx),
+        _ => null,
+    };
 }

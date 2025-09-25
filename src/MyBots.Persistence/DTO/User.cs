@@ -1,4 +1,4 @@
-namespace MyBots.Persistence.DTO;
+namespace MyBots.Core.Persistence.DTO;
 
 /// <summary>
 /// Data transfer object representing a user in the persistence layer.
@@ -19,16 +19,6 @@ public class User
     /// Gets or sets the display name of the user.
     /// </summary>
     public string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the identifier of the user's role.
-    /// </summary>
-    public int RoleId { get; set; }
-
-    /// <summary>
-    /// Gets or sets the navigation property for the user's role.
-    /// </summary>
-    public Role? Role { get; set; }
 
     /// <summary>
     /// Gets or sets the current FSM state of the user.

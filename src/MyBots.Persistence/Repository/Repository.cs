@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace MyBots.Persistence.Repository;
+namespace MyBots.Core.Persistence.Repository;
 
 /// <summary>
 /// Provides a generic implementation of the repository pattern using Entity Framework Core.

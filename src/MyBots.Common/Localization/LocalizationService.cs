@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Resources;
 
 namespace MyBots.Core.Localization;
@@ -11,39 +10,17 @@ namespace MyBots.Core.Localization;
 /// to fetch localized strings from embedded resources.
 /// </remarks>
 /// <param name="resourceManager">The resource manager used to fetch localized strings.</param>
-/// <param name="defaultLanguage">The default language code to use when no user preference is set. Defaults to "en-US".</param>
-public class LocalizationService(ResourceManager resourceManager, string defaultLanguage = "en-US") : ILocalizationService
+public class LocalizationService(ResourceManager resourceManager) : ILocalizationService
 {
-    private readonly Dictionary<long, CultureInfo> _userLanguages = [];
     private readonly ResourceManager _resourceManager = resourceManager;
-    private readonly string _defaultLanguage = defaultLanguage;
 
     /// <inheritdoc />
-    public Task SetUserLanguageAsync(long userId, CultureInfo culture)
-    {
-        _userLanguages[userId] = culture;
-        return Task.CompletedTask;
-    }
+    public string GetString(string key) => _resourceManager.GetString(key) ?? key;
 
     /// <inheritdoc />
-    public Task<CultureInfo> GetUserLanguageAsync(long userId)
+    public string GetString(string key, params object[] args)
     {
-        if (_userLanguages.TryGetValue(userId, out var culture))
-            return Task.FromResult(culture);
-        return Task.FromResult(new CultureInfo(_defaultLanguage));
-    }
-
-    /// <inheritdoc />
-    public async Task<string> GetStringAsync(string key, long userId)
-    {
-        var culture = await GetUserLanguageAsync(userId);
-        return _resourceManager.GetString(key, culture) ?? key;
-    }
-
-    /// <inheritdoc />
-    public async Task<string> GetStringAsync(string key, long userId, params object[] args)
-    {
-        var format = await GetStringAsync(key, userId);
+        var format = GetString(key);
         return string.Format(format, args);
     }
 }
