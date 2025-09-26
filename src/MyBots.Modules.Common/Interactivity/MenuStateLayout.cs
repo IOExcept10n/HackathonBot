@@ -23,7 +23,7 @@ public class MenuStateLayout : StateLayout
         if (DisableKeyboard)
             keyboardMarkup = RemoveMarkup;
         else
-            keyboardMarkup = new ReplyKeyboardMarkup()
+            keyboardMarkup = new ReplyKeyboardMarkup
             {
                 ResizeKeyboard = ResizeKeyboard,
                 OneTimeKeyboard = OneTimeKeyboard,
@@ -34,7 +34,6 @@ public class MenuStateLayout : StateLayout
         await client.SendMessage(
             chatId,
             overrideReplyMessage ?? MessageText,
-            Telegram.Bot.Types.Enums.ParseMode.Markdown,
             replyMarkup: keyboardMarkup,
             cancellationToken: cancellationToken);
     }

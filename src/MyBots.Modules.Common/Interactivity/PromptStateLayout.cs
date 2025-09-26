@@ -7,6 +7,6 @@ public class PromptStateLayout : StateLayout
 {
     public override async Task SendLayoutMessageAsync(ITelegramBotClient client, ChatId chatId, string? overrideReplyMessage = null, CancellationToken cancellationToken = default)
     {
-        await client.SendMessage(chatId, overrideReplyMessage ?? MessageText, Telegram.Bot.Types.Enums.ParseMode.Markdown, replyMarkup: RemoveMarkup, cancellationToken: cancellationToken);
+        await client.SendMessage(chatId, overrideReplyMessage ?? MessageText, replyMarkup: RemoveMarkup, cancellationToken: cancellationToken);
     }
 }

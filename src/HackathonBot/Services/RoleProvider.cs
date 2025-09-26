@@ -1,9 +1,17 @@
-﻿using MyBots.Modules.Common.Roles;
+﻿using MyBots.Core.Persistence.DTO;
+using MyBots.Modules.Common.Roles;
 
-namespace HackathonBot.Services
+namespace HackathonBot.Services;
+
+internal class RoleProvider(ITelegramUserService userService) : IRoleProvider
 {
-    internal class RoleProvider : IRoleProvider
+    private readonly ITelegramUserService _userService = userService;
+
+    public async Task<Role> GetRoleAsync(User user, CancellationToken cancellationToken = default)
     {
-        public Task<Role> GetRoleAsync(long userId, CancellationToken cancellationToken = default) => Task.FromResult(Roles.User);
+        var role = await _userService.EnsureRegisteredAsync(user.TelegramId, user.Name, cancellationToken);
+        if (role == null)
+            return Role.Unknown;
+        return role.Role;
     }
 }

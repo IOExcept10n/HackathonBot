@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Resources;
+using HackathonBot.Models;
 using HackathonBot.Properties;
+using HackathonBot.Repository;
 using HackathonBot.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,8 +15,6 @@ using MyBots.Core.Persistence;
 using MyBots.Core.Persistence.DTO;
 using MyBots.Core.Persistence.Repository;
 using MyBots.Modules.Common;
-using MyBots.Modules.Common.Handling;
-using MyBots.Modules.Common.Interactivity;
 using MyBots.Modules.Common.Roles;
 
 namespace HackathonBot;
@@ -35,18 +35,10 @@ public static class ServiceCollectionExtensions
                 configuration.GetConnectionString("Sqlite")
                 ?? throw new InvalidOperationException("Database connection string is not configured")));
         services.AddScoped<BasicBotDbContext>(ctx => ctx.GetRequiredService<BotDbContext>());
-        services.AddScoped<UserRepository>();
-        services.AddScoped<IRepository<User>>(ctx => ctx.GetRequiredService<UserRepository>());
+        services.AddRepositories();
 
         // Common Services
-        services.AddSingleton<IFsmDispatcher, FsmDispatcher>();
-        services.AddSingleton<ILocalizationService, LocalizationService>();
-        services.AddSingleton<IStateRegistry, StateRegistry>();
-        services.AddSingleton<IRoleProvider, RoleProvider>();
-        services.AddSingleton<IHandlerRegistrationService, HandlerRegistrationService>();
-        services.AddSingleton<IStateHandlerRegistry, StateHandlerRegistry>();
-        services.AddSingleton<IReplyService, ReplyService>();
-        services.AddSingleton<IButtonLabelProvider, ButtonLabelProvider>();
+        services.ConfigureCommonServices();
 
         foreach (var moduleType in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsAssignableTo(typeof(ModuleBase))))
         {
@@ -54,12 +46,45 @@ public static class ServiceCollectionExtensions
         }
 
         services.ConfigureRoleDispatcher(
-            new(Role.Unknown, "Idk u", "u shll nt pss"),
-            new(Roles.User, "Hello, user!", "U cant"),
-            new(Roles.Organizer, "Welcome, master ^_^", "baka!"),
-            new(Roles.Admin, "Hi adm :3", "sorry, nope"));
+            new(Role.Unknown, Localization.UnknownRoleHello, Localization.UnknownRoleAccessDenied),
+            new(Roles.Participant, "Hello, user!", Localization.ParticipantAccessDenied),
+            new(Roles.Organizer, "Welcome, master ^_^", Localization.OrganizerAccessDenied),
+            new(Roles.Admin, "Hi adm :3", Localization.OrganizerAccessDenied));
+        
+        services.AddSingleton<IRoleProvider, RoleProvider>();
+        services.AddSingleton<ITelegramUserService, TelegramUserService>();
 
         services.AddSingleton(Localization.ResourceManager);
+
+        return services;
+    }
+
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        // FSM User
+        services.AddScoped<UserRepository>();
+        services.AddScoped<IUserRepository>(ctx => ctx.GetRequiredService<UserRepository>());
+        services.AddScoped<IRepository<User>>(ctx => ctx.GetRequiredService<UserRepository>());
+
+        // Participant
+        services.AddScoped<ParticipantRepository>();
+        services.AddScoped<IParticipantRepository>(sp => sp.GetRequiredService<ParticipantRepository>());
+        services.AddScoped<IRepository<Participant>>(sp => sp.GetRequiredService<ParticipantRepository>());
+
+        // Team
+        services.AddScoped<TeamRepository>();
+        services.AddScoped<ITeamRepository>(sp => sp.GetRequiredService<TeamRepository>());
+        services.AddScoped<IRepository<Team>>(sp => sp.GetRequiredService<TeamRepository>());
+
+        // Submission
+        services.AddScoped<SubmissionRepository>();
+        services.AddScoped<ISubmissionRepository>(sp => sp.GetRequiredService<SubmissionRepository>());
+        services.AddScoped<IRepository<Submission>>(sp => sp.GetRequiredService<SubmissionRepository>());
+
+        // BotUserRole
+        services.AddScoped<BotUserRoleRepository>();
+        services.AddScoped<IBotUserRoleRepository>(sp => sp.GetRequiredService<BotUserRoleRepository>());
+        services.AddScoped<IRepository<BotUserRole>>(sp => sp.GetRequiredService<BotUserRoleRepository>());
 
         return services;
     }

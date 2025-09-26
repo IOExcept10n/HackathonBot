@@ -79,7 +79,7 @@ namespace MyBots.Modules.Common.Handling
             var layout = new MenuStateLayout()
             {
                 MessageText = _localization.GetString(menuAttr.MessageResourceKey),
-                Buttons = [from item in menuItems select _buttonProvider.GetLabel(item.LabelKey)],
+                Buttons = from item in menuItems select new List<ButtonLabel>() { _buttonProvider.GetLabel(item.LabelKey) },
             };
 
             return new StateDefinition(
@@ -105,7 +105,7 @@ namespace MyBots.Modules.Common.Handling
 
             public async Task<StateResult> ExecuteAsync(StateContext ctx, CancellationToken cancellationToken = default)
             {
-                var role = await _roleProvider.GetRoleAsync(ctx.User.TelegramId, cancellationToken);
+                var role = await _roleProvider.GetRoleAsync(ctx.User, cancellationToken);
                 var moduleContext = _module.PrepareContext(RoleStateContext.FromContext(ctx, role), cancellationToken);
                 return await _expr(moduleContext);
             }
@@ -133,7 +133,7 @@ namespace MyBots.Modules.Common.Handling
 
             public async Task<StateResult> ExecuteAsync(StateContext ctx, CancellationToken cancellationToken = default)
             {
-                var role = await _roleProvider.GetRoleAsync(ctx.User.TelegramId, cancellationToken);
+                var role = await _roleProvider.GetRoleAsync(ctx.User, cancellationToken);
                 var moduleContext = _module.PrepareContext(RoleStateContext.FromContext(ctx, role), cancellationToken);
 
                 (Optional<T> data, bool invalidContent) = ctx.Message switch

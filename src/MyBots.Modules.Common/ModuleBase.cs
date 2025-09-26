@@ -14,6 +14,7 @@ public abstract class ModuleBase(
 {
     public const string SelectRootMenuKey = "ModuleSelectRootMenu";
     public const string InvalidInputKey = "BaseModuleInvalidInput";
+    public const string UnknownErrorKey = "UnknownError";
     public const string RootStateName = "root";
 
     private readonly IStateRegistry _states = states;
@@ -40,11 +41,16 @@ public abstract class ModuleBase(
     protected static StateResult Retry(ModuleStateContext ctx, string? stateData = null, string? message = null)
         => new(ctx.User.State, stateData ?? ctx.User.StateData, message);
 
-    protected static StateResult ToRoot(string? stateData = null, string? message = null)
+    protected static StateResult ToStart(string? stateData = null, string? message = null)
         => new("start", stateData ?? string.Empty, message);
+
+    protected StateResult Fail(string? stateData = null, string? message = null)
+        => ToStart(stateData ?? _localizationService.GetString(UnknownErrorKey), message);
 
     protected internal virtual StateResult InvalidInput(ModuleStateContext ctx)
         => Retry(ctx, _localizationService.GetString(InvalidInputKey));
+    protected StateResult ToRoot(string? stateData = null, string? message = null)
+        => new(RootStateId, stateData ?? string.Empty, message);
 
     protected StateResult ToGlobalState<TModule>(string stateKey, string? stateData = null, string? message = null)
     {

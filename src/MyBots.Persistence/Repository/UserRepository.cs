@@ -6,7 +6,7 @@ namespace MyBots.Core.Persistence.Repository;
 /// <summary>
 /// Repository for managing user entities.
 /// </summary>
-public class UserRepository(BasicBotDbContext context) : Repository<BasicBotDbContext, User>(context)
+public class UserRepository(BasicBotDbContext context) : Repository<BasicBotDbContext, User>(context), IUserRepository
 {
 
     /// <summary>

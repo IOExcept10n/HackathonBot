@@ -22,7 +22,11 @@ public abstract class BasicBotDbContext(DbContextOptions options) : DbContext(op
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure roles and users
-        modelBuilder.ConfigureRoleModel();
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.TelegramId).IsUnique();
+            entity.HasAlternateKey(u => u.TelegramId);
+        });
     }
 }

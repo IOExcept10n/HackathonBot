@@ -11,7 +11,7 @@ public record PromptStateContext<T>(
     ChatId Chat,
     Role Role,
     MessageContent Message,
-    Optional<T> MessageInput,
+    Optional<T> Input,
     string StateData,
     ITelegramBotClient BotClient,
     CancellationToken CancellationToken) : ModuleStateContext(User, Chat, Role, Message, StateData, BotClient, CancellationToken)

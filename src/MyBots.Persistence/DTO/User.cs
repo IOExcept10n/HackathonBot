@@ -5,6 +5,8 @@ namespace MyBots.Core.Persistence.DTO;
 /// </summary>
 public class User
 {
+    private string name = string.Empty;
+
     /// <summary>
     /// Gets or sets the unique identifier of the user in the database.
     /// </summary>
@@ -16,10 +18,9 @@ public class User
     public long TelegramId { get; set; }
 
     /// <summary>
-    /// Gets or sets the display name of the user.
+    /// Gets or sets the Telegram nickname of the user.
     /// </summary>
-    public string Name { get; set; } = string.Empty;
-
+    public string Name { get => name; set => name = value.Replace("@", "").ToLowerInvariant(); }
     /// <summary>
     /// Gets or sets the current FSM state of the user.
     /// </summary>

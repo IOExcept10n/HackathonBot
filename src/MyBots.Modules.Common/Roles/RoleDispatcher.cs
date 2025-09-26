@@ -30,7 +30,7 @@ namespace MyBots.Modules.Common.Roles
             }
         }
 
-        public async Task<StateDefinition> GetUserRootStateAsync(User user) => _registeredRoles[await _roleProvider.GetRoleAsync(user.TelegramId)];
+        public async Task<StateDefinition> GetUserRootStateAsync(User user) => _registeredRoles[await _roleProvider.GetRoleAsync(user)];
 
         public void RegisterRole(Role role, string helloMessage, string? accessDeniedMessage)
         {
@@ -39,7 +39,7 @@ namespace MyBots.Modules.Common.Roles
             var layout = new MenuStateLayout()
             {
                 MessageText = helloMessage,
-                Buttons = [allowedModules.Select(x => x.Label)]
+                Buttons = allowedModules.Select(x => new List<ButtonLabel>() { x.Label })
             };
 
             var definition = new StateDefinition(role.Name, "start", string.Empty, layout);

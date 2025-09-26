@@ -14,14 +14,14 @@ public class FsmDispatcher(
     IStateHandlerProvider handlerProvider,
     IReplyService replyService,
     IUserStateService userStates,
-    UserRepository users,
+    IUserRepository users,
     ILogger<FsmDispatcher> logger) : IFsmDispatcher
 {
     private readonly IStateHandlerProvider _handlerProvider = handlerProvider;
     private readonly ILogger<FsmDispatcher> _logger = logger;
     private readonly IStateRegistry _registry = registry;
     private readonly IReplyService _replyService = replyService;
-    private readonly UserRepository _users = users;
+    private readonly IUserRepository _users = users;
     private readonly IUserStateService _userStates = userStates;
 
     private ITelegramBotClient? _client;
@@ -62,7 +62,7 @@ public class FsmDispatcher(
         if (message.From == null)
             return;
 
-        var user = await _users.GetOrCreateByTelegramIdAsync(message.From.Id, message.From.Username ?? string.Empty, cancellationToken);
+        var user = await _users.GetOrCreateByTelegramIdAsync(message.From.Id, message.From.Username?.ToLowerInvariant() ?? string.Empty, cancellationToken);
         var ctx = new StateContext(user, message.GetContent(), user.StateData, _client);
 
         if (!_registry.TryGet(user.State, out var def))

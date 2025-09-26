@@ -120,16 +120,127 @@
   <data name="BaseModuleInvalidInput" xml:space="preserve">
     <value>Некорректный ввод. Пожалуйста, попробуйте ещё раз</value>
   </data>
+  <data name="CaseLD" xml:space="preserve">
+    <value>Завод ЛД</value>
+  </data>
+  <data name="Cases" xml:space="preserve">
+    <value>Кейсы</value>
+  </data>
+  <data name="CaseSelectedSuccessfully" xml:space="preserve">
+    <value>Кейс успешно выбран! Удачи на хакатоне!</value>
+  </data>
+  <data name="CaseTBank" xml:space="preserve">
+    <value>Т-Банк</value>
+  </data>
   <data name="HackathonModuleText" xml:space="preserve">
     <value>Хакатон</value>
   </data>
   <data name="ModuleSelectRootMenu" xml:space="preserve">
     <value>Выберите действие</value>
   </data>
+  <data name="MyTeam" xml:space="preserve">
+    <value>Моя команда</value>
+  </data>
   <data name="No" xml:space="preserve">
     <value>Нет</value>
   </data>
+  <data name="NoTeamWarning" xml:space="preserve">
+    <value>Похоже, что у вас нет команды. Пожалуйста, свяжитесь с организатором, чтобы вам помогли найти команду: @kkkira_kh</value>
+  </data>
+  <data name="RequestCasePrompt" xml:space="preserve">
+    <value>Какой кейс вы выбираете?
+
+Завод ЛД – крутая компания, делает трубы.
+Кейс: сделать трубу.
+
+Т-Банк – крутой банк, даёт кредиты.
+Кейс: взять кредит.</value>
+  </data>
+  <data name="SelectCase" xml:space="preserve">
+    <value>Выбрать кейс</value>
+  </data>
+  <data name="UploadSolution" xml:space="preserve">
+    <value>Загрузить решение</value>
+  </data>
+  <data name="TeamInfo" xml:space="preserve">
+    <value>Привет, {0}!
+
+Твоя команда: {1}
+Вы выбрали кейс: {2}</value>
+  </data>
+  <data name="UnknownRoleHello" xml:space="preserve">
+    <value>Извините, но похоже вы не зарегистрированы! Пожалуйста, свяжитесь с организаторами хакатона: @kkkira_kh</value>
+  </data>
+  <data name="WhatsYourChoice" xml:space="preserve">
+    <value>Что вы хотите сделать?</value>
+  </data>
   <data name="Yes" xml:space="preserve">
     <value>Да</value>
+  </data>
+  <data name="UnknownRoleAccessDenied" xml:space="preserve">
+    <value>Извините, вы не были зарегистрированы на хакатон, поэтому это действие вам недоступно. Если вы считаете, что произошла ошибка, то напишите организаторам: @kkkira_kh</value>
+  </data>
+  <data name="ParticipantAccessDenied" xml:space="preserve">
+    <value>Извините, но вы не можете выполнить это действие. Попробуйте ещё раз, или напишите организаторам хакатона: @kkkira_kh</value>
+  </data>
+  <data name="OrganizerAccessDenied" xml:space="preserve">
+    <value>Извините, но вы не можете выполнить это действие. Попробуйте ещё раз или напишите разработчику: @IOException</value>
+  </data>
+  <data name="AdminModuleText" xml:space="preserve">
+    <value>Администрирование</value>
+  </data>
+  <data name="RegisterAdmin" xml:space="preserve">
+    <value>Зарегистрировать организатора</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Организатор</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Администратор</value>
+  </data>
+  <data name="RegisterParticipant" xml:space="preserve">
+    <value>Зарегистрировать участника</value>
+  </data>
+  <data name="DeleteAdmin" xml:space="preserve">
+    <value>Удалить организатора</value>
+  </data>
+  <data name="DeleteParticipant" xml:space="preserve">
+    <value>Удалить участника</value>
+  </data>
+  <data name="InputUserName" xml:space="preserve">
+    <value>Введите никнейм пользователя</value>
+  </data>
+  <data name="ConfirmUserDeletion" xml:space="preserve">
+    <value>Вы точно хотите удалить участника?</value>
+  </data>
+  <data name="UserDeleted" xml:space="preserve">
+    <value>Пользователь успешно удалён!</value>
+  </data>
+  <data name="UserAdded" xml:space="preserve">
+    <value>Пользователь успешно создан!</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Произошла неизвестная ошибка. Пожалуйста, сообщите разработчику @ioexception, приложив историю переписки.</value>
+  </data>
+  <data name="Participant" xml:space="preserve">
+    <value>Участник</value>
+  </data>
+  <data name="UserRoleInfo" xml:space="preserve">
+    <value>Роль пользователя:</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Пользователь не найден</value>
+  </data>
+  <data name="InputUserTeam" xml:space="preserve">
+    <value>Введите название команды:</value>
+  </data>
+  <data name="UserAlreadyExists" xml:space="preserve">
+    <value>Пользователь с таким ником уже существует.</value>
+  </data>
+  <data name="SelectRole" xml:space="preserve">
+    <value>Выберите роль</value>
+  </data>
+  <data name="InputUserFullName" xml:space="preserve">
+    <value>Введите ФИО участника</value>
   </data>
 </root>

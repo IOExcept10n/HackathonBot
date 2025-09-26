@@ -10,5 +10,18 @@ namespace HackathonBot
         public static ButtonLabel Hackathon { get; } = new(Emoji.PersonalComputer, Localization.HackathonModuleText);
         public static ButtonLabel Yes { get; } = new(Emoji.WhiteHeavyCheckMark, Localization.Yes);
         public static ButtonLabel No { get; } = new(Emoji.CrossMark, Localization.No);
+        public static ButtonLabel Case { get; } = new(Emoji.Briefcase, Localization.Cases);
+        public static ButtonLabel CaseLD { get; } = new(Emoji.Factory, Localization.CaseLD);
+        public static ButtonLabel CaseTBank { get; } = new(Emoji.Bank, Localization.CaseTBank);
+        public static ButtonLabel MyTeam { get; } = new(Emoji.GlowingStar, Localization.MyTeam);
+        public static ButtonLabel UploadSolution { get; } = new(Emoji.FloppyDisk, Localization.UploadSolution);
+        public static ButtonLabel Administration { get; } = new(Emoji.Key, Localization.AdminModuleText);
+        public static ButtonLabel DeleteAdmin { get; } = new(Emoji.CrossMark, Localization.DeleteAdmin);
+        public static ButtonLabel DeleteParticipant { get; } = new(Emoji.NegativeSquaredCrossMark, Localization.DeleteParticipant);
+        public static ButtonLabel RegisterAdmin { get; } = new(Emoji.Memo, Localization.RegisterAdmin);
+        public static ButtonLabel RegisterParticipant { get; } = new(Emoji.Scroll, Localization.RegisterParticipant);
+        public static ButtonLabel Admin { get; } = new(Emoji.Lock, Localization.Admin);
+        public static ButtonLabel Organizer { get; } = new(Emoji.Wrench, Localization.Organizer);
     }
 }
+
