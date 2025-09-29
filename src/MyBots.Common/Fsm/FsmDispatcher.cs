@@ -84,7 +84,17 @@ public class FsmDispatcher(
                 return;
             }
 
-            var result = await handler.ExecuteAsync(ctx, cancellationToken);
+            StateResult? result;
+            try
+            {
+                result = await handler.ExecuteAsync(ctx, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Couldn't process request. User state: {State}", ctx.User.State);
+                result = new("start", $"Error: {ex.Message}", "UnknownError");
+            }
+
             nextMessage = result.OverrideNextStateMessage;
 
             if (!_registry.TryGet(result.NextStateId, out nextState))

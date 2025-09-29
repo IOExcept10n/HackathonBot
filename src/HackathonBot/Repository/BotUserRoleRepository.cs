@@ -11,7 +11,7 @@ internal class BotUserRoleRepository(BotDbContext ctx) : BotRepository<BotUserRo
 
     public async Task<BotUserRole?> FindByUsernameAsync(string username, CancellationToken ct = default)
     {
-        var canonical = username.Replace("@","");
+        var canonical = username.Replace("@","").ToLower();
         return await _dbSet.AsNoTracking()
             .FirstOrDefaultAsync(b => b.Username == canonical, ct);
     }

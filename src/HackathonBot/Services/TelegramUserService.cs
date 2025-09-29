@@ -4,10 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace HackathonBot.Services;
 
-internal class TelegramUserService(IBotUserRoleRepository roles, IParticipantRepository participants, ILogger<TelegramUserService> logger) : ITelegramUserService
+internal class TelegramUserService(IBotUserRoleRepository roles, IParticipantRepository participants, ITeamRepository teams, ILogger<TelegramUserService> logger) : ITelegramUserService
 {
     private readonly IBotUserRoleRepository _roles = roles;
     private readonly IParticipantRepository _participants = participants;
+    private readonly ITeamRepository _teams = teams;
     private readonly ILogger<TelegramUserService> _logger = logger;
 
     public async Task DeleteUserAsync(string username, CancellationToken ct = default)
@@ -125,5 +126,43 @@ internal class TelegramUserService(IBotUserRoleRepository roles, IParticipantRep
         if (participant != null)
             return RoleIndex.Participant;
         return RoleIndex.Unknown;
+    }
+
+    public async Task<Participant?> RegisterParticipantAsync(string teamName, string username, string fullName, CancellationToken cancellationToken = default)
+    {
+        var team = await _teams.FindByNameAsync(teamName, cancellationToken);
+        bool isLeader = false;
+        if (team == null)
+        {
+            isLeader = true;
+            team = new()
+            {
+                Name = teamName,
+            };
+            await _teams.AddAsync(team, cancellationToken);
+            await _teams.SaveChangesAsync(cancellationToken);
+        }
+
+        var participant = await _participants.FindByUsernameAsync(username, cancellationToken);
+        if (participant != null)
+        {
+            participant.IsLeader = isLeader;
+            participant.FullName = fullName;
+            participant.TeamId = team.Id;
+            await _participants.UpdateAsync(participant, cancellationToken);
+        }
+        else
+        {
+            participant = new Participant()
+            {
+                IsLeader = isLeader,
+                FullName = fullName,
+                Nickname = username,
+                TeamId = team.Id,
+            };
+            await _participants.AddAsync(participant, cancellationToken);
+        }
+        await _participants.SaveChangesAsync(cancellationToken);
+        return participant;
     }
 }

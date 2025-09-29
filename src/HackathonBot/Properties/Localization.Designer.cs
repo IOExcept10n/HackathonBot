@@ -61,11 +61,29 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Добавить команду.
+        /// </summary>
+        internal static string AddTeam {
+            get {
+                return ResourceManager.GetString("AddTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Администратор.
         /// </summary>
         internal static string Admin {
             get {
                 return ResourceManager.GetString("Admin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Привет, спишь? А работать когда? 😠.
+        /// </summary>
+        internal static string AdminHello {
+            get {
+                return ResourceManager.GetString("AdminHello", resourceCulture);
             }
         }
         
@@ -79,11 +97,29 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Назад.
+        /// </summary>
+        internal static string Back {
+            get {
+                return ResourceManager.GetString("Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Некорректный ввод. Пожалуйста, попробуйте ещё раз.
         /// </summary>
         internal static string BaseModuleInvalidInput {
             get {
                 return ResourceManager.GetString("BaseModuleInvalidInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отмена.
+        /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
             }
         }
         
@@ -115,11 +151,38 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Увы, но вы не можете выбрать кейс — произошло невероятное, и оба кейса были переполнены. Можете написать организатору по этому поводу: @kkkira_kh.
+        /// </summary>
+        internal static string CaseSelectionUnavailable {
+            get {
+                return ResourceManager.GetString("CaseSelectionUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Т-Банк.
         /// </summary>
         internal static string CaseTBank {
             get {
                 return ResourceManager.GetString("CaseTBank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ниже будет представлен список участников, сгруппированный по командам. Проверьте правильность введённых данных.
+        /// </summary>
+        internal static string CheckTeamUploadFileContents {
+            get {
+                return ResourceManager.GetString("CheckTeamUploadFileContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Подтвердить сохранение?.
+        /// </summary>
+        internal static string ConfirmUpload {
+            get {
+                return ResourceManager.GetString("ConfirmUpload", resourceCulture);
             }
         }
         
@@ -147,6 +210,15 @@ namespace HackathonBot.Properties {
         internal static string DeleteParticipant {
             get {
                 return ResourceManager.GetString("DeleteParticipant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить команду.
+        /// </summary>
+        internal static string DeleteTeam {
+            get {
+                return ResourceManager.GetString("DeleteTeam", resourceCulture);
             }
         }
         
@@ -187,11 +259,56 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ЛД.
+        /// </summary>
+        internal static string LD {
+            get {
+                return ResourceManager.GetString("LD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 💫 Кейс от ЛД — разработка и внедрение системы машинного зрения для автоматического выявления брака при штамповке деталей.
+        /// </summary>
+        internal static string LDCaseInfo {
+            get {
+                return ResourceManager.GetString("LDCaseInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управлять организаторами.
+        /// </summary>
+        internal static string ManageOrganizers {
+            get {
+                return ResourceManager.GetString("ManageOrganizers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управлять командами.
+        /// </summary>
+        internal static string ManageTeams {
+            get {
+                return ResourceManager.GetString("ManageTeams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выберите действие.
         /// </summary>
         internal static string ModuleSelectRootMenu {
             get {
                 return ResourceManager.GetString("ModuleSelectRootMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Моё решение.
+        /// </summary>
+        internal static string MySubmission {
+            get {
+                return ResourceManager.GetString("MySubmission", resourceCulture);
             }
         }
         
@@ -210,6 +327,33 @@ namespace HackathonBot.Properties {
         internal static string No {
             get {
                 return ResourceManager.GetString("No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Нет.
+        /// </summary>
+        internal static string None {
+            get {
+                return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы ещё не загрузили презентацию. Пожалуйста, прикрепите её до стоп-кода.
+        /// </summary>
+        internal static string NoPresentationYet {
+            get {
+                return ResourceManager.GetString("NoPresentationYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы ещё не загрузили ссылку на репозиторий. Не забудьте прикрепить её до стоп-кода.
+        /// </summary>
+        internal static string NoRepoYet {
+            get {
+                return ResourceManager.GetString("NoRepoYet", resourceCulture);
             }
         }
         
@@ -241,6 +385,24 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Добро пожаловать в бота &quot;ФакториХак&quot;! С его помощью вы можете осуществлять рассылки участникам и регистрировать результаты КММ. Выберите раздел меню для продолжения.
+        /// </summary>
+        internal static string OrganizerHello {
+            get {
+                return ResourceManager.GetString("OrganizerHello", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список организаторов:.
+        /// </summary>
+        internal static string OrganizersList {
+            get {
+                return ResourceManager.GetString("OrganizersList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Участник.
         /// </summary>
         internal static string Participant {
@@ -255,6 +417,51 @@ namespace HackathonBot.Properties {
         internal static string ParticipantAccessDenied {
             get {
                 return ResourceManager.GetString("ParticipantAccessDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Привет! Я – бот поддержки хакатона &quot;ФакториХак&quot;. С моей помощью ты сможешь участвовать в разных мероприятиях, а также выбирать кейсы и отправлять решения на них. Выбери раздел меню с помощью кнопок ниже :).
+        /// </summary>
+        internal static string ParticipantHello {
+            get {
+                return ResourceManager.GetString("ParticipantHello", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список участников:.
+        /// </summary>
+        internal static string ParticipantsList {
+            get {
+                return ResourceManager.GetString("ParticipantsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Файл с презентацией команды {0}.
+        /// </summary>
+        internal static string PresentationFileInfo {
+            get {
+                return ResourceManager.GetString("PresentationFileInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ссылка на презентацию команды {0}: {1}.
+        /// </summary>
+        internal static string PresentationLinkInfo {
+            get {
+                return ResourceManager.GetString("PresentationLinkInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Презентация успешно загружена!.
+        /// </summary>
+        internal static string PresentationUploaded {
+            get {
+                return ResourceManager.GetString("PresentationUploaded", resourceCulture);
             }
         }
         
@@ -277,13 +484,25 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Какой кейс вы выбираете?
-        ///
-        ///Завод ЛД – крутая компания, делает трубы.
-        ///Кейс: сделать трубу.
-        ///
-        ///Т-Банк – крутой банк, даёт кредиты.
-        ///Кейс: взять кредит..
+        ///   Looks up a localized string similar to Ссылка на репозиторий команды {0}: {1}.
+        /// </summary>
+        internal static string RepoLinkInfo {
+            get {
+                return ResourceManager.GetString("RepoLinkInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ссылка на репозиторий успешно загружена!.
+        /// </summary>
+        internal static string RepoUploaded {
+            get {
+                return ResourceManager.GetString("RepoUploaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Какой кейс вы выбираете?.
         /// </summary>
         internal static string RequestCasePrompt {
             get {
@@ -310,6 +529,42 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Отправьте CSV файл со списком участников для регистрации.
+        /// </summary>
+        internal static string SendUsersFile {
+            get {
+                return ResourceManager.GetString("SendUsersFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отобразить список участников.
+        /// </summary>
+        internal static string ShowParticipantsList {
+            get {
+                return ResourceManager.GetString("ShowParticipantsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Т-Банк.
+        /// </summary>
+        internal static string TBank {
+            get {
+                return ResourceManager.GetString("TBank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 🏰 Кейс от Т-банк — создание системы управления электронной очередью к интерактивным стендам компании.
+        /// </summary>
+        internal static string TBankCaseInfo {
+            get {
+                return ResourceManager.GetString("TBankCaseInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Привет, {0}!
         ///
         ///Твоя команда: {1}
@@ -318,6 +573,15 @@ namespace HackathonBot.Properties {
         internal static string TeamInfo {
             get {
                 return ResourceManager.GetString("TeamInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список команд:.
+        /// </summary>
+        internal static string TeamsList {
+            get {
+                return ResourceManager.GetString("TeamsList", resourceCulture);
             }
         }
         
@@ -349,11 +613,91 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Загрузка успешно выполнена.
+        /// </summary>
+        internal static string UploadCompleted {
+            get {
+                return ResourceManager.GetString("UploadCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Загрузите CSV файл со списком участников и их команд.
+        /// </summary>
+        internal static string UploadFilePrompt {
+            get {
+                return ResourceManager.GetString("UploadFilePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Загрузить список участников.
+        /// </summary>
+        internal static string UploadParticipantsList {
+            get {
+                return ResourceManager.GetString("UploadParticipantsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Загрузить презентацию.
+        /// </summary>
+        internal static string UploadPresentation {
+            get {
+                return ResourceManager.GetString("UploadPresentation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Загрузите файл презентации или ссылку на него. Учтите, что бот не проверяет корректность ссылки, поэтому убедитесь, что она открывается..
+        /// </summary>
+        internal static string UploadPresentationPrompt {
+            get {
+                return ResourceManager.GetString("UploadPresentationPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Загрузить ссылку на репозиторий.
+        /// </summary>
+        internal static string UploadRepo {
+            get {
+                return ResourceManager.GetString("UploadRepo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отправьте ссылку на репозиторий с решением. Убедитесь, что репозиторий открыт для чтения.
+        /// </summary>
+        internal static string UploadRepoPrompt {
+            get {
+                return ResourceManager.GetString("UploadRepoPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Загрузить решение.
         /// </summary>
         internal static string UploadSolution {
             get {
                 return ResourceManager.GetString("UploadSolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Привет, {0}!
+        ///
+        ///Твоя команда — {1}. На данный момент у вас следующий статус отправки решения:
+        ///🌄 Презентация: {2}
+        ///🖥️ Ссылка на репозиторий: {3}
+        ///Последнее изменение {4}
+        ///
+        ///Выбери один из вариантов ниже, чтобы загрузить элементы решения.
+        ///До стоп-кода осталось {5} ⏱️.
+        /// </summary>
+        internal static string UploadStatus {
+            get {
+                return ResourceManager.GetString("UploadStatus", resourceCulture);
             }
         }
         

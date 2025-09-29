@@ -6,20 +6,27 @@ namespace HackathonBot.Repository;
 internal class ParticipantRepository(BotDbContext ctx) : BotRepository<Participant>(ctx), IParticipantRepository
 {
     public async Task<Participant?> FindByTelegramIdAsync(long telegramId, CancellationToken ct = default) =>
-        await _dbSet.AsNoTracking()
+        await _dbSet
             .Include(x => x.Team)
+            .ThenInclude(y => y!.Submission)
+            .ThenInclude(z => z!.SubmittedBy)
             .FirstOrDefaultAsync(p => p.TelegramId == telegramId, ct);
 
     public async Task<Participant?> FindByUsernameAsync(string username, CancellationToken ct = default)
     {
-        var canonical = username.Replace("@", "");
-        return await _dbSet.AsNoTracking()
+        var canonical = username.Replace("@", "").ToLower();
+        return await _dbSet
+            .Include(x => x.Team)
+            .ThenInclude(y => y!.Submission)
+            .ThenInclude(z => z!.SubmittedBy)
             .FirstOrDefaultAsync(p => p.Nickname == canonical, ct);
     }
 
     public async Task<IList<Participant>> GetByTeamIdAsync(Guid teamId, CancellationToken ct = default) =>
-        await _dbSet.AsNoTracking()
+        await _dbSet
             .Include(x => x.Team)
+            .ThenInclude(y => y!.Submission)
+            .ThenInclude(z => z!.SubmittedBy)
             .Where(p => p.TeamId == teamId)
             .ToListAsync(ct);
 

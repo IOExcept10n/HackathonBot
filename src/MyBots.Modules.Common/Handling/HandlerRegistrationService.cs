@@ -12,6 +12,9 @@ namespace MyBots.Modules.Common.Handling
         private readonly ILocalizationService _localization = localization;
         private readonly IRoleProvider _roleProvider = roleProvider;
 
+        private readonly ButtonLabel _back = new(Emoji.BackWithLeftwardsArrowAbove, localization.GetString("Back"));
+        private readonly ButtonLabel _cancel = new(Emoji.CrossMark, localization.GetString("Cancel"));
+
         public void RegisterModule(ModuleBase module, IStateHandlerRegistry registry)
         {
             var stateMethodCandidates = from method in module.GetType().GetMethods()
@@ -47,7 +50,11 @@ namespace MyBots.Modules.Common.Handling
 
         private StateDefinition CreatePromptDefinition(ModuleBase module, PromptStateAttribute promptAttr, MethodInfo method)
         {
-            var layout = new PromptStateLayout() { MessageText = _localization.GetString(promptAttr.MessageResourceKey) };
+            var layout = new PromptStateLayout(_cancel)
+            {
+                MessageText = _localization.GetString(promptAttr.MessageResourceKey),
+                AllowCancel = promptAttr.BackButton,
+            };
 
             return new StateDefinition(
                 promptAttr.StateName ?? method.Name,
@@ -59,7 +66,7 @@ namespace MyBots.Modules.Common.Handling
         private IStateHandler CreatePromptStateHandler(ModuleBase module, PromptStateAttribute promptAttr, MethodInfo method)
             => (IStateHandler?)Activator.CreateInstance(
                 typeof(PromptStateHandler<>).MakeGenericType(promptAttr.InputType), 
-                [module, method, _roleProvider, promptAttr.AllowTextInput, promptAttr.AllowFileInput]) ??
+                [module, method, _roleProvider, promptAttr.AllowTextInput, promptAttr.AllowFileInput, _cancel]) ??
             throw new InvalidOperationException("Couldn't create prompt state handler. Please, check your prompt handling method definition.");
 
         private StateDefinition RegisterMenu(IStateHandlerRegistry registry,
@@ -68,7 +75,7 @@ namespace MyBots.Modules.Common.Handling
                                              MethodInfo method,
                                              IEnumerable<MenuItemAttribute> menuItems)
         {
-            var handler = new MenuStateHandler(module, method, _roleProvider);
+            var handler = new MenuStateHandler(module, method, _roleProvider, _back);
             var definition = CreateMenuDefinition(module, menuAttr, method, menuItems);
             registry.Register(definition, handler);
             return definition;
@@ -76,10 +83,14 @@ namespace MyBots.Modules.Common.Handling
 
         private StateDefinition CreateMenuDefinition(ModuleBase module, MenuStateAttribute menuAttr, MethodInfo method, IEnumerable<MenuItemAttribute> menuItems)
         {
+            var buttons = from item in menuItems select new List<ButtonLabel>() { _buttonProvider.GetLabel(item.LabelKey) };
+            if (menuAttr.BackButton)
+                buttons = buttons.Append([_back]);
+
             var layout = new MenuStateLayout()
             {
                 MessageText = _localization.GetString(menuAttr.MessageResourceKey),
-                Buttons = from item in menuItems select new List<ButtonLabel>() { _buttonProvider.GetLabel(item.LabelKey) },
+                Buttons = buttons,
             };
 
             return new StateDefinition(
@@ -95,18 +106,24 @@ namespace MyBots.Modules.Common.Handling
             private readonly Func<ModuleStateContext, Task<StateResult>> _expr;
             private readonly ModuleBase _module;
             private readonly IRoleProvider _roleProvider;
+            private readonly ButtonLabel _back;
 
-            public MenuStateHandler(ModuleBase module, MethodInfo method, IRoleProvider roleProvider)
+            public MenuStateHandler(ModuleBase module, MethodInfo method, IRoleProvider roleProvider, ButtonLabel back)
             {
                 _module = module;
                 _expr = GetMenuStateExpression(method);
                 _roleProvider = roleProvider;
+                _back = back;
             }
 
             public async Task<StateResult> ExecuteAsync(StateContext ctx, CancellationToken cancellationToken = default)
             {
                 var role = await _roleProvider.GetRoleAsync(ctx.User, cancellationToken);
                 var moduleContext = _module.PrepareContext(RoleStateContext.FromContext(ctx, role), cancellationToken);
+                if (ctx.Matches(_back))
+                {
+                    return _module.Back(moduleContext);
+                }
                 return await _expr(moduleContext);
             }
 
@@ -121,20 +138,25 @@ namespace MyBots.Modules.Common.Handling
             private readonly IRoleProvider _roleProvider;
             private readonly bool _allowTextInput;
             private readonly bool _allowFileInput;
+            private readonly ButtonLabel _cancel;
 
-            public PromptStateHandler(ModuleBase module, MethodInfo method, IRoleProvider roleProvider, bool allowTextInput, bool allowFileInput)
+            public PromptStateHandler(ModuleBase module, MethodInfo method, IRoleProvider roleProvider, bool allowTextInput, bool allowFileInput, ButtonLabel cancel)
             {
                 _module = module;
                 _expr = GetPromptStateExpression(method);
                 _roleProvider = roleProvider;
                 _allowTextInput = allowTextInput;
                 _allowFileInput = allowFileInput;
+                _cancel = cancel;
             }
 
             public async Task<StateResult> ExecuteAsync(StateContext ctx, CancellationToken cancellationToken = default)
             {
                 var role = await _roleProvider.GetRoleAsync(ctx.User, cancellationToken);
                 var moduleContext = _module.PrepareContext(RoleStateContext.FromContext(ctx, role), cancellationToken);
+
+                if (ctx.Matches(_cancel))
+                    return _module.Back(moduleContext);
 
                 (Optional<T> data, bool invalidContent) = ctx.Message switch
                 {

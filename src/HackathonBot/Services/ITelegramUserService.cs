@@ -8,4 +8,5 @@ public interface ITelegramUserService
     Task DeleteUserAsync(string username, CancellationToken ct = default);
     Task<RoleIndex> CheckUserByNameAsync(string username, CancellationToken ct = default);
     Task<BotUserRole?> EnsureRegisteredAsync(long userId, string username, CancellationToken ct = default);
+    Task<Participant?> RegisterParticipantAsync(string teamName, string username, string fullName, CancellationToken ct = default);
 }

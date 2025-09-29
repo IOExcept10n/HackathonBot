@@ -138,3 +138,4 @@ jspm_packages/
 
 # End
 *.db-wal
+*.db-shm

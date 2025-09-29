@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Resources;
 using HackathonBot.Models;
 using HackathonBot.Properties;
 using HackathonBot.Repository;
@@ -7,10 +6,8 @@ using HackathonBot.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MyBots.Core;
-using MyBots.Core.Fsm;
-using MyBots.Core.Fsm.States;
-using MyBots.Core.Localization;
 using MyBots.Core.Persistence;
 using MyBots.Core.Persistence.DTO;
 using MyBots.Core.Persistence.Repository;
@@ -26,7 +23,8 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         // Configuration
-        services.Configure<BotStartupConfig>(configuration.GetSection("StartupConfig"));
+        services.Configure<BotStartupConfig>(configuration.GetSection(nameof(BotStartupConfig)));
+        services.Configure<HackathonConfig>(configuration.GetSection(nameof(HackathonConfig)));
         services.AddLogging();
 
         // Database
@@ -47,9 +45,9 @@ public static class ServiceCollectionExtensions
 
         services.ConfigureRoleDispatcher(
             new(Role.Unknown, Localization.UnknownRoleHello, Localization.UnknownRoleAccessDenied),
-            new(Roles.Participant, "Hello, user!", Localization.ParticipantAccessDenied),
-            new(Roles.Organizer, "Welcome, master ^_^", Localization.OrganizerAccessDenied),
-            new(Roles.Admin, "Hi adm :3", Localization.OrganizerAccessDenied));
+            new(Roles.Participant, Localization.ParticipantHello, Localization.ParticipantAccessDenied),
+            new(Roles.Organizer, Localization.OrganizerHello, Localization.OrganizerAccessDenied),
+            new(Roles.Admin, Localization.AdminHello, Localization.OrganizerAccessDenied));
         
         services.AddSingleton<IRoleProvider, RoleProvider>();
         services.AddSingleton<ITelegramUserService, TelegramUserService>();
@@ -87,5 +85,25 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRepository<BotUserRole>>(sp => sp.GetRequiredService<BotUserRoleRepository>());
 
         return services;
+    }
+
+    public static async Task ConfigureCreatorAsync(this IServiceProvider services)
+    {
+        var startup = services.GetRequiredService<IOptions<BotStartupConfig>>().Value;
+        if (startup.BotCreator == null)
+            return;
+        var roles = services.GetRequiredService<IBotUserRoleRepository>();
+        var role = await roles.FindByUsernameAsync(startup.BotCreator);
+        if (role == null)
+        {
+            role = new()
+            {
+                Note = "Creator",
+                RoleId = RoleIndex.Admin,
+                Username = startup.BotCreator
+            };
+            await roles.AddAsync(role);
+            await roles.SaveChangesAsync();
+        }
     }
 }

@@ -22,6 +22,15 @@ namespace HackathonBot
         public static ButtonLabel RegisterParticipant { get; } = new(Emoji.Scroll, Localization.RegisterParticipant);
         public static ButtonLabel Admin { get; } = new(Emoji.Lock, Localization.Admin);
         public static ButtonLabel Organizer { get; } = new(Emoji.Wrench, Localization.Organizer);
+        public static ButtonLabel Back { get; } = new(Emoji.BackWithLeftwardsArrowAbove, Localization.Back);
+        public static ButtonLabel ManageTeams { get; } = new(Emoji.Snowflake, Localization.ManageTeams);
+        public static ButtonLabel ManageParticipants { get; } = new(Emoji.TriangularFlagOnPost, Localization.ShowParticipantsList);
+        public static ButtonLabel ManageOrganizers { get; } = new(Emoji.ConstructionSign, Localization.ManageOrganizers);
+        public static ButtonLabel UploadParticipantsList { get; } = new(Emoji.Envelope, Localization.UploadParticipantsList);
+        public static ButtonLabel SelectCase { get; } = new(Emoji.Pencil, Localization.SelectCase);
+        public static ButtonLabel UploadPresentation { get; } = new(Emoji.SunriseOverMountains, Localization.UploadPresentation);
+        public static ButtonLabel UploadRepo { get; } = new(Emoji.Cloud, Localization.UploadRepo);
+        public static ButtonLabel MySubmission { get; } = new(Emoji.Ledger, Localization.MySubmission);
     }
 }
 

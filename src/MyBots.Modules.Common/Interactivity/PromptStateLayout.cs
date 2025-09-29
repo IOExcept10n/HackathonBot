@@ -1,12 +1,21 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace MyBots.Modules.Common.Interactivity;
 
-public class PromptStateLayout : StateLayout
+public class PromptStateLayout(ButtonLabel cancelButton) : StateLayout
 {
-    public override async Task SendLayoutMessageAsync(ITelegramBotClient client, ChatId chatId, string? overrideReplyMessage = null, CancellationToken cancellationToken = default)
-    {
-        await client.SendMessage(chatId, overrideReplyMessage ?? MessageText, replyMarkup: RemoveMarkup, cancellationToken: cancellationToken);
-    }
+    private readonly ReplyKeyboardMarkup _cancelMarkup = new([[cancelButton.ToString()]]);
+
+    public bool AllowCancel { get; set; }
+
+    public override async Task SendLayoutMessageAsync(ITelegramBotClient client,
+                                                      ChatId chatId,
+                                                      string? overrideReplyMessage = null,
+                                                      CancellationToken cancellationToken = default)
+        => await client.SendMessage(chatId,
+                                    overrideReplyMessage ?? MessageText,
+                                    replyMarkup: AllowCancel ? _cancelMarkup : RemoveMarkup,
+                                    cancellationToken: cancellationToken);
 }

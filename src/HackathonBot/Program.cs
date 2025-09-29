@@ -1,7 +1,10 @@
-﻿using HackathonBot;
+﻿using System.Text;
+using HackathonBot;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyBots.Core;
+
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 IConfiguration config = new ConfigurationBuilder()
 #if DEBUG
@@ -15,6 +18,8 @@ IConfiguration config = new ConfigurationBuilder()
 IServiceProvider services = new ServiceCollection()
     .AddHackathonBot(config)
     .BuildServiceProvider();
+
+await services.ConfigureCreatorAsync();
 
 BotListener listener = new(services, config.GetSection("BotStartupConfig").Get<BotStartupConfig>()!);
 await listener.Run();

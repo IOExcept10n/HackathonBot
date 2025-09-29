@@ -148,13 +148,7 @@
     <value>Похоже, что у вас нет команды. Пожалуйста, свяжитесь с организатором, чтобы вам помогли найти команду: @kkkira_kh</value>
   </data>
   <data name="RequestCasePrompt" xml:space="preserve">
-    <value>Какой кейс вы выбираете?
-
-Завод ЛД – крутая компания, делает трубы.
-Кейс: сделать трубу.
-
-Т-Банк – крутой банк, даёт кредиты.
-Кейс: взять кредит.</value>
+    <value>Какой кейс вы выбираете?</value>
   </data>
   <data name="SelectCase" xml:space="preserve">
     <value>Выбрать кейс</value>
@@ -242,5 +236,127 @@
   </data>
   <data name="InputUserFullName" xml:space="preserve">
     <value>Введите ФИО участника</value>
+  </data>
+  <data name="AddTeam" xml:space="preserve">
+    <value>Добавить команду</value>
+  </data>
+  <data name="DeleteTeam" xml:space="preserve">
+    <value>Удалить команду</value>
+  </data>
+  <data name="ManageTeams" xml:space="preserve">
+    <value>Управлять командами</value>
+  </data>
+  <data name="ShowParticipantsList" xml:space="preserve">
+    <value>Отобразить список участников</value>
+  </data>
+  <data name="ManageOrganizers" xml:space="preserve">
+    <value>Управлять организаторами</value>
+  </data>
+  <data name="SendUsersFile" xml:space="preserve">
+    <value>Отправьте CSV файл со списком участников для регистрации</value>
+  </data>
+  <data name="TBankCaseInfo" xml:space="preserve">
+    <value>🏰 Кейс от Т-банк — создание системы управления электронной очередью к интерактивным стендам компании</value>
+  </data>
+  <data name="LDCaseInfo" xml:space="preserve">
+    <value>💫 Кейс от ЛД — разработка и внедрение системы машинного зрения для автоматического выявления брака при штамповке деталей</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="UploadParticipantsList" xml:space="preserve">
+    <value>Загрузить список участников</value>
+  </data>
+  <data name="UploadFilePrompt" xml:space="preserve">
+    <value>Загрузите CSV файл со списком участников и их команд</value>
+  </data>
+  <data name="CheckTeamUploadFileContents" xml:space="preserve">
+    <value>Ниже будет представлен список участников, сгруппированный по командам. Проверьте правильность введённых данных</value>
+  </data>
+  <data name="ParticipantsList" xml:space="preserve">
+    <value>Список участников:</value>
+  </data>
+  <data name="OrganizersList" xml:space="preserve">
+    <value>Список организаторов:</value>
+  </data>
+  <data name="TeamsList" xml:space="preserve">
+    <value>Список команд:</value>
+  </data>
+  <data name="ConfirmUpload" xml:space="preserve">
+    <value>Подтвердить сохранение?</value>
+  </data>
+  <data name="UploadCompleted" xml:space="preserve">
+    <value>Загрузка успешно выполнена</value>
+  </data>
+  <data name="CaseSelectionUnavailable" xml:space="preserve">
+    <value>Увы, но вы не можете выбрать кейс — произошло невероятное, и оба кейса были переполнены. Можете написать организатору по этому поводу: @kkkira_kh</value>
+  </data>
+  <data name="ParticipantHello" xml:space="preserve">
+    <value>Привет! Я – бот поддержки хакатона "ФакториХак". С моей помощью ты сможешь участвовать в разных мероприятиях, а также выбирать кейсы и отправлять решения на них. Выбери раздел меню с помощью кнопок ниже :)</value>
+  </data>
+  <data name="OrganizerHello" xml:space="preserve">
+    <value>Добро пожаловать в бота "ФакториХак"! С его помощью вы можете осуществлять рассылки участникам и регистрировать результаты КММ. Выберите раздел меню для продолжения</value>
+  </data>
+  <data name="AdminHello" xml:space="preserve">
+    <value>Привет, спишь? А работать когда? 😠</value>
+  </data>
+  <data name="UploadStatus" xml:space="preserve">
+    <value>Привет, {0}!
+
+Твоя команда — {1}. На данный момент у вас следующий статус отправки решения:
+🌄 Презентация: {2}
+🖥️ Ссылка на репозиторий: {3}
+Последнее изменение {4}
+
+Выбери один из вариантов ниже, чтобы загрузить элементы решения.
+До стоп-кода осталось {5} ⏱️</value>
+  </data>
+  <data name="UploadPresentation" xml:space="preserve">
+    <value>Загрузить презентацию</value>
+  </data>
+  <data name="UploadRepo" xml:space="preserve">
+    <value>Загрузить ссылку на репозиторий</value>
+  </data>
+  <data name="PresentationUploaded" xml:space="preserve">
+    <value>Презентация успешно загружена!</value>
+  </data>
+  <data name="RepoUploaded" xml:space="preserve">
+    <value>Ссылка на репозиторий успешно загружена!</value>
+  </data>
+  <data name="UploadPresentationPrompt" xml:space="preserve">
+    <value>Загрузите файл презентации или ссылку на него. Учтите, что бот не проверяет корректность ссылки, поэтому убедитесь, что она открывается.</value>
+  </data>
+  <data name="UploadRepoPrompt" xml:space="preserve">
+    <value>Отправьте ссылку на репозиторий с решением. Убедитесь, что репозиторий открыт для чтения</value>
+  </data>
+  <data name="MySubmission" xml:space="preserve">
+    <value>Моё решение</value>
+  </data>
+  <data name="NoPresentationYet" xml:space="preserve">
+    <value>Вы ещё не загрузили презентацию. Пожалуйста, прикрепите её до стоп-кода</value>
+  </data>
+  <data name="NoRepoYet" xml:space="preserve">
+    <value>Вы ещё не загрузили ссылку на репозиторий. Не забудьте прикрепить её до стоп-кода</value>
+  </data>
+  <data name="PresentationLinkInfo" xml:space="preserve">
+    <value>Ссылка на презентацию команды {0}: {1}</value>
+  </data>
+  <data name="PresentationFileInfo" xml:space="preserve">
+    <value>Файл с презентацией команды {0}</value>
+  </data>
+  <data name="RepoLinkInfo" xml:space="preserve">
+    <value>Ссылка на репозиторий команды {0}: {1}</value>
+  </data>
+  <data name="LD" xml:space="preserve">
+    <value>ЛД</value>
+  </data>
+  <data name="TBank" xml:space="preserve">
+    <value>Т-Банк</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
   </data>
 </root>
