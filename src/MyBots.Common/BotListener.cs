@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Runtime.InteropServices;
+using Microsoft.Extensions.DependencyInjection;
 using MyBots.Core.Fsm;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -11,17 +12,13 @@ namespace MyBots.Core
         private readonly BotStartupConfig _config = config;
 
         private int _running;
-
         private TelegramBotClient? _client;
         private CancellationTokenSource? _cts;
 
         public async Task Run()
         {
-            // Try to set _running from 0 to 1 atomically. If it was already 1, throw.
             if (Interlocked.CompareExchange(ref _running, 1, 0) != 0)
-            {
                 throw new InvalidOperationException("BotEngine is already running.");
-            }
 
             _cts = new CancellationTokenSource();
             try
@@ -31,28 +28,41 @@ namespace MyBots.Core
                 _client.OnUpdate += OnUpdateReceived;
 
                 var me = await _client.GetMe(_cts.Token);
-                Console.WriteLine($"@{me.Username} is running... Press Escape to terminate");
 
-                // wait for Escape or cancellation
-                while (!Console.KeyAvailable || Console.ReadKey(true).Key != ConsoleKey.Escape)
+                // Detect non-interactive environment (no TTY) and behave accordingly.
+                var isInteractive = Console.IsInputRedirected == false && Console.IsOutputRedirected == false && IsConsoleAttached();
+                if (isInteractive)
                 {
-                    await Task.Delay(200, _cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
-                }
+                    Console.WriteLine($"@{me.Username} is running... Press Escape to terminate");
+                    // wait for Escape or cancellation
+                    while (!Console.KeyAvailable || Console.ReadKey(true).Key != ConsoleKey.Escape)
+                    {
+                        await Task.Delay(200, _cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
+                    }
 
-                // Cancel and wait a moment for handlers to finish (optional)
-                _cts.Cancel();
+                    _cts.Cancel();
+                }
+                else
+                {
+                    // Non-interactive: just log and wait until cancellation is requested.
+                    Console.WriteLine($"@{me.Username} is running (non-interactive). Waiting for stop signal...");
+                    try
+                    {
+                        await Task.Delay(Timeout.Infinite, _cts.Token);
+                    }
+                    catch (TaskCanceledException) { /* expected on stop */ }
+                }
             }
             finally
             {
-                // cleanup and mark as stopped
                 try
                 {
                     if (_client != null)
                     {
-                        // detach handlers to avoid leaks
                         _client.OnUpdate -= OnUpdateReceived;
                         _client = null;
                     }
+
                     _cts?.Dispose();
                     _cts = null;
                 }
@@ -68,11 +78,36 @@ namespace MyBots.Core
         public void Stop()
         {
             if (Volatile.Read(ref _running) == 1)
-            {
                 _cts?.Cancel();
-            }
         }
 
         private async Task OnUpdateReceived(Update update) => await _dispatcher.HandleUpdateAsync(update, _cts!.Token);
+
+        // Best-effort check whether a real console is attached (works cross-platform).
+        private static bool IsConsoleAttached()
+        {
+            try
+            {
+                // Console.OpenStandardInput/Output succeed even when redirected; use P/Invoke on Windows and /dev/tty on *nix.
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    // On Windows, GetConsoleWindow==0 means no console.
+                    return GetConsoleWindow() != IntPtr.Zero;
+                }
+                else
+                {
+                    // On Unix, check if /dev/tty can be opened for reading.
+                    return File.Exists("/dev/tty");
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // P/Invoke for Windows console detection
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern IntPtr GetConsoleWindow();
     }
 }
