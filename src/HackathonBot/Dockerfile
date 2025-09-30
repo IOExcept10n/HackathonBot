@@ -27,7 +27,8 @@ RUN dotnet build "HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 WORKDIR /src/src/HackathonBot
-RUN dotnet publish "HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
+RUN dotnet publish "HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/publish \
+    -r linux-x64 --self-contained true /p:PublishTrimmed=false /p:UseAppHost=true
 
 # ---- aotdebug stage (for VS debugging) ----
 FROM base AS aotdebug
