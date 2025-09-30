@@ -6,7 +6,7 @@ namespace MyBots.Modules.Common.Interactivity;
 
 public class PromptStateLayout(ButtonLabel cancelButton) : StateLayout
 {
-    private readonly ReplyKeyboardMarkup _cancelMarkup = new([[cancelButton.ToString()]]);
+    private readonly ReplyKeyboardMarkup _cancelMarkup = new([[cancelButton.ToString()]]) { ResizeKeyboard = true };
 
     public bool AllowCancel { get; set; }
 

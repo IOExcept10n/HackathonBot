@@ -14,7 +14,7 @@ internal class ParticipantRepository(BotDbContext ctx) : BotRepository<Participa
 
     public async Task<Participant?> FindByUsernameAsync(string username, CancellationToken ct = default)
     {
-        var canonical = username.Replace("@", "").ToLower();
+        var canonical = username.AsCanonicalNickname();
         return await _dbSet
             .Include(x => x.Team)
             .ThenInclude(y => y!.Submission)

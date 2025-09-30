@@ -124,6 +124,15 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Кейс успешно сменён.
+        /// </summary>
+        internal static string CaseChanged {
+            get {
+                return ResourceManager.GetString("CaseChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Завод ЛД.
         /// </summary>
         internal static string CaseLD {
@@ -169,6 +178,24 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Сменить команду участника.
+        /// </summary>
+        internal static string ChangeParticipantTeam {
+            get {
+                return ResourceManager.GetString("ChangeParticipantTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сменить кейс команды.
+        /// </summary>
+        internal static string ChangeTeamCase {
+            get {
+                return ResourceManager.GetString("ChangeTeamCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ниже будет представлен список участников, сгруппированный по командам. Проверьте правильность введённых данных.
         /// </summary>
         internal static string CheckTeamUploadFileContents {
@@ -183,6 +210,15 @@ namespace HackathonBot.Properties {
         internal static string ConfirmMailing {
             get {
                 return ResourceManager.GetString("ConfirmMailing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы точно хотите удалить команду?.
+        /// </summary>
+        internal static string ConfirmTeamDeletion {
+            get {
+                return ResourceManager.GetString("ConfirmTeamDeletion", resourceCulture);
             }
         }
         
@@ -228,6 +264,15 @@ namespace HackathonBot.Properties {
         internal static string DeleteTeam {
             get {
                 return ResourceManager.GetString("DeleteTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Получить решение команды.
+        /// </summary>
+        internal static string GetTeamSubmission {
+            get {
+                return ResourceManager.GetString("GetTeamSubmission", resourceCulture);
             }
         }
         
@@ -482,6 +527,18 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Участник: {0}
+        ///Никнейм: {1}
+        ///Регистрация в боте: {2}
+        ///Команда: {3}.
+        /// </summary>
+        internal static string ParticipantDetails {
+            get {
+                return ResourceManager.GetString("ParticipantDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Привет! Я – бот поддержки хакатона &quot;ФакториХак&quot;. С моей помощью ты сможешь участвовать в разных мероприятиях, а также выбирать кейсы и отправлять решения на них. Выбери раздел меню с помощью кнопок ниже :).
         /// </summary>
         internal static string ParticipantHello {
@@ -496,6 +553,15 @@ namespace HackathonBot.Properties {
         internal static string ParticipantsList {
             get {
                 return ResourceManager.GetString("ParticipantsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команда участника изменена.
+        /// </summary>
+        internal static string ParticipantTeamChanged {
+            get {
+                return ResourceManager.GetString("ParticipantTeamChanged", resourceCulture);
             }
         }
         
@@ -541,6 +607,15 @@ namespace HackathonBot.Properties {
         internal static string RegisterParticipant {
             get {
                 return ResourceManager.GetString("RegisterParticipant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Переименовать команду.
+        /// </summary>
+        internal static string RenameTeam {
+            get {
+                return ResourceManager.GetString("RenameTeam", resourceCulture);
             }
         }
         
@@ -595,6 +670,24 @@ namespace HackathonBot.Properties {
         internal static string SelectRole {
             get {
                 return ResourceManager.GetString("SelectRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите действие для команды.
+        /// </summary>
+        internal static string SelectTeamAction {
+            get {
+                return ResourceManager.GetString("SelectTeamAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите действие для пользователя.
+        /// </summary>
+        internal static string SelectUserAction {
+            get {
+                return ResourceManager.GetString("SelectUserAction", resourceCulture);
             }
         }
         
@@ -690,6 +783,31 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Команда успешно удалена.
+        /// </summary>
+        internal static string TeamDeleted {
+            get {
+                return ResourceManager.GetString("TeamDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команда {0}
+        ///Участники:
+        ///{1}
+        ///
+        ///Выбранный кейс: {2}
+        ///Статус отправки решения:
+        ///Презентация: {3}
+        ///Репозиторий: {4}.
+        /// </summary>
+        internal static string TeamDetails {
+            get {
+                return ResourceManager.GetString("TeamDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Привет, {0}!
         ///
         ///Твоя команда: {1}
@@ -698,6 +816,24 @@ namespace HackathonBot.Properties {
         internal static string TeamInfo {
             get {
                 return ResourceManager.GetString("TeamInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команда не найдена.
+        /// </summary>
+        internal static string TeamNotFound {
+            get {
+                return ResourceManager.GetString("TeamNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команда успешно переименована.
+        /// </summary>
+        internal static string TeamRenamed {
+            get {
+                return ResourceManager.GetString("TeamRenamed", resourceCulture);
             }
         }
         

@@ -69,8 +69,7 @@ public class NotificationModule(
     }
 
     [MenuState(nameof(Localization.ShowSenderNameRequest))]
-    [MenuItem(nameof(Labels.Yes))]
-    [MenuItem(nameof(Labels.No))]
+    [MenuRow(nameof(Labels.No), nameof(Labels.Yes))]
     public async Task<StateResult> OnShowSenderNameAsync(ModuleStateContext ctx)
     {
         bool show = false;
@@ -156,8 +155,7 @@ public class NotificationModule(
     }
 
     [MenuState(nameof(Localization.ConfirmMailing))]
-    [MenuItem(nameof(Labels.Yes))]
-    [MenuItem(nameof(Labels.No))]
+    [MenuRow(nameof(Labels.No), nameof(Labels.Yes))]
     public async Task<StateResult> OnConfirmMailing(ModuleStateContext ctx)
     {
         if (ctx.Matches(Labels.Yes))
@@ -264,7 +262,7 @@ public class NotificationModule(
         if (!ctx.Input.TryGetValue(out var userName))
             return InvalidInput(ctx);
 
-        userName = userName.ToLower().Replace("@", "");
+        userName = userName.AsCanonicalNickname();
 
         var containsTeam = await _users.GetAll().AsNoTracking().AnyAsync(x => x.Username == userName);
         if (!containsTeam)

@@ -24,13 +24,12 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
     {
         logging.ClearProviders();
-        logging.AddConsole();                 // пишет в stdout/stderr -> docker logs
+        logging.AddConsole();
         logging.SetMinimumLevel(LogLevel.Information);
     })
     .ConfigureServices((context, services) =>
     {
         services.AddHackathonBot(context.Configuration);
-        // регистрация BotListener и т.п.
         services.AddSingleton<BotListener>();
     })
     .Build();

@@ -57,7 +57,6 @@ internal class TelegramUserService(IBotUserRoleRepository roles, IParticipantRep
             {
                 // Update role Telegram ID.
                 role.TelegramId = userId;
-                await _roles.UpdateAsync(role, cancellationToken);
                 await _roles.SaveChangesAsync(cancellationToken);
                 return role;
             }
@@ -78,13 +77,11 @@ internal class TelegramUserService(IBotUserRoleRepository roles, IParticipantRep
                                                                       CancellationToken cancellationToken)
     {
         participant.TelegramId = userId;
-        await _participants.UpdateAsync(participant, cancellationToken);
         // If somehow role has been already created but user is participant, update role.
         if (role != null)
         {
             role.TelegramId = userId;
             role.RoleId = RoleIndex.Participant;
-            await _roles.UpdateAsync(role, cancellationToken);
         }
         else
         {
@@ -149,7 +146,6 @@ internal class TelegramUserService(IBotUserRoleRepository roles, IParticipantRep
             participant.IsLeader = isLeader;
             participant.FullName = fullName;
             participant.TeamId = team.Id;
-            await _participants.UpdateAsync(participant, cancellationToken);
         }
         else
         {

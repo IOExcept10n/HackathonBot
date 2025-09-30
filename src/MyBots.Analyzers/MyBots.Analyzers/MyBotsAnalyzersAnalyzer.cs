@@ -36,16 +36,16 @@ public sealed class FsmStateAnalyzer : DiagnosticAnalyzer
 
     private readonly static DiagnosticDescriptor MenuItemWithoutMenu = new DiagnosticDescriptor(
         id: "FSM004",
-        title: "MenuItem without MenuState",
-        messageFormat: "[MenuItem] used on method '{0}' without [MenuState]",
+        title: "MenuItem or MenuRow without MenuState",
+        messageFormat: "[MenuItem] or [MenuRow] used on method '{0}' without [MenuState]",
         category: Category,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
     private readonly static DiagnosticDescriptor MenuItemLabelNotFound = new DiagnosticDescriptor(
         id: "FSM005",
-        title: "MenuItem label not found",
-        messageFormat: "MenuItem label '{0}' is not a public static readonly ButtonLabel member of a class marked with [LabelsStorage]",
+        title: "MenuItem or MenuRow label not found",
+        messageFormat: "MenuItem or MenuRow label '{0}' is not a public static readonly ButtonLabel member of a class marked with [LabelsStorage]",
         category: Category,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
@@ -66,8 +66,16 @@ public sealed class FsmStateAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
+    private readonly static DiagnosticDescriptor KeyboardInstructionWithoutMenu = new DiagnosticDescriptor(
+        id: "FSM008",
+        title: "Keyboard instruction without MenuState",
+        messageFormat: "Keyboard instruction [{0}] is used on method {1} without [MenuState]",
+        category: Category,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        ImmutableArray.Create(MenuSig, PromptSig, PromptGenericMismatch, MenuItemWithoutMenu, MenuItemLabelNotFound, LocalizationKeyNotFound, NullabilityMismatch);
+        ImmutableArray.Create(MenuSig, PromptSig, PromptGenericMismatch, MenuItemWithoutMenu, MenuItemLabelNotFound, LocalizationKeyNotFound, NullabilityMismatch, KeyboardInstructionWithoutMenu);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -88,9 +96,12 @@ public sealed class FsmStateAnalyzer : DiagnosticAnalyzer
         var menuAttr = attrs.FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == "MyBots.Modules.Common.MenuStateAttribute");
         var promptAttr = attrs.FirstOrDefault(a => a.AttributeClass?.OriginalDefinition?.ToDisplayString() == "MyBots.Modules.Common.PromptStateAttribute<T>");
         var menuItemAttrs = attrs.Where(a => a.AttributeClass?.ToDisplayString() == "MyBots.Modules.Common.MenuItemAttribute").ToImmutableArray();
+        var menuRowAttrs = attrs.Where(a => a.AttributeClass?.ToDisplayString() == "MyBots.Modules.Common.MenuRowAttribute").ToImmutableArray();
+        var keyboardAttrs = attrs.Where(a => a.AttributeClass?.ToDisplayString() == "MyBots.Modules.Common.InheritKeyboardAttribute" ||
+                                             a.AttributeClass?.ToDisplayString() == "MyBots.Modules.Common.RemoveKeyboardAttribute").ToImmutableArray();
 
         // Check access and instance requirement if any of the relevant attributes present
-        if (menuAttr != null || promptAttr != null || menuItemAttrs.Length > 0)
+        if (menuAttr != null || promptAttr != null || menuItemAttrs.Length > 0 || menuRowAttrs.Length > 0 || keyboardAttrs.Length > 0)
         {
             if (method.IsStatic || method.DeclaredAccessibility != Accessibility.Public)
             {
@@ -121,9 +132,15 @@ public sealed class FsmStateAnalyzer : DiagnosticAnalyzer
         else
         {
             // If method has MenuItem but no MenuState -> warn (if this is not root method for module).
-            if (menuItemAttrs.Length > 0 && method.Name != "OnModuleRootAsync")
+            if ((menuItemAttrs.Length > 0 || menuRowAttrs.Length > 0) && method.Name != "OnModuleRootAsync")
             {
                 context.ReportDiagnostic(Diagnostic.Create(MenuItemWithoutMenu, method.Locations.FirstOrDefault() ?? method.Locations[0], method.Name));
+            }
+
+            // If method has keyboard control but no MenuState -> warn (if this is not root method for module).
+            if (keyboardAttrs.Length > 0 && method.Name != "OnModuleRootAsync")
+            {
+                context.ReportDiagnostic(Diagnostic.Create(KeyboardInstructionWithoutMenu, method.Locations.FirstOrDefault() ?? method.Locations[0], promptAttr.AttributeClass.Name, method.Name));
             }
         }
 
@@ -214,71 +231,27 @@ public sealed class FsmStateAnalyzer : DiagnosticAnalyzer
             var arg = attrSyntax.ArgumentList?.Arguments.FirstOrDefault();
             if (arg is null)
                 return;
-
-            var op = model.GetOperation(arg.Expression);
-            if (op is INameOfOperation nameofOp)
+            bool flowControl = CheckAttributeArgumentLabelReference(context, model, arg);
+            if (!flowControl)
             {
-                var namedSymbol = nameofOp.Argument is IOperation nameOfArgOp
-                    ? (nameOfArgOp is IFieldReferenceOperation fr ? fr.Field :
-                       nameOfArgOp is IPropertyReferenceOperation pr ? pr.Property :
-                       (ISymbol)null)
-                    : null;
-
-                if (namedSymbol is null)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
-                    return;
-                }
-
-                // Verify symbol is field or property, public static readonly and of type ButtonLabel
-                ITypeSymbol memberType = null;
-                switch (namedSymbol)
-                {
-                    case IFieldSymbol f:
-                        memberType = f.Type;
-                        break;
-                    case IPropertySymbol p:
-                        memberType = p.Type;
-                        break;
-                }
-
-                if (memberType is null || memberType.ToDisplayString() != "MyBots.Modules.Common.Interactivity.ButtonLabel")
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
-                    return;
-                }
-
-                // check modifiers and containing type attribute LabelsStorage
-                bool isStatic = (namedSymbol is IFieldSymbol ff && ff.IsStatic) || (namedSymbol is IPropertySymbol pp && pp.IsStatic);
-                if (!isStatic)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
-                    return;
-                }
-
-                // For field: check readonly
-                if (namedSymbol is IFieldSymbol fieldSym && !fieldSym.IsReadOnly)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
-                    return;
-                }
-
-                var containing = namedSymbol.ContainingType;
-                var hasLabelsAttr = containing.GetAttributes().Any(a => a.AttributeClass?.ToDisplayString() == "MyBots.Modules.Common.LabelsStorageAttribute");
-                if (!hasLabelsAttr)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
-                    return;
-                }
-            }
-            else
-            {
-                // not nameof — warn
-                context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
                 return;
             }
 
             // OK — label exists and looks valid.
+        }
+
+        if (attrFullName == "MyBots.Modules.Common.MenuRowAttribute")
+        {
+            var arguments = attrSyntax.ArgumentList?.Arguments ?? new SeparatedSyntaxList<AttributeArgumentSyntax>();
+
+            foreach (var arg in arguments)
+            {
+                bool flowControl = CheckAttributeArgumentLabelReference(context, model, arg);
+                if (!flowControl)
+                {
+                    return;
+                }
+            }
         }
 
         // Check resource keys for MenuState/PromptState messageResourceKey and also for MenuItem labelKey (if they are nameof(...))
@@ -335,5 +308,73 @@ public sealed class FsmStateAnalyzer : DiagnosticAnalyzer
                 context.ReportDiagnostic(Diagnostic.Create(LocalizationKeyNotFound, arg.GetLocation(), arg.ToString()));
             }
         }
+    }
+
+    private static bool CheckAttributeArgumentLabelReference(SyntaxNodeAnalysisContext context, SemanticModel model, AttributeArgumentSyntax arg)
+    {
+        var op = model.GetOperation(arg.Expression);
+        if (op is INameOfOperation nameofOp)
+        {
+            var namedSymbol = nameofOp.Argument is IOperation nameOfArgOp
+                ? (nameOfArgOp is IFieldReferenceOperation fr ? fr.Field :
+                   nameOfArgOp is IPropertyReferenceOperation pr ? pr.Property :
+                   (ISymbol)null)
+                : null;
+
+            if (namedSymbol is null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
+                return false;
+            }
+
+            // Verify symbol is field or property, public static readonly and of type ButtonLabel
+            ITypeSymbol memberType = null;
+            switch (namedSymbol)
+            {
+                case IFieldSymbol f:
+                    memberType = f.Type;
+                    break;
+                case IPropertySymbol p:
+                    memberType = p.Type;
+                    break;
+            }
+
+            if (memberType is null || memberType.ToDisplayString() != "MyBots.Modules.Common.Interactivity.ButtonLabel")
+            {
+                context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
+                return false;
+            }
+
+            // check modifiers and containing type attribute LabelsStorage
+            bool isStatic = (namedSymbol is IFieldSymbol ff && ff.IsStatic) || (namedSymbol is IPropertySymbol pp && pp.IsStatic);
+            if (!isStatic)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
+                return false;
+            }
+
+            // For field: check readonly
+            if (namedSymbol is IFieldSymbol fieldSym && !fieldSym.IsReadOnly)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
+                return false;
+            }
+
+            var containing = namedSymbol.ContainingType;
+            var hasLabelsAttr = containing.GetAttributes().Any(a => a.AttributeClass?.ToDisplayString() == "MyBots.Modules.Common.LabelsStorageAttribute");
+            if (!hasLabelsAttr)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
+                return false;
+            }
+        }
+        else
+        {
+            // not nameof — warn
+            context.ReportDiagnostic(Diagnostic.Create(MenuItemLabelNotFound, arg.GetLocation(), arg.ToString()));
+            return false;
+        }
+
+        return true;
     }
 }
