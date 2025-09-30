@@ -1,47 +1,56 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# syntax=docker/dockerfile:1
 
-# These ARGs allow for swapping out the base used to make the final image when debugging from VS
 ARG LAUNCHING_FROM_VS
-# This sets the base image for final, but only if LAUNCHING_FROM_VS has been defined
 ARG FINAL_BASE_IMAGE=${LAUNCHING_FROM_VS:+aotdebug}
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 
-
-# This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-# Install clang/zlib1g-dev dependencies for publishing to native
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    clang zlib1g-dev
+    && apt-get install -y --no-install-recommends clang zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["HackathonBot.csproj", "."]
-RUN dotnet restore "./HackathonBot.csproj"
+
+# Копируем файл решения (.slnx или .sln) из корня репо в образ
+COPY ["*.slnx", "./"]
+COPY ["*.sln", "./"]
+
+# Копируем все csproj из src (нужно для корректного restore)
+# Этот шаблон копирует все проекты в src — если у вас очень большой репо, можно перечислить конкретные .csproj
+COPY src/**/*.csproj src/
+
+# Восстанавливаем зависимости по файлу решения (dotnet restore сам найдёт slnx/sln)
+RUN dotnet restore || true
+# Если dotnet restore отказал из-за шаблона COPY, вторичный restore ниже после полного копирования гарантирует корректность
+
+# Копируем весь репозиторий в контекст сборки
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# Перейдём в папку проекта бота и соберём/опубликуем
+WORKDIR /src/HackathonBot
+RUN dotnet build "HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
+WORKDIR /src/HackathonBot
+RUN dotnet publish "HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
 
-# This stage is used as the base for the final stage when launching from VS to support debugging in regular mode (Default when not using the Debug configuration)
 FROM base AS aotdebug
 USER root
-# Install GDB to support native debugging
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    gdb
-USER app
+    && apt-get install -y --no-install-recommends gdb \
+    && rm -rf /var/lib/apt/lists/*
+USER 1000
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-RUN mkdir -p /app/data && chown -R 1000:1000 /app/data
 FROM ${FINAL_BASE_IMAGE:-mcr.microsoft.com/dotnet/runtime-deps:8.0} AS final
 WORKDIR /app
+
+# Создаём каталог для sqlite и даём права на пользователя 1000
+RUN mkdir -p /app/data && chown -R 1000:1000 /app/data
+
 COPY --from=publish /app/publish .
+USER 1000
+
 ENTRYPOINT ["./HackathonBot"]
