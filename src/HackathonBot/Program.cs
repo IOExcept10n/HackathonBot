@@ -10,15 +10,17 @@ using MyBots.Core;
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 IConfiguration config = new ConfigurationBuilder()
+
+    .Build();
+
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration(builder => builder
 #if DEBUG
     .AddJsonFile("appsettings.Development.json")
 #else
     .AddJsonFile("appsettings.json")
 #endif
-    .AddJsonFile("appsettings.Secrets.json")
-    .Build();
-
-var host = Host.CreateDefaultBuilder(args)
+    .AddJsonFile("appsettings.Secrets.json"))
     .ConfigureLogging(logging =>
     {
         logging.ClearProviders();
