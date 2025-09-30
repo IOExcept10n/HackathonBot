@@ -20,11 +20,9 @@ WORKDIR /src
 COPY ["HackathonBot.slnx", "./"]
 COPY src/ src/
 
-# Восстанавливаем зависимости по решению
-RUN dotnet restore "HackathonBot.slnx"
-
 # Сборка и publish проекта бота
 WORKDIR /src/src/HackathonBot
+RUN dotnet restore "HackathonBot.csproj"
 RUN dotnet build "HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
