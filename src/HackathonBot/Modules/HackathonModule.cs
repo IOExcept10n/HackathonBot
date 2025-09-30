@@ -27,7 +27,6 @@ internal class HackathonModule(
     private readonly IParticipantRepository _participants = participants;
     private readonly ISubmissionRepository _submissions = submissions;
     private readonly ITeamRepository _teams = teams;
-    private readonly ILocalizationService _localization = localization;
 
     [MenuItem(nameof(Labels.Case))]
     [MenuItem(nameof(Labels.MyTeam))]
@@ -92,7 +91,7 @@ internal class HackathonModule(
                 teamInfo.Append("- ").AppendLine(member.FormatDisplay());
             }
 
-            return Retry(ctx, message: string.Format(Localization.TeamInfo, participant.GetNameOnly(), teamInfo.ToString(), _localization.GetString(team.Case.ToString())));
+            return Retry(ctx, message: string.Format(Localization.TeamInfo, participant.GetNameOnly(), teamInfo.ToString(), _localizationService.GetString(team.Case.ToString())));
         }
         return InvalidInput(ctx);
     }
@@ -134,8 +133,7 @@ internal class HackathonModule(
     }
 
     [MenuState(nameof(Localization.RequestCasePrompt), ParentStateName = nameof(OnCaseAsync_HackathonNotStarted))]
-    [MenuItem(nameof(Labels.CaseLD))]
-    [MenuItem(nameof(Labels.CaseTBank))]
+    [MenuRow(nameof(Labels.CaseLD), nameof(Labels.CaseTBank))]
     public async Task<StateResult> OnSelectCaseAsync_FullSelection(ModuleStateContext ctx)
         => await ProcessCaseSelectionAsync(ctx);
 
@@ -240,7 +238,6 @@ internal class HackathonModule(
 
         submission.SubmittedById = participant.Id;
         submission.SubmittedAt = DateTime.Now;
-        await _submissions.UpdateAsync(submission, ctx.CancellationToken);
         await _submissions.SaveChangesAsync(ctx.CancellationToken);
         return Back(ctx, message: Localization.PresentationUploaded);
     }
@@ -275,7 +272,6 @@ internal class HackathonModule(
 
         submission.SubmittedById = participant.Id;
         submission.SubmittedAt = DateTime.Now;
-        await _submissions.UpdateAsync(submission, ctx.CancellationToken);
         await _submissions.SaveChangesAsync(ctx.CancellationToken);
         return Back(ctx, message: Localization.RepoUploaded);
     }
@@ -297,14 +293,12 @@ internal class HackathonModule(
         if (ctx.Matches(Labels.CaseLD) && !exceedLD)
         {
             participant.Team.Case = Case.LD;
-            await _teams.UpdateAsync(participant.Team, ctx.CancellationToken);
             await _teams.SaveChangesAsync(ctx.CancellationToken);
             return Completed(Localization.CaseSelectedSuccessfully);
         }
         else if (ctx.Matches(Labels.CaseTBank) && !exceedTBank)
         {
             participant.Team.Case = Case.TBank;
-            await _teams.UpdateAsync(participant.Team, ctx.CancellationToken);
             await _teams.SaveChangesAsync(ctx.CancellationToken);
             return Completed(Localization.CaseSelectedSuccessfully);
         }

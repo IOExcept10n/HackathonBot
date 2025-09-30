@@ -16,11 +16,9 @@ RUN apt-get update \
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Копируем файл решения и исходники в контейнер (контекст сборки - корень репо)
 COPY ["HackathonBot.slnx", "./"]
 COPY src/ src/
 
-# Сборка и publish проекта бота
 WORKDIR /src/src/HackathonBot
 RUN dotnet restore "HackathonBot.csproj"
 RUN dotnet build "HackathonBot.csproj" -c $BUILD_CONFIGURATION -o /app/build
@@ -42,13 +40,10 @@ USER 1000
 FROM ${FINAL_BASE_IMAGE:-mcr.microsoft.com/dotnet/runtime-deps:8.0} AS final
 WORKDIR /app
 
-# Создаём каталог для sqlite и даём права на запись пользователю 1000
 RUN mkdir -p /app/data && chown -R 1000:1000 /app/data
 
-# Копируем опубликованные файлы (включая appsettings.Secrets.json, если он входит в publish)
 COPY --from=publish /app/publish .
 
-# Запуск от непользователя 1000
 USER 1000
 
 ENTRYPOINT ["./HackathonBot"]

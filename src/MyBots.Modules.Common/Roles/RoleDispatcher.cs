@@ -39,6 +39,7 @@ namespace MyBots.Modules.Common.Roles
             var layout = new MenuStateLayout()
             {
                 MessageText = helloMessage,
+                ResizeKeyboard = true,
                 Buttons = allowedModules.Select(x => new List<ButtonLabel>() { x.Label })
             };
 

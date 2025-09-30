@@ -406,4 +406,56 @@
   <data name="MailingCompleted" xml:space="preserve">
     <value>Рассылка успешно выполнена. Отправлено {0} из {1}</value>
   </data>
+  <data name="SelectTeamAction" xml:space="preserve">
+    <value>Выберите действие для команды</value>
+  </data>
+  <data name="RenameTeam" xml:space="preserve">
+    <value>Переименовать команду</value>
+  </data>
+  <data name="ChangeTeamCase" xml:space="preserve">
+    <value>Сменить кейс команды</value>
+  </data>
+  <data name="CaseChanged" xml:space="preserve">
+    <value>Кейс успешно сменён</value>
+  </data>
+  <data name="TeamDeleted" xml:space="preserve">
+    <value>Команда успешно удалена</value>
+  </data>
+  <data name="SelectUserAction" xml:space="preserve">
+    <value>Выберите действие для пользователя</value>
+  </data>
+  <data name="ChangeParticipantTeam" xml:space="preserve">
+    <value>Сменить команду участника</value>
+  </data>
+  <data name="TeamNotFound" xml:space="preserve">
+    <value>Команда не найдена</value>
+  </data>
+  <data name="TeamRenamed" xml:space="preserve">
+    <value>Команда успешно переименована</value>
+  </data>
+  <data name="ConfirmTeamDeletion" xml:space="preserve">
+    <value>Вы точно хотите удалить команду?</value>
+  </data>
+  <data name="TeamDetails" xml:space="preserve">
+    <value>Команда {0}
+Участники:
+{1}
+
+Выбранный кейс: {2}
+Статус отправки решения:
+Презентация: {3}
+Репозиторий: {4}</value>
+  </data>
+  <data name="GetTeamSubmission" xml:space="preserve">
+    <value>Получить решение команды</value>
+  </data>
+  <data name="ParticipantTeamChanged" xml:space="preserve">
+    <value>Команда участника изменена</value>
+  </data>
+  <data name="ParticipantDetails" xml:space="preserve">
+    <value>Участник: {0}
+Никнейм: {1}
+Регистрация в боте: {2}
+Команда: {3}</value>
+  </data>
 </root>

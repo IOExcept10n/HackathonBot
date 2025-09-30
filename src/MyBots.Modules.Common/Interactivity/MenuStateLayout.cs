@@ -16,11 +16,15 @@ public class MenuStateLayout : StateLayout
 
     public bool DisableKeyboard { get; init; }
 
+    public bool InheritKeyboard { get; init; }
+
     public override async Task SendLayoutMessageAsync(ITelegramBotClient client, ChatId chatId, string? overrideReplyMessage = null, CancellationToken cancellationToken = default)
     {
-        ReplyMarkup keyboardMarkup;
+        ReplyMarkup? keyboardMarkup;
 
-        if (DisableKeyboard)
+        if (InheritKeyboard)
+            keyboardMarkup = null;
+        else if (DisableKeyboard)
             keyboardMarkup = RemoveMarkup;
         else
             keyboardMarkup = new ReplyKeyboardMarkup

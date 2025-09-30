@@ -19,10 +19,20 @@ public sealed class MenuStateAttribute(string messageResourceKey) : FsmStateAttr
 }
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public sealed class MenuItemAttribute(string labelKey) : Attribute
+public class MenuRowAttribute(params string[] labelKeys) : Attribute
 {
-    public string LabelKey { get; } = labelKey;
+    public string[] LabelKeys { get; init; } = labelKeys;
 }
+
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public sealed class MenuItemAttribute(string labelKey) : MenuRowAttribute(labelKey)
+{
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class InheritKeyboardAttribute : Attribute;
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class RemoveKeyboardAttribute : Attribute;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 public abstract class PromptStateAttribute(Type inputType, string messageResourceKey) : FsmStateAttribute(messageResourceKey)

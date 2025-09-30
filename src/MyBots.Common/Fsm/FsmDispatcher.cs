@@ -106,7 +106,6 @@ public class FsmDispatcher(
         }
 
         user.State = nextState.StateId;
-        await _users.UpdateAsync(user, cancellationToken);
         await _users.SaveChangesAsync(cancellationToken);
 
         await _replyService.SendReplyAsync(_client, user.TelegramId, nextState, nextMessage, cancellationToken);

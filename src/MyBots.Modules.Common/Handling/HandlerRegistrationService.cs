@@ -30,7 +30,7 @@ namespace MyBots.Modules.Common.Handling
             {
                 StateDefinition def = candidate.State switch
                 {
-                    MenuStateAttribute menuState => RegisterMenu(registry, module, menuState, candidate.Method, candidate.Method.GetCustomAttributes<MenuItemAttribute>()),
+                    MenuStateAttribute menuState => RegisterMenu(registry, module, menuState, candidate.Method, candidate.Method.GetCustomAttributes<MenuRowAttribute>()),
                     PromptStateAttribute promptState => RegisterPrompt(registry, module, promptState, candidate.Method),
                     _ => throw new InvalidOperationException(
                         "Cannot register method because of unrecognizable state definition." +
@@ -73,7 +73,7 @@ namespace MyBots.Modules.Common.Handling
                                              ModuleBase module,
                                              MenuStateAttribute menuAttr,
                                              MethodInfo method,
-                                             IEnumerable<MenuItemAttribute> menuItems)
+                                             IEnumerable<MenuRowAttribute> menuItems)
         {
             var handler = new MenuStateHandler(module, method, _roleProvider, _back);
             var definition = CreateMenuDefinition(module, menuAttr, method, menuItems);
@@ -81,16 +81,19 @@ namespace MyBots.Modules.Common.Handling
             return definition;
         }
 
-        private StateDefinition CreateMenuDefinition(ModuleBase module, MenuStateAttribute menuAttr, MethodInfo method, IEnumerable<MenuItemAttribute> menuItems)
+        private StateDefinition CreateMenuDefinition(ModuleBase module, MenuStateAttribute menuAttr, MethodInfo method, IEnumerable<MenuRowAttribute> menuRows)
         {
-            var buttons = from item in menuItems select new List<ButtonLabel>() { _buttonProvider.GetLabel(item.LabelKey) };
+            var buttons = from row in menuRows select from item in row.LabelKeys select _buttonProvider.GetLabel(item);
             if (menuAttr.BackButton)
                 buttons = buttons.Append([_back]);
 
             var layout = new MenuStateLayout()
             {
                 MessageText = _localization.GetString(menuAttr.MessageResourceKey),
+                ResizeKeyboard = true,
                 Buttons = buttons,
+                InheritKeyboard = method.GetCustomAttribute<InheritKeyboardAttribute>() != null,
+                DisableKeyboard = method.GetCustomAttribute<RemoveKeyboardAttribute>() != null,
             };
 
             return new StateDefinition(

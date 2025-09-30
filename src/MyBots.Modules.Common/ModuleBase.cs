@@ -18,7 +18,7 @@ public abstract class ModuleBase(
     public const string RootStateName = "root";
 
     private readonly IStateRegistry _states = states;
-    private readonly ILocalizationService _localizationService = localization;
+    protected readonly ILocalizationService _localizationService = localization;
 
     private string? moduleName = null;
 
