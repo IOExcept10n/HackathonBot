@@ -1,7 +1,10 @@
 ﻿using System.Text;
 using HackathonBot;
 using Microsoft.Extensions.Configuration;
+
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MyBots.Core;
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -15,15 +18,27 @@ IConfiguration config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.Secrets.json")
     .Build();
 
-IServiceProvider services = new ServiceCollection()
-    .AddHackathonBot(config)
-    .BuildServiceProvider();
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
+        logging.AddConsole();                 // пишет в stdout/stderr -> docker logs
+        logging.SetMinimumLevel(LogLevel.Information);
+    })
+    .ConfigureServices((context, services) =>
+    {
+        services.AddHackathonBot(context.Configuration);
+        // регистрация BotListener и т.п.
+        services.AddSingleton<BotListener>();
+    })
+    .Build();
+
 
 #if RELEASE
-services.ConfigureMigrations();
+host.Services.ConfigureMigrations();
 #endif
 
-await services.ConfigureCreatorAsync();
+await host.Services.ConfigureCreatorAsync();
 
-BotListener listener = new(services, config.GetSection("BotStartupConfig").Get<BotStartupConfig>()!);
+BotListener listener = host.Services.GetRequiredService<BotListener>();
 await listener.Run();
