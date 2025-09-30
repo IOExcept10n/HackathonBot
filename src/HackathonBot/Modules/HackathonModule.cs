@@ -56,11 +56,6 @@ internal class HackathonModule(
                     lastUpd = $"{submission.SubmittedAt} ({submission.SubmittedBy.FullName})";
                 }
 
-                string yesEmoji = Emoji.WhiteHeavyCheckMark.ToUnicode(),
-                       noEmoji = Emoji.CrossMark.ToUnicode();
-
-                string AsEmoji(bool v) => v ? yesEmoji : noEmoji;
-
 
                 var delta = _config.StopCode - DateTime.UtcNow;
                 if (delta < TimeSpan.Zero)
@@ -69,8 +64,8 @@ internal class HackathonModule(
                 await ctx.ReplyAsync(string.Format(Localization.UploadStatus,
                     participant.GetNameOnly(),
                     participant.Team.Name,
-                    AsEmoji(presentationUploaded),
-                    AsEmoji(repoUploaded),
+                    presentationUploaded.AsEmoji().ToUnicode(),
+                    repoUploaded.AsEmoji().ToUnicode(),
                     lastUpd,
                     $"{(int)delta.TotalHours:00}:{delta:mm\\:ss}"));
                 return ToState(nameof(OnCaseAsync_HackathonStarted));

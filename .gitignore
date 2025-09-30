@@ -139,3 +139,5 @@ jspm_packages/
 # End
 *.db-wal
 *.db-shm
+ssh-private.ppk
+ssh-public

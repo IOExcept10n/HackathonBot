@@ -106,4 +106,11 @@ public static class ServiceCollectionExtensions
             await roles.SaveChangesAsync();
         }
     }
+
+    public static void ConfigureMigrations(this IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<BotDbContext>();
+        db.Database.Migrate();
+    }
 }

@@ -359,4 +359,51 @@
   <data name="Cancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Рассылки</value>
+  </data>
+  <data name="SendToAllParticipants" xml:space="preserve">
+    <value>Рассылка всем участникам</value>
+  </data>
+  <data name="SendToOrganizers" xml:space="preserve">
+    <value>Рассылка организаторам</value>
+  </data>
+  <data name="SendToTeam" xml:space="preserve">
+    <value>Сообщение отдельной команде</value>
+  </data>
+  <data name="SendPersonal" xml:space="preserve">
+    <value>Отправить лично</value>
+  </data>
+  <data name="MessageRequestPrompt" xml:space="preserve">
+    <value>Введите сообщение для рассылки</value>
+  </data>
+  <data name="ConfirmMailing" xml:space="preserve">
+    <value>Вы уверены, что хотите отправить сообщение?</value>
+  </data>
+  <data name="MailingDetails" xml:space="preserve">
+    <value>Детали рассылки:
+
+От: {0}
+Показывать автора: {1}
+Кому: {2}
+
+Сообщение: {3}
+Цели рассылки: {4} пользователя(-ей), зарегистрировано и доступно {5}</value>
+  </data>
+  <data name="SelectMailingTarget" xml:space="preserve">
+    <value>Выберите цель рассылки</value>
+  </data>
+  <data name="ShowSenderNameRequest" xml:space="preserve">
+    <value>Хотите ли вы указать вас как автора рассылки?
+Если вы выберете "Нет", то рассылка будет анонимной, если "Да" — то бот добавит подпись с вашим никнеймом в Telegram</value>
+  </data>
+  <data name="SendToEveryone" xml:space="preserve">
+    <value>Рассылка всем</value>
+  </data>
+  <data name="MailingRejected" xml:space="preserve">
+    <value>Рассылка отменена</value>
+  </data>
+  <data name="MailingCompleted" xml:space="preserve">
+    <value>Рассылка успешно выполнена. Отправлено {0} из {1}</value>
+  </data>
 </root>

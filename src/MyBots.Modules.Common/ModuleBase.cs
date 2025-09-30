@@ -48,7 +48,7 @@ public abstract class ModuleBase(
         => ToStart(stateData ?? _localizationService.GetString(UnknownErrorKey), message);
 
     protected internal virtual StateResult InvalidInput(ModuleStateContext ctx)
-        => Retry(ctx, message: _localizationService.GetString(InvalidInputKey));
+        => Retry(ctx, ctx.StateData, _localizationService.GetString(InvalidInputKey));
     protected StateResult ToRoot(string? stateData = null, string? message = null)
         => new(RootStateId, stateData ?? string.Empty, message);
 

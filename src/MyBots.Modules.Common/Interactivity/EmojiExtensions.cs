@@ -6,6 +6,8 @@ public static class EmojiExtensions
 {
     private const string UnknownEmojiSign = "?";
 
+    public static Emoji AsEmoji(this bool v) => v ? Emoji.WhiteHeavyCheckMark : Emoji.CrossMark;
+
     public static string ToUnicode(this Emoji emoji) => emoji switch
     {
         Emoji.None => string.Empty,

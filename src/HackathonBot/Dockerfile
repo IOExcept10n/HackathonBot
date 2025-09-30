@@ -40,6 +40,7 @@ RUN apt-get update \
 USER app
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+RUN mkdir -p /app/data && chown -R 1000:1000 /app/data
 FROM ${FINAL_BASE_IMAGE:-mcr.microsoft.com/dotnet/runtime-deps:8.0} AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

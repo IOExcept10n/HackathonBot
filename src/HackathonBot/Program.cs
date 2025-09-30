@@ -19,6 +19,10 @@ IServiceProvider services = new ServiceCollection()
     .AddHackathonBot(config)
     .BuildServiceProvider();
 
+#if RELEASE
+services.ConfigureMigrations();
+#endif
+
 await services.ConfigureCreatorAsync();
 
 BotListener listener = new(services, config.GetSection("BotStartupConfig").Get<BotStartupConfig>()!);

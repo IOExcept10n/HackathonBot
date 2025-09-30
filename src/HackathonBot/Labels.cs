@@ -31,6 +31,12 @@ namespace HackathonBot
         public static ButtonLabel UploadPresentation { get; } = new(Emoji.SunriseOverMountains, Localization.UploadPresentation);
         public static ButtonLabel UploadRepo { get; } = new(Emoji.Cloud, Localization.UploadRepo);
         public static ButtonLabel MySubmission { get; } = new(Emoji.Ledger, Localization.MySubmission);
+        public static ButtonLabel Notifications { get; } = new(Emoji.PublicAddressLoudspeaker, Localization.Notifications);
+        public static ButtonLabel MailingToAll { get; } = new(Emoji.GlobeWithMeridians, Localization.SendToEveryone);
+        public static ButtonLabel MailingToParticipants { get; } = new(Emoji.Bell, Localization.SendToAllParticipants);
+        public static ButtonLabel MailingToOrganizers { get; } = new(Emoji.OpenMailboxWithRaisedFlag, Localization.SendToOrganizers);
+        public static ButtonLabel MailingToTeam { get; } = new(Emoji.BustsInSilhouette, Localization.SendToTeam);
+        public static ButtonLabel MailingPersonal { get; } = new(Emoji.Pistol, Localization.SendPersonal);
     }
 }
 

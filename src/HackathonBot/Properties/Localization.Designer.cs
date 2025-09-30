@@ -178,6 +178,15 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Вы уверены, что хотите отправить сообщение?.
+        /// </summary>
+        internal static string ConfirmMailing {
+            get {
+                return ResourceManager.GetString("ConfirmMailing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Подтвердить сохранение?.
         /// </summary>
         internal static string ConfirmUpload {
@@ -277,6 +286,40 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Рассылка успешно выполнена. Отправлено {0} из {1}.
+        /// </summary>
+        internal static string MailingCompleted {
+            get {
+                return ResourceManager.GetString("MailingCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Детали рассылки:
+        ///
+        ///От: {0}
+        ///Показывать автора: {1}
+        ///Кому: {2}
+        ///
+        ///Сообщение: {3}
+        ///Цели рассылки: {4} пользователя(-ей), зарегистрировано и доступно {5}.
+        /// </summary>
+        internal static string MailingDetails {
+            get {
+                return ResourceManager.GetString("MailingDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Рассылка отменена.
+        /// </summary>
+        internal static string MailingRejected {
+            get {
+                return ResourceManager.GetString("MailingRejected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Управлять организаторами.
         /// </summary>
         internal static string ManageOrganizers {
@@ -291,6 +334,15 @@ namespace HackathonBot.Properties {
         internal static string ManageTeams {
             get {
                 return ResourceManager.GetString("ManageTeams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите сообщение для рассылки.
+        /// </summary>
+        internal static string MessageRequestPrompt {
+            get {
+                return ResourceManager.GetString("MessageRequestPrompt", resourceCulture);
             }
         }
         
@@ -363,6 +415,15 @@ namespace HackathonBot.Properties {
         internal static string NoTeamWarning {
             get {
                 return ResourceManager.GetString("NoTeamWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Рассылки.
+        /// </summary>
+        internal static string Notifications {
+            get {
+                return ResourceManager.GetString("Notifications", resourceCulture);
             }
         }
         
@@ -520,11 +581,65 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Выберите цель рассылки.
+        /// </summary>
+        internal static string SelectMailingTarget {
+            get {
+                return ResourceManager.GetString("SelectMailingTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выберите роль.
         /// </summary>
         internal static string SelectRole {
             get {
                 return ResourceManager.GetString("SelectRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отправить лично.
+        /// </summary>
+        internal static string SendPersonal {
+            get {
+                return ResourceManager.GetString("SendPersonal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Рассылка всем участникам.
+        /// </summary>
+        internal static string SendToAllParticipants {
+            get {
+                return ResourceManager.GetString("SendToAllParticipants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Рассылка всем.
+        /// </summary>
+        internal static string SendToEveryone {
+            get {
+                return ResourceManager.GetString("SendToEveryone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Рассылка организаторам.
+        /// </summary>
+        internal static string SendToOrganizers {
+            get {
+                return ResourceManager.GetString("SendToOrganizers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сообщение отдельной команде.
+        /// </summary>
+        internal static string SendToTeam {
+            get {
+                return ResourceManager.GetString("SendToTeam", resourceCulture);
             }
         }
         
@@ -543,6 +658,16 @@ namespace HackathonBot.Properties {
         internal static string ShowParticipantsList {
             get {
                 return ResourceManager.GetString("ShowParticipantsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хотите ли вы указать вас как автора рассылки?
+        ///Если вы выберете &quot;Нет&quot;, то рассылка будет анонимной, если &quot;Да&quot; — то бот добавит подпись с вашим никнеймом в Telegram.
+        /// </summary>
+        internal static string ShowSenderNameRequest {
+            get {
+                return ResourceManager.GetString("ShowSenderNameRequest", resourceCulture);
             }
         }
         
