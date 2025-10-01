@@ -3,6 +3,7 @@ using System;
 using HackathonBot;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HackathonBot.Migrations
 {
     [DbContext(typeof(BotDbContext))]
-    partial class BotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251001194953_AddedKmmMigration")]
+    partial class AddedKmmMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -154,9 +157,6 @@ namespace HackathonBot.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("HackathonTeamId")
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("IsAlive")
                         .HasColumnType("INTEGER");
 
@@ -168,9 +168,6 @@ namespace HackathonBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HackathonTeamId")
-                        .IsUnique();
 
                     b.ToTable("KmmTeam");
                 });
@@ -390,17 +387,6 @@ namespace HackathonBot.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("HackathonBot.Models.Kmm.KmmTeam", b =>
-                {
-                    b.HasOne("HackathonBot.Models.Team", "HackathonTeam")
-                        .WithOne("KmmTeam")
-                        .HasForeignKey("HackathonBot.Models.Kmm.KmmTeam", "HackathonTeamId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
-
-                    b.Navigation("HackathonTeam");
-                });
-
             modelBuilder.Entity("HackathonBot.Models.Kmm.Quest", b =>
                 {
                     b.HasOne("HackathonBot.Models.Kmm.Event", "Event")
@@ -469,8 +455,6 @@ namespace HackathonBot.Migrations
 
             modelBuilder.Entity("HackathonBot.Models.Team", b =>
                 {
-                    b.Navigation("KmmTeam");
-
                     b.Navigation("Members");
 
                     b.Navigation("Submission");

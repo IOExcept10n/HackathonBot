@@ -1,11 +1,10 @@
 ﻿using System.Text;
 using HackathonBot.Models;
 using HackathonBot.Properties;
-using HackathonBot.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MyBots.Core.Fsm.States;
-using MyBots.Core.Localization;
 using MyBots.Modules.Common;
 using MyBots.Modules.Common.Interactivity;
 using Quartz.Util;
@@ -13,22 +12,12 @@ using Telegram.Bot;
 
 namespace HackathonBot.Modules;
 
-public class NotificationModule(
-    ITeamRepository teams,
-    IBotUserRoleRepository users,
-    IParticipantRepository participants,
-    ILogger<NotificationModule> logger,
-    IStateRegistry states,
-    ILocalizationService localization) :
-    ModuleBase(Labels.Notifications, [Roles.Admin, Roles.Organizer], states, localization)
+internal class NotificationModule(IServiceProvider services) : BotModule(Labels.Notifications, [Roles.Admin, Roles.Organizer], services)
 {
-    private readonly ITeamRepository _teams = teams;
-    private readonly IBotUserRoleRepository _users = users;
-    private readonly IParticipantRepository _participants = participants;
-    private readonly ILogger<NotificationModule> _logger = logger;
+    private readonly ILogger<NotificationModule> _logger = services.GetRequiredService<ILogger<NotificationModule>>();
 
     private const string All = "all";
-    private const string Participants = "participants";
+    private const string AllParticipants = "participants";
     private const string Organizers = "organizers";
 
     [MenuItem(nameof(Labels.MailingToAll))]
@@ -41,14 +30,14 @@ public class NotificationModule(
         if (ctx.Matches(Labels.MailingToAll))
             return ToState(nameof(OnInputMessageAsync), All);
         else if (ctx.Matches(Labels.MailingToParticipants))
-            return ToState(nameof(OnInputMessageAsync), Participants);
+            return ToState(nameof(OnInputMessageAsync), AllParticipants);
         else if (ctx.Matches(Labels.MailingToOrganizers))
             return ToState(nameof(OnInputMessageAsync), Organizers);
         else if (ctx.Matches(Labels.MailingToTeam))
         {
             StringBuilder teams = new();
             teams.AppendLine(Localization.TeamsList);
-            foreach (var team in _teams.GetAll().AsNoTracking())
+            foreach (var team in Teams.GetAll().AsNoTracking())
             {
                 teams.AppendLine(team.Name);
             }
@@ -89,29 +78,29 @@ public class NotificationModule(
         {
             case All:
                 {
-                    targets = await _users.GetAll().AsNoTracking().CountAsync(x => x.RoleId != RoleIndex.Participant) +
-                              await _participants.GetAll().AsNoTracking().CountAsync();
-                    actualTargets = await _users.GetAll().AsNoTracking().Where(x => x.TelegramId != null).CountAsync(x => x.RoleId != RoleIndex.Participant) +
-                                    await _participants.GetAll().AsNoTracking().Where(x => x.TelegramId != null).CountAsync();
+                    targets = await BotRoles.GetAll().AsNoTracking().CountAsync(x => x.RoleId != RoleIndex.Participant) +
+                              await Participants.GetAll().AsNoTracking().CountAsync();
+                    actualTargets = await BotRoles.GetAll().AsNoTracking().Where(x => x.TelegramId != null).CountAsync(x => x.RoleId != RoleIndex.Participant) +
+                                    await Participants.GetAll().AsNoTracking().Where(x => x.TelegramId != null).CountAsync();
                     break;
                 }
-            case Participants:
+            case AllParticipants:
                 {
-                    targets = await _participants.GetAll().AsNoTracking().CountAsync();
-                    actualTargets = await _participants.GetAll().AsNoTracking().Where(x => x.TelegramId != null).CountAsync();
+                    targets = await Participants.GetAll().AsNoTracking().CountAsync();
+                    actualTargets = await Participants.GetAll().AsNoTracking().Where(x => x.TelegramId != null).CountAsync();
                     break;
                 }
             case Organizers:
                 {
-                    targets = await _users.GetAll().AsNoTracking().CountAsync(x => x.RoleId != RoleIndex.Participant);
-                    actualTargets = await _users.GetAll().AsNoTracking().Where(x => x.TelegramId != null).CountAsync(x => x.RoleId != RoleIndex.Participant);
+                    targets = await BotRoles.GetAll().AsNoTracking().CountAsync(x => x.RoleId != RoleIndex.Participant);
+                    actualTargets = await BotRoles.GetAll().AsNoTracking().Where(x => x.TelegramId != null).CountAsync(x => x.RoleId != RoleIndex.Participant);
                     break;
                 }
             default:
                 {
                     if (to.StartsWith("team:"))
                     {
-                        var team = await _teams.FindByNameAsync(to[5..]); // Skip 'team:' from tag
+                        var team = await Teams.FindByNameAsync(to[5..]); // Skip 'team:' from tag
                         if (team == null)
                         {
                             targets = 0;
@@ -119,14 +108,14 @@ public class NotificationModule(
                         }
                         else
                         {
-                            team = await _teams.GetWithMembersAsync(team.Id);
+                            team = await Teams.GetWithMembersAsync(team.Id);
                             targets = team!.Members.Count;
                             actualTargets = team.Members.Count(x => x.IsLoggedIntoBot);
                         }
                     }
                     else if (to.StartsWith("user:"))
                     {
-                        var user = await _users.FindByUsernameAsync(to[5..]); // Skip 'user:' from tag
+                        var user = await BotRoles.FindByUsernameAsync(to[5..]); // Skip 'user:' from tag
                         if (user == null)
                         {
                             targets = 0;
@@ -187,27 +176,27 @@ public class NotificationModule(
         switch (to)
         {
             case All:
-                targets = [.. from user in _users.GetAll().AsNoTracking() where user.RoleId != RoleIndex.Participant select user.TelegramId, 
-                           .. from participant in _participants.GetAll().AsNoTracking() select participant.TelegramId];
+                targets = [.. from user in BotRoles.GetAll().AsNoTracking() where user.RoleId != RoleIndex.Participant select user.TelegramId, 
+                           .. from participant in Participants.GetAll().AsNoTracking() select participant.TelegramId];
                 break;
-            case Participants:
-                targets = from participant in _participants.GetAll().AsNoTracking() select participant.TelegramId; break;
+            case AllParticipants:
+                targets = from participant in Participants.GetAll().AsNoTracking() select participant.TelegramId; break;
             case Organizers:
-                targets = from user in _users.GetAll().AsNoTracking() where user.RoleId != RoleIndex.Participant select user.TelegramId; break;
+                targets = from user in BotRoles.GetAll().AsNoTracking() where user.RoleId != RoleIndex.Participant select user.TelegramId; break;
             case { } when to.StartsWith("team:"):
-                var team = await _teams.FindByNameAsync(to[5..]); // Skip 'team:' from tag
+                var team = await Teams.FindByNameAsync(to[5..]); // Skip 'team:' from tag
                 if (team == null)
                 {
                     targets = [];
                 }
                 else
                 {
-                    team = await _teams.GetWithMembersAsync(team.Id);
+                    team = await Teams.GetWithMembersAsync(team.Id);
                     targets = from member in team!.Members select member.TelegramId;
                 }
                 break;
             case { } when to.StartsWith("user:"):
-                var target = await _users.FindByUsernameAsync(to[5..]); // Skip 'user:' from tag
+                var target = await BotRoles.FindByUsernameAsync(to[5..]); // Skip 'user:' from tag
                 if (target == null)
                 {
                     targets = [];
@@ -250,7 +239,7 @@ public class NotificationModule(
     {
         if (!ctx.Input.TryGetValue(out var teamName))
             return InvalidInput(ctx);
-        var containsTeam = await _teams.GetAll().AsNoTracking().AnyAsync(x => x.Name == teamName);
+        var containsTeam = await Teams.GetAll().AsNoTracking().AnyAsync(x => x.Name == teamName);
         if (!containsTeam)
             return InvalidInput(ctx);
         return ToState(nameof(OnInputMessageAsync), $"team:{teamName}");
@@ -264,7 +253,7 @@ public class NotificationModule(
 
         userName = userName.AsCanonicalNickname();
 
-        var containsTeam = await _users.GetAll().AsNoTracking().AnyAsync(x => x.Username == userName);
+        var containsTeam = await BotRoles.GetAll().AsNoTracking().AnyAsync(x => x.Username == userName);
         if (!containsTeam)
             return InvalidInput(ctx);
         return ToState(nameof(OnInputMessageAsync), $"user:{userName}");

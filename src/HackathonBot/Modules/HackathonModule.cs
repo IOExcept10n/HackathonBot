@@ -1,11 +1,10 @@
 ﻿using System.Text;
 using HackathonBot.Models;
 using HackathonBot.Properties;
-using HackathonBot.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MyBots.Core.Fsm.States;
-using MyBots.Core.Localization;
 using MyBots.Modules.Common;
 using MyBots.Modules.Common.Interactivity;
 using Quartz.Util;
@@ -14,19 +13,9 @@ using Telegram.Bot.Types;
 
 namespace HackathonBot.Modules;
 
-internal class HackathonModule(
-    IOptions<HackathonConfig> config,
-    IParticipantRepository participants,
-    ITeamRepository teams,
-    ISubmissionRepository submissions,
-    IStateRegistry stateRegistry,
-    ILocalizationService localization) :
-    ModuleBase(Labels.Hackathon, [Roles.Participant], stateRegistry, localization)
+internal class HackathonModule(IServiceProvider services) : BotModule(Labels.Hackathon, [Roles.Participant], services)
 {
-    private readonly HackathonConfig _config = config.Value;
-    private readonly IParticipantRepository _participants = participants;
-    private readonly ISubmissionRepository _submissions = submissions;
-    private readonly ITeamRepository _teams = teams;
+    private readonly HackathonConfig _config = services.GetRequiredService<IOptions<HackathonConfig>>().Value;
 
     [MenuItem(nameof(Labels.Case))]
     [MenuItem(nameof(Labels.MyTeam))]
@@ -55,7 +44,6 @@ internal class HackathonModule(
                     lastUpd = $"{submission.SubmittedAt} ({submission.SubmittedBy.FullName})";
                 }
 
-
                 var delta = _config.StopCode - DateTime.UtcNow;
                 if (delta < TimeSpan.Zero)
                     delta = TimeSpan.Zero;
@@ -81,7 +69,7 @@ internal class HackathonModule(
                 return Retry(ctx, message: Localization.NoTeamWarning);
             }
 
-            var team = (await _teams.GetWithMembersAsync(participant.TeamId!.Value))!;
+            var team = (await Teams.GetWithMembersAsync(participant.TeamId!.Value))!;
 
             StringBuilder teamInfo = new();
             teamInfo.AppendLine(team.Name);
@@ -110,7 +98,7 @@ internal class HackathonModule(
             if (participant.Team == null)
                 return Completed(Localization.NoTeamWarning);
 
-            var teamsByCase = _teams.GetAll().AsNoTracking().GroupBy(x => x.Case).ToList();
+            var teamsByCase = Teams.GetAll().AsNoTracking().GroupBy(x => x.Case).ToList();
             int countLD = teamsByCase.FirstOrDefault(x => x.Key == Case.LD)?.Count() ?? 0;
             int countTBank = teamsByCase.FirstOrDefault(x => x.Key == Case.TBank)?.Count() ?? 0;
 
@@ -155,10 +143,18 @@ internal class HackathonModule(
     {
         if (ctx.Matches(Labels.UploadPresentation))
         {
+            if (DateTime.UtcNow > _config.StopCode)
+            {
+                return Completed(Localization.HackathonEndedWarning);
+            }
             return ToState(nameof(OnUploadPresentation));
         }
         else if (ctx.Matches(Labels.UploadRepo))
         {
+            if (DateTime.UtcNow > _config.StopCode)
+            {
+                return Completed(Localization.HackathonEndedWarning);
+            }
             return ToState(nameof(OnUploadRepo));
         }
         else if (ctx.Matches(Labels.MySubmission))
@@ -213,12 +209,12 @@ internal class HackathonModule(
         if (submission == null)
         {
             submission = new()
-            { 
+            {
                 Case = participant.Team.Case,
                 Team = participant.Team,
                 SubmittedBy = participant,
             };
-            await _submissions.AddAsync(submission);
+            await Submissions.AddAsync(submission);
         }
 
         if (ctx.Message is FileMessageContent file)
@@ -237,8 +233,8 @@ internal class HackathonModule(
         }
 
         submission.SubmittedById = participant.Id;
-        submission.SubmittedAt = DateTime.Now;
-        await _submissions.SaveChangesAsync(ctx.CancellationToken);
+        submission.SubmittedAt = DateTime.UtcNow;
+        await Submissions.SaveChangesAsync(ctx.CancellationToken);
         return Back(ctx, message: Localization.PresentationUploaded);
     }
 
@@ -257,8 +253,8 @@ internal class HackathonModule(
                 Team = participant.Team,
                 SubmittedBy = participant,
             };
-            await _submissions.AddAsync(submission, ctx.CancellationToken);
-            await _submissions.SaveChangesAsync(ctx.CancellationToken);
+            await Submissions.AddAsync(submission, ctx.CancellationToken);
+            await Submissions.SaveChangesAsync(ctx.CancellationToken);
         }
 
         if (ctx.Input.TryGetValue(out string link))
@@ -271,8 +267,8 @@ internal class HackathonModule(
         }
 
         submission.SubmittedById = participant.Id;
-        submission.SubmittedAt = DateTime.Now;
-        await _submissions.SaveChangesAsync(ctx.CancellationToken);
+        submission.SubmittedAt = DateTime.UtcNow;
+        await Submissions.SaveChangesAsync(ctx.CancellationToken);
         return Back(ctx, message: Localization.RepoUploaded);
     }
 
@@ -284,7 +280,7 @@ internal class HackathonModule(
         if (participant.Team == null)
             return Completed(Localization.NoTeamWarning);
 
-        var teamsByCase = _teams.GetAll().AsNoTracking().GroupBy(x => x.Case).ToList();
+        var teamsByCase = Teams.GetAll().AsNoTracking().GroupBy(x => x.Case).ToList();
         int countLD = teamsByCase.FirstOrDefault(x => x.Key == Case.LD)?.Count() ?? 0;
         int countTBank = teamsByCase.FirstOrDefault(x => x.Key == Case.TBank)?.Count() ?? 0;
 
@@ -293,13 +289,13 @@ internal class HackathonModule(
         if (ctx.Matches(Labels.CaseLD) && !exceedLD)
         {
             participant.Team.Case = Case.LD;
-            await _teams.SaveChangesAsync(ctx.CancellationToken);
+            await Teams.SaveChangesAsync(ctx.CancellationToken);
             return Completed(Localization.CaseSelectedSuccessfully);
         }
         else if (ctx.Matches(Labels.CaseTBank) && !exceedTBank)
         {
             participant.Team.Case = Case.TBank;
-            await _teams.SaveChangesAsync(ctx.CancellationToken);
+            await Teams.SaveChangesAsync(ctx.CancellationToken);
             return Completed(Localization.CaseSelectedSuccessfully);
         }
 
@@ -308,5 +304,5 @@ internal class HackathonModule(
 
     private (bool, bool) ExceedsLimit(int v1, int v2) => (v1 >= _config.MaxTeamsPerCase, v2 >= _config.MaxTeamsPerCase);
 
-    private async Task<Participant> GetParticipantAsync(ModuleStateContext ctx) => (await _participants.FindByTelegramIdAsync(ctx.User.TelegramId)) ?? throw new InvalidOperationException();
+    private async Task<Participant> GetParticipantAsync(ModuleStateContext ctx) => (await Participants.FindByTelegramIdAsync(ctx.User.TelegramId)) ?? throw new InvalidOperationException();
 }

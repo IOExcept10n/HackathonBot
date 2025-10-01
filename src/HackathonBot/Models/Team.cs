@@ -1,4 +1,6 @@
-﻿namespace HackathonBot.Models;
+﻿using HackathonBot.Models.Kmm;
+
+namespace HackathonBot.Models;
 
 public class Team
 {
@@ -8,7 +10,9 @@ public class Team
 
     public Case Case { get; set; }
 
-    public long KmmId { get; set; }
+    public long? KmmId { get; set; }
+
+    public KmmTeam? KmmTeam { get; set; }
 
     public Guid? SubmissionId { get; set; }
 

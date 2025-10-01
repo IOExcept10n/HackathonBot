@@ -458,4 +458,148 @@
 Регистрация в боте: {2}
 Команда: {3}</value>
   </data>
+  <data name="HackathonEndedWarning" xml:space="preserve">
+    <value>Хакатон уже завершился!</value>
+  </data>
+  <data name="KmmManagement" xml:space="preserve">
+    <value>Управление КММ</value>
+  </data>
+  <data name="Kmm" xml:space="preserve">
+    <value>КММ</value>
+  </data>
+  <data name="InitializeKmm" xml:space="preserve">
+    <value>Раздать роли командам</value>
+  </data>
+  <data name="KmmTeamsStatus" xml:space="preserve">
+    <value>Статусы команд</value>
+  </data>
+  <data name="KmmCreateEvent" xml:space="preserve">
+    <value>Создать событие</value>
+  </data>
+  <data name="KmmCreateQuest" xml:space="preserve">
+    <value>Создать квест/саботаж</value>
+  </data>
+  <data name="KmmManageEvents" xml:space="preserve">
+    <value>Управлять событиями</value>
+  </data>
+  <data name="KmmManageQuests" xml:space="preserve">
+    <value>Управлять квестами</value>
+  </data>
+  <data name="KmmStartVote" xml:space="preserve">
+    <value>Начать голосование</value>
+  </data>
+  <data name="KmmTeamDetails" xml:space="preserve">
+    <value>Команда {0}:
+Роль: {1}
+Команда жива? {2}
+Счёт: {3}</value>
+  </data>
+  <data name="Citizen" xml:space="preserve">
+    <value>Сотрудник</value>
+  </data>
+  <data name="Mafia" xml:space="preserve">
+    <value>Инсайдер</value>
+  </data>
+  <data name="Detective" xml:space="preserve">
+    <value>Тимлид</value>
+  </data>
+  <data name="Doctor" xml:space="preserve">
+    <value>Специалист по информационной безопасности</value>
+  </data>
+  <data name="Godfather" xml:space="preserve">
+    <value>Компания-конкурент</value>
+  </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>Не реализовано</value>
+  </data>
+  <data name="KmmAuditAbilities" xml:space="preserve">
+    <value>Лог способностей</value>
+  </data>
+  <data name="KmmNotInitialized" xml:space="preserve">
+    <value>КММ не инициализировано. Распределите команды по ролям, чтобы использовать остальные функции.</value>
+  </data>
+  <data name="InputEventName" xml:space="preserve">
+    <value>Введите название события</value>
+  </data>
+  <data name="NameTaken" xml:space="preserve">
+    <value>Имя уже занято</value>
+  </data>
+  <data name="EventCreated" xml:space="preserve">
+    <value>Событие успешно создано</value>
+  </data>
+  <data name="QuestCreatedSuccessfully" xml:space="preserve">
+    <value>Квест успешно создан</value>
+  </data>
+  <data name="InputFirstPlaceReward" xml:space="preserve">
+    <value>Введите награду за первое место</value>
+  </data>
+  <data name="InputSecondPlaceReward" xml:space="preserve">
+    <value>Введите награду за второе место</value>
+  </data>
+  <data name="InputThirdPlaceReward" xml:space="preserve">
+    <value>Введите награду за третье место</value>
+  </data>
+  <data name="EventsList" xml:space="preserve">
+    <value>Список событий:</value>
+  </data>
+  <data name="SelectEvent" xml:space="preserve">
+    <value>Выберите событие</value>
+  </data>
+  <data name="StartEvent" xml:space="preserve">
+    <value>Запустить событие</value>
+  </data>
+  <data name="DeleteEvent" xml:space="preserve">
+    <value>Удалить событие</value>
+  </data>
+  <data name="EventDeleted" xml:space="preserve">
+    <value>Событие успешно удалено</value>
+  </data>
+  <data name="ConfirmEventDeletion" xml:space="preserve">
+    <value>Вы точно хотите удалить событие?</value>
+  </data>
+  <data name="InputQuestName" xml:space="preserve">
+    <value>Введите имя квеста</value>
+  </data>
+  <data name="SelectQuestIsSabotage" xml:space="preserve">
+    <value>Это квест для саботажа?</value>
+  </data>
+  <data name="InputQuestDescription" xml:space="preserve">
+    <value>Введите описание квеста</value>
+  </data>
+  <data name="NormalQuestsList" xml:space="preserve">
+    <value>Список квестов</value>
+  </data>
+  <data name="SabotageQuestsList" xml:space="preserve">
+    <value>Список саботажей</value>
+  </data>
+  <data name="NoQuests" xml:space="preserve">
+    <value>Нет квестов</value>
+  </data>
+  <data name="SelectQuest" xml:space="preserve">
+    <value>Выберите квест</value>
+  </data>
+  <data name="EditQuestName" xml:space="preserve">
+    <value>Изменить имя квеста</value>
+  </data>
+  <data name="EditQuestDescription" xml:space="preserve">
+    <value>Изменить описание квеста</value>
+  </data>
+  <data name="DeleteQuest" xml:space="preserve">
+    <value>Удалить квест</value>
+  </data>
+  <data name="InputNewQuestName" xml:space="preserve">
+    <value>Введите новое имя квеста</value>
+  </data>
+  <data name="InputNewQuestDescription" xml:space="preserve">
+    <value>Введите новое описание квеста</value>
+  </data>
+  <data name="ConfirmQuestDeletion" xml:space="preserve">
+    <value>Вы точно хотите удалить квест?</value>
+  </data>
+  <data name="QuestUpdated" xml:space="preserve">
+    <value>Квест успешно обновлён</value>
+  </data>
+  <data name="QuestDeleted" xml:space="preserve">
+    <value>Квест успешно удалён</value>
+  </data>
 </root>

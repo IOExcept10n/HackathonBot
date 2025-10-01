@@ -41,6 +41,20 @@ namespace HackathonBot
         public static ButtonLabel RenameTeam { get; } = new(Emoji.Bookmark, Localization.RenameTeam);
         public static ButtonLabel ChangeParticipantTeam { get; } = new(Emoji.AnticlockwiseDownwardsAndUpwardsOpenCircleArrows, Localization.ChangeParticipantTeam);
         public static ButtonLabel GetTeamSubmission { get; } = new(Emoji.PassportControl, Localization.GetTeamSubmission);
+        public static ButtonLabel KmmManagement { get; } = new(Emoji.VideoGame, Localization.KmmManagement);
+        public static ButtonLabel Kmm { get; } = new(Emoji.VideoGame, Localization.Kmm);
+        public static ButtonLabel KmmTeamsStatus { get; } = new(Emoji.BlackTelephone, Localization.KmmTeamsStatus);
+        public static ButtonLabel KmmCreateEvent { get; } = new(Emoji.TriangularFlagOnPost, Localization.KmmCreateEvent);
+        public static ButtonLabel KmmCreateQuest { get; } = new(Emoji.CircusTent, Localization.KmmCreateQuest);
+        public static ButtonLabel KmmManageEvents { get; } = new(Emoji.SatelliteAntenna, Localization.KmmManageEvents);
+        public static ButtonLabel KmmManageQuests { get; } = new(Emoji.Scroll, Localization.KmmManageQuests);
+        public static ButtonLabel KmmStartVote { get; } = new(Emoji.PoliceCarsRevolvingLight, Localization.KmmStartVote);
+        public static ButtonLabel KmmAuditAbilities { get; } = new(Emoji.PageWithCurl, Localization.KmmAuditAbilities);
+        public static ButtonLabel InitializeKmm { get; } = new(Emoji.SlotMachine, Localization.InitializeKmm);
+        public static ButtonLabel StartEvent { get; } = new(Emoji.ChequeredFlag, Localization.StartEvent);
+        public static ButtonLabel DeleteEvent { get; } = new(Emoji.CrossMark, Localization.DeleteEvent);
+        public static ButtonLabel EditQuestName { get; } = new(Emoji.Notebook, Localization.EditQuestName);
+        public static ButtonLabel EditQuestDescription { get; } = new(Emoji.OpenBook, Localization.EditQuestDescription);
+        public static ButtonLabel DeleteQuest { get; } = new(Emoji.CrossMark, Localization.DeleteQuest);
     }
 }
-

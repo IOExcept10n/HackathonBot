@@ -205,11 +205,38 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Сотрудник.
+        /// </summary>
+        internal static string Citizen {
+            get {
+                return ResourceManager.GetString("Citizen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы точно хотите удалить событие?.
+        /// </summary>
+        internal static string ConfirmEventDeletion {
+            get {
+                return ResourceManager.GetString("ConfirmEventDeletion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Вы уверены, что хотите отправить сообщение?.
         /// </summary>
         internal static string ConfirmMailing {
             get {
                 return ResourceManager.GetString("ConfirmMailing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы точно хотите удалить квест?.
+        /// </summary>
+        internal static string ConfirmQuestDeletion {
+            get {
+                return ResourceManager.GetString("ConfirmQuestDeletion", resourceCulture);
             }
         }
         
@@ -250,11 +277,29 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Удалить событие.
+        /// </summary>
+        internal static string DeleteEvent {
+            get {
+                return ResourceManager.GetString("DeleteEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Удалить участника.
         /// </summary>
         internal static string DeleteParticipant {
             get {
                 return ResourceManager.GetString("DeleteParticipant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить квест.
+        /// </summary>
+        internal static string DeleteQuest {
+            get {
+                return ResourceManager.GetString("DeleteQuest", resourceCulture);
             }
         }
         
@@ -268,6 +313,69 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Тимлид.
+        /// </summary>
+        internal static string Detective {
+            get {
+                return ResourceManager.GetString("Detective", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Специалист по информационной безопасности.
+        /// </summary>
+        internal static string Doctor {
+            get {
+                return ResourceManager.GetString("Doctor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Изменить описание квеста.
+        /// </summary>
+        internal static string EditQuestDescription {
+            get {
+                return ResourceManager.GetString("EditQuestDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Изменить имя квеста.
+        /// </summary>
+        internal static string EditQuestName {
+            get {
+                return ResourceManager.GetString("EditQuestName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Событие успешно создано.
+        /// </summary>
+        internal static string EventCreated {
+            get {
+                return ResourceManager.GetString("EventCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Событие успешно удалено.
+        /// </summary>
+        internal static string EventDeleted {
+            get {
+                return ResourceManager.GetString("EventDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список событий:.
+        /// </summary>
+        internal static string EventsList {
+            get {
+                return ResourceManager.GetString("EventsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Получить решение команды.
         /// </summary>
         internal static string GetTeamSubmission {
@@ -277,11 +385,110 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Компания-конкурент.
+        /// </summary>
+        internal static string Godfather {
+            get {
+                return ResourceManager.GetString("Godfather", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хакатон уже завершился!.
+        /// </summary>
+        internal static string HackathonEndedWarning {
+            get {
+                return ResourceManager.GetString("HackathonEndedWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Хакатон.
         /// </summary>
         internal static string HackathonModuleText {
             get {
                 return ResourceManager.GetString("HackathonModuleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Раздать роли командам.
+        /// </summary>
+        internal static string InitializeKmm {
+            get {
+                return ResourceManager.GetString("InitializeKmm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите название события.
+        /// </summary>
+        internal static string InputEventName {
+            get {
+                return ResourceManager.GetString("InputEventName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите награду за первое место.
+        /// </summary>
+        internal static string InputFirstPlaceReward {
+            get {
+                return ResourceManager.GetString("InputFirstPlaceReward", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите новое описание квеста.
+        /// </summary>
+        internal static string InputNewQuestDescription {
+            get {
+                return ResourceManager.GetString("InputNewQuestDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите новое имя квеста.
+        /// </summary>
+        internal static string InputNewQuestName {
+            get {
+                return ResourceManager.GetString("InputNewQuestName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите описание квеста.
+        /// </summary>
+        internal static string InputQuestDescription {
+            get {
+                return ResourceManager.GetString("InputQuestDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите имя квеста.
+        /// </summary>
+        internal static string InputQuestName {
+            get {
+                return ResourceManager.GetString("InputQuestName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите награду за второе место.
+        /// </summary>
+        internal static string InputSecondPlaceReward {
+            get {
+                return ResourceManager.GetString("InputSecondPlaceReward", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите награду за третье место.
+        /// </summary>
+        internal static string InputThirdPlaceReward {
+            get {
+                return ResourceManager.GetString("InputThirdPlaceReward", resourceCulture);
             }
         }
         
@@ -313,6 +520,108 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to КММ.
+        /// </summary>
+        internal static string Kmm {
+            get {
+                return ResourceManager.GetString("Kmm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Лог способностей.
+        /// </summary>
+        internal static string KmmAuditAbilities {
+            get {
+                return ResourceManager.GetString("KmmAuditAbilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Создать событие.
+        /// </summary>
+        internal static string KmmCreateEvent {
+            get {
+                return ResourceManager.GetString("KmmCreateEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Создать квест/саботаж.
+        /// </summary>
+        internal static string KmmCreateQuest {
+            get {
+                return ResourceManager.GetString("KmmCreateQuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управлять событиями.
+        /// </summary>
+        internal static string KmmManageEvents {
+            get {
+                return ResourceManager.GetString("KmmManageEvents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управление КММ.
+        /// </summary>
+        internal static string KmmManagement {
+            get {
+                return ResourceManager.GetString("KmmManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управлять квестами.
+        /// </summary>
+        internal static string KmmManageQuests {
+            get {
+                return ResourceManager.GetString("KmmManageQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to КММ не инициализировано. Распределите команды по ролям, чтобы использовать остальные функции..
+        /// </summary>
+        internal static string KmmNotInitialized {
+            get {
+                return ResourceManager.GetString("KmmNotInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Начать голосование.
+        /// </summary>
+        internal static string KmmStartVote {
+            get {
+                return ResourceManager.GetString("KmmStartVote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команда {0}:
+        ///Роль: {1}
+        ///Команда жива? {2}
+        ///Счёт: {3}.
+        /// </summary>
+        internal static string KmmTeamDetails {
+            get {
+                return ResourceManager.GetString("KmmTeamDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Статусы команд.
+        /// </summary>
+        internal static string KmmTeamsStatus {
+            get {
+                return ResourceManager.GetString("KmmTeamsStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ЛД.
         /// </summary>
         internal static string LD {
@@ -327,6 +636,15 @@ namespace HackathonBot.Properties {
         internal static string LDCaseInfo {
             get {
                 return ResourceManager.GetString("LDCaseInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Инсайдер.
+        /// </summary>
+        internal static string Mafia {
+            get {
+                return ResourceManager.GetString("Mafia", resourceCulture);
             }
         }
         
@@ -419,6 +737,15 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Имя уже занято.
+        /// </summary>
+        internal static string NameTaken {
+            get {
+                return ResourceManager.GetString("NameTaken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Нет.
         /// </summary>
         internal static string No {
@@ -446,11 +773,29 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Нет квестов.
+        /// </summary>
+        internal static string NoQuests {
+            get {
+                return ResourceManager.GetString("NoQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Вы ещё не загрузили ссылку на репозиторий. Не забудьте прикрепить её до стоп-кода.
         /// </summary>
         internal static string NoRepoYet {
             get {
                 return ResourceManager.GetString("NoRepoYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список квестов.
+        /// </summary>
+        internal static string NormalQuestsList {
+            get {
+                return ResourceManager.GetString("NormalQuestsList", resourceCulture);
             }
         }
         
@@ -469,6 +814,15 @@ namespace HackathonBot.Properties {
         internal static string Notifications {
             get {
                 return ResourceManager.GetString("Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Не реализовано.
+        /// </summary>
+        internal static string NotImplemented {
+            get {
+                return ResourceManager.GetString("NotImplemented", resourceCulture);
             }
         }
         
@@ -593,6 +947,33 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Квест успешно создан.
+        /// </summary>
+        internal static string QuestCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("QuestCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Квест успешно удалён.
+        /// </summary>
+        internal static string QuestDeleted {
+            get {
+                return ResourceManager.GetString("QuestDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Квест успешно обновлён.
+        /// </summary>
+        internal static string QuestUpdated {
+            get {
+                return ResourceManager.GetString("QuestUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Зарегистрировать организатора.
         /// </summary>
         internal static string RegisterAdmin {
@@ -647,6 +1028,15 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Список саботажей.
+        /// </summary>
+        internal static string SabotageQuestsList {
+            get {
+                return ResourceManager.GetString("SabotageQuestsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выбрать кейс.
         /// </summary>
         internal static string SelectCase {
@@ -656,11 +1046,38 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Выберите событие.
+        /// </summary>
+        internal static string SelectEvent {
+            get {
+                return ResourceManager.GetString("SelectEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выберите цель рассылки.
         /// </summary>
         internal static string SelectMailingTarget {
             get {
                 return ResourceManager.GetString("SelectMailingTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите квест.
+        /// </summary>
+        internal static string SelectQuest {
+            get {
+                return ResourceManager.GetString("SelectQuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Это квест для саботажа?.
+        /// </summary>
+        internal static string SelectQuestIsSabotage {
+            get {
+                return ResourceManager.GetString("SelectQuestIsSabotage", resourceCulture);
             }
         }
         
@@ -761,6 +1178,15 @@ namespace HackathonBot.Properties {
         internal static string ShowSenderNameRequest {
             get {
                 return ResourceManager.GetString("ShowSenderNameRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Запустить событие.
+        /// </summary>
+        internal static string StartEvent {
+            get {
+                return ResourceManager.GetString("StartEvent", resourceCulture);
             }
         }
         
