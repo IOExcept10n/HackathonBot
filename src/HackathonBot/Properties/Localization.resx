@@ -178,7 +178,7 @@
     <value>Извините, но вы не можете выполнить это действие. Попробуйте ещё раз, или напишите организаторам хакатона: @kkkira_kh</value>
   </data>
   <data name="OrganizerAccessDenied" xml:space="preserve">
-    <value>Извините, но вы не можете выполнить это действие. Попробуйте ещё раз или напишите разработчику: @IOException</value>
+    <value>Извините, но вы не можете выполнить это действие. Попробуйте ещё раз или напишите разработчику: @IOExcept10n</value>
   </data>
   <data name="AdminModuleText" xml:space="preserve">
     <value>Администрирование</value>
@@ -214,7 +214,7 @@
     <value>Пользователь успешно создан!</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Произошла неизвестная ошибка. Пожалуйста, сообщите разработчику @ioexception, приложив историю переписки.</value>
+    <value>Произошла неизвестная ошибка. Пожалуйста, сообщите разработчику @ioexcept10n, приложив историю переписки.</value>
   </data>
   <data name="Participant" xml:space="preserve">
     <value>Участник</value>
@@ -457,5 +457,372 @@
 Никнейм: {1}
 Регистрация в боте: {2}
 Команда: {3}</value>
+  </data>
+  <data name="HackathonEndedWarning" xml:space="preserve">
+    <value>Хакатон уже завершился!</value>
+  </data>
+  <data name="KmmManagement" xml:space="preserve">
+    <value>Управление КММ</value>
+  </data>
+  <data name="Kmm" xml:space="preserve">
+    <value>КММ</value>
+  </data>
+  <data name="InitializeKmm" xml:space="preserve">
+    <value>Раздать роли командам</value>
+  </data>
+  <data name="KmmTeamsStatus" xml:space="preserve">
+    <value>Статусы команд</value>
+  </data>
+  <data name="KmmCreateEvent" xml:space="preserve">
+    <value>Создать событие</value>
+  </data>
+  <data name="KmmCreateQuest" xml:space="preserve">
+    <value>Создать квест/саботаж</value>
+  </data>
+  <data name="KmmManageEvents" xml:space="preserve">
+    <value>Управлять событиями</value>
+  </data>
+  <data name="KmmManageQuests" xml:space="preserve">
+    <value>Управлять квестами</value>
+  </data>
+  <data name="KmmStartVote" xml:space="preserve">
+    <value>Начать голосование</value>
+  </data>
+  <data name="KmmTeamDetails" xml:space="preserve">
+    <value>Команда {0}:
+Роль: {1}
+Команда жива? {2}
+Счёт: {3}</value>
+  </data>
+  <data name="Citizen" xml:space="preserve">
+    <value>Сотрудник</value>
+  </data>
+  <data name="Mafia" xml:space="preserve">
+    <value>Инсайдер</value>
+  </data>
+  <data name="Detective" xml:space="preserve">
+    <value>Тимлид</value>
+  </data>
+  <data name="Doctor" xml:space="preserve">
+    <value>Специалист по информационной безопасности</value>
+  </data>
+  <data name="Godfather" xml:space="preserve">
+    <value>Компания-конкурент</value>
+  </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>Не реализовано</value>
+  </data>
+  <data name="KmmAuditAbilities" xml:space="preserve">
+    <value>Лог способностей</value>
+  </data>
+  <data name="KmmNotInitialized" xml:space="preserve">
+    <value>КММ не инициализировано. Распределите команды по ролям, чтобы использовать остальные функции.</value>
+  </data>
+  <data name="InputEventName" xml:space="preserve">
+    <value>Введите название события</value>
+  </data>
+  <data name="NameTaken" xml:space="preserve">
+    <value>Имя уже занято</value>
+  </data>
+  <data name="EventCreated" xml:space="preserve">
+    <value>Событие успешно создано</value>
+  </data>
+  <data name="QuestCreatedSuccessfully" xml:space="preserve">
+    <value>Квест успешно создан</value>
+  </data>
+  <data name="InputFirstPlaceReward" xml:space="preserve">
+    <value>Введите награду за первое место</value>
+  </data>
+  <data name="InputSecondPlaceReward" xml:space="preserve">
+    <value>Введите награду за второе место</value>
+  </data>
+  <data name="InputThirdPlaceReward" xml:space="preserve">
+    <value>Введите награду за третье место</value>
+  </data>
+  <data name="EventsList" xml:space="preserve">
+    <value>Список событий:</value>
+  </data>
+  <data name="SelectEvent" xml:space="preserve">
+    <value>Выберите событие</value>
+  </data>
+  <data name="StartEvent" xml:space="preserve">
+    <value>Запустить событие</value>
+  </data>
+  <data name="DeleteEvent" xml:space="preserve">
+    <value>Удалить событие</value>
+  </data>
+  <data name="EventDeleted" xml:space="preserve">
+    <value>Событие успешно удалено</value>
+  </data>
+  <data name="ConfirmEventDeletion" xml:space="preserve">
+    <value>Вы точно хотите удалить событие?</value>
+  </data>
+  <data name="InputQuestName" xml:space="preserve">
+    <value>Введите имя квеста</value>
+  </data>
+  <data name="SelectQuestIsSabotage" xml:space="preserve">
+    <value>Это квест для саботажа?</value>
+  </data>
+  <data name="InputQuestDescription" xml:space="preserve">
+    <value>Введите описание квеста</value>
+  </data>
+  <data name="NormalQuestsList" xml:space="preserve">
+    <value>Список квестов</value>
+  </data>
+  <data name="SabotageQuestsList" xml:space="preserve">
+    <value>Список саботажей</value>
+  </data>
+  <data name="NoQuests" xml:space="preserve">
+    <value>Нет квестов</value>
+  </data>
+  <data name="SelectQuest" xml:space="preserve">
+    <value>Выберите квест</value>
+  </data>
+  <data name="EditQuestName" xml:space="preserve">
+    <value>Изменить имя квеста</value>
+  </data>
+  <data name="EditQuestDescription" xml:space="preserve">
+    <value>Изменить описание квеста</value>
+  </data>
+  <data name="DeleteQuest" xml:space="preserve">
+    <value>Удалить квест</value>
+  </data>
+  <data name="InputNewQuestName" xml:space="preserve">
+    <value>Введите новое имя квеста</value>
+  </data>
+  <data name="InputNewQuestDescription" xml:space="preserve">
+    <value>Введите новое описание квеста</value>
+  </data>
+  <data name="ConfirmQuestDeletion" xml:space="preserve">
+    <value>Вы точно хотите удалить квест?</value>
+  </data>
+  <data name="QuestUpdated" xml:space="preserve">
+    <value>Квест успешно обновлён</value>
+  </data>
+  <data name="QuestDeleted" xml:space="preserve">
+    <value>Квест успешно удалён</value>
+  </data>
+  <data name="EventAlreadyExists" xml:space="preserve">
+    <value>Событие уже существует</value>
+  </data>
+  <data name="NoTeamsForEvent" xml:space="preserve">
+    <value>Нет команд для запуска события</value>
+  </data>
+  <data name="EventHasNoQuests" xml:space="preserve">
+    <value>У события нет квестов</value>
+  </data>
+  <data name="EventAssignedQuest" xml:space="preserve">
+    <value>Для события '{0}' команде '{1}' назначен индивидуальный квест!
+
+{2}
+{3}
+
+Выполнение этого квеста командой даст бонус к очкам мирным жителям или позволит мафии украсть часть очков. Организатор КММ сам проследит за выполнением этого квеста.</value>
+  </data>
+  <data name="EventStartedSuccessfully" xml:space="preserve">
+    <value>Событие успешно запущено</value>
+  </data>
+  <data name="KmmManageRunningEvent" xml:space="preserve">
+    <value>Управление действующим событием. Внимание, не покидайте это меню без завершения события!</value>
+  </data>
+  <data name="EndEvent" xml:space="preserve">
+    <value>Завершить событие</value>
+  </data>
+  <data name="InvalidTeamSelection" xml:space="preserve">
+    <value>Неверный выбор команды</value>
+  </data>
+  <data name="PickNextPlace" xml:space="preserve">
+    <value>Выберите команду, занявшую {0} место:</value>
+  </data>
+  <data name="SelectWinners" xml:space="preserve">
+    <value>Выберите следующую команду для записи результатов</value>
+  </data>
+  <data name="EventEndedSuccessfully" xml:space="preserve">
+    <value>Событие успешно завершено</value>
+  </data>
+  <data name="VoteStartedMessage" xml:space="preserve">
+    <value>Пришло время голосования! Заходи в раздел для КММ и отдай свой голос!</value>
+  </data>
+  <data name="AwaitVoteEnd" xml:space="preserve">
+    <value>Ожидание завершения голосования. Не покидайте это меню, не завершив голосование!</value>
+  </data>
+  <data name="ConcludeVote" xml:space="preserve">
+    <value>Завершить голосование</value>
+  </data>
+  <data name="VoteEndedSuccessfully" xml:space="preserve">
+    <value>Голосование успешно завершено!</value>
+  </data>
+  <data name="LynchedResult" xml:space="preserve">
+    <value>Жители изгнали команду '{0}'.</value>
+  </data>
+  <data name="LynchedResultNone" xml:space="preserve">
+    <value>Жители никого не изгнали</value>
+  </data>
+  <data name="MafiaKillResult" xml:space="preserve">
+    <value>Мафия изгнала команду '{0}'.</value>
+  </data>
+  <data name="MafiaKillResultNone" xml:space="preserve">
+    <value>Мафия никого не убила</value>
+  </data>
+  <data name="DetectiveFoundMafia" xml:space="preserve">
+    <value>Детектив вычислил мафию</value>
+  </data>
+  <data name="DetectiveFoundCitizen" xml:space="preserve">
+    <value>Детектив вычислил мирного жителя</value>
+  </data>
+  <data name="DetectiveCheckBlocked" xml:space="preserve">
+    <value>Детектив столкнулся с помехами и не смог никого вычислить</value>
+  </data>
+  <data name="DetectiveCheckResult" xml:space="preserve">
+    <value>Результат проверки команды '{0}': {1}</value>
+  </data>
+  <data name="PromptPlace" xml:space="preserve">
+    <value>Введите место, занятое командой</value>
+  </data>
+  <data name="PromptQuestCompleted" xml:space="preserve">
+    <value>Команда выполнила квест?</value>
+  </data>
+  <data name="PickTeamToProcess" xml:space="preserve">
+    <value>Выберите команду для регистрации результата</value>
+  </data>
+  <data name="EventFinalResultForTeam" xml:space="preserve">
+    <value>Результаты мероприятия '{0}' для команды '{1}'.
+Место: {2}
+Выполнение квеста: {3}
+Итоговый счёт команды: {4}</value>
+  </data>
+  <data name="UploadTeamsPrompt" xml:space="preserve">
+    <value>Загрузите CSV-файл со списком команд-участников и их цветов</value>
+  </data>
+  <data name="KmmInitializedSuccessfully" xml:space="preserve">
+    <value>Игра для КММ успешно инициализирована</value>
+  </data>
+  <data name="ConfirmInitializeKmm" xml:space="preserve">
+    <value>Вы точно хотите заново начать игру в мафию? Это удалит все текущие команды и весь прогресс</value>
+  </data>
+  <data name="ListTeamQuests" xml:space="preserve">
+    <value>Получить список квестов по командам</value>
+  </data>
+  <data name="AboutKmm" xml:space="preserve">
+    <value>Об игре</value>
+  </data>
+  <data name="AboutKmmMessage" xml:space="preserve">
+    <value>Ваша компания оказалась под угрозой: группа инсайдеров под прикрытием конкурента пытается захватить контроль над главным проектом — "Сейфом с инновациями". За 3 дня команды получают роли (мирные или мафия) и соревнуются — мирные стремятся собрать 100 кредитов в общий сейф, мафия саботирует события, крадёт кредиты и пытается устранить ключевых защитников.
+
+Каждый день команды участвуют в мероприятиях и зарабатывают кредиты; ночью мафия тайно выбирает цель, а все мирные голосуют за подозреваемого. У каждой роли — уникальные активные и пассивные способности (проверки, защита, саботаж, хакерские атаки и т. п.). Взаимодействие и голосования проходят через Telegram-бота; призы получают только команды победившей фракции, распределение зависит от личного вклада.
+
+Более подробные правила по ссылке: https://docs.google.com/document/d/1lk9fB68f99T6CoyzICrL_0_OLbMaZ4prYLDKI260gec/edit?usp=sharing</value>
+  </data>
+  <data name="Vote" xml:space="preserve">
+    <value>Голосование</value>
+  </data>
+  <data name="KmmNotStarted" xml:space="preserve">
+    <value>Извините, но мероприятия ещё не начались, либо вы на них не зарегистрированы. Подождите ещё немного, скоро организаторы зарегистрируют всех желающих. Если вы считаете, что произошла какая-то ошибка, то напишите организаторам: @kkkira_kh</value>
+  </data>
+  <data name="KmmTeamInfo" xml:space="preserve">
+    <value>Ваша команда по КММ: {0}
+Роль команды: {1}
+Заработанные очки: {2}
+{3}
+
+Общий банк мирных жителей: {4}/{5}</value>
+  </data>
+  <data name="TeamOut" xml:space="preserve">
+    <value>Команда выбыла!</value>
+  </data>
+  <data name="TeamOutNote" xml:space="preserve">
+    <value>Не беспокойтесь, вы всё ещё можете копить очки в общий зачёт, но они не будут засчитываться в банке</value>
+  </data>
+  <data name="MafiaPersonalBankInfo" xml:space="preserve">
+    <value>Личный счёт мафии: {0}</value>
+  </data>
+  <data name="VoteClosedWarning" xml:space="preserve">
+    <value>Голосование на данный момент закрыто. Пожалуйста, попробуйте позже</value>
+  </data>
+  <data name="CurrentVoteDetails" xml:space="preserve">
+    <value>Ваша команда: {0}
+Вы выбрали команду {1}</value>
+  </data>
+  <data name="CurrentVoteDefailsNoVote" xml:space="preserve">
+    <value>Ваша команда: {0}
+Вы ещё не сделали голос</value>
+  </data>
+  <data name="VoteTargetRequest" xml:space="preserve">
+    <value>Выберите команду, за которую вы голосвуете</value>
+  </data>
+  <data name="Abilities" xml:space="preserve">
+    <value>Способности</value>
+  </data>
+  <data name="VoteAccepted" xml:space="preserve">
+    <value>Ваш голос принят!</value>
+  </data>
+  <data name="SelectAbility" xml:space="preserve">
+    <value>Выберите способность</value>
+  </data>
+  <data name="WorkEthic" xml:space="preserve">
+    <value>Трудовая этика</value>
+  </data>
+  <data name="Check" xml:space="preserve">
+    <value>Проверка</value>
+  </data>
+  <data name="Defense" xml:space="preserve">
+    <value>Защита</value>
+  </data>
+  <data name="Firewall" xml:space="preserve">
+    <value>Брандмауер</value>
+  </data>
+  <data name="Slander" xml:space="preserve">
+    <value>Клевета</value>
+  </data>
+  <data name="DataLeak" xml:space="preserve">
+    <value>Утечка данных</value>
+  </data>
+  <data name="HackerAttack" xml:space="preserve">
+    <value>Хакерская атака</value>
+  </data>
+  <data name="WorkEthicDescription" xml:space="preserve">
+    <value>Вы можете использовать эту способность один раз за всю игру, чтобы увеличить число заработанных в следующем мероприятии личных очков в 2 раза</value>
+  </data>
+  <data name="CheckDescription" xml:space="preserve">
+    <value>Вы можете использовать эту способность перед каждым голосованием, чтобы определить, какая команда является мафией. До конца общего голосования вы можете менять выбор, а после него вам придёт сообщение с информацией по выбранной вами команде. После голосования вы снова можете использовать эту способность, чтобы выбирать другие команды</value>
+  </data>
+  <data name="DefenseDescription" xml:space="preserve">
+    <value>Вы можете использовать эту способность перед каждым голосованием, чтобы защитить одну команду (в том числе и себя) от нападения мафии. Учтите, что эта способность не подействует, если вас выгонят на голосовании. Вы можете менять свой выбор сколько угодно раз до конца голосования. После голосования не будет раскрыто, за кого вы голосовали, но ваш последний голос учтётся при проверке жертвы мафии</value>
+  </data>
+  <data name="FirewallDescription" xml:space="preserve">
+    <value>Эта способность позволяет заблокировать использование способностей мафии при следующем срабатывании. Её можно использовать только один раз за игру. </value>
+  </data>
+  <data name="SlanderDescription" xml:space="preserve">
+    <value>Эта способность лишает выбранную команду голоса на следующем голосовании. Стоимость использования: 5 личных монет. Каждое повторное использование способности в рамках одного голосования позволяет выбрать ещё одну команду в качестве цели</value>
+  </data>
+  <data name="DataLeakDescription" xml:space="preserve">
+    <value>Эта способность позволяет уменьшить общий счёт мирных жителей на 10 единиц. Стоимость использования: 10 личных монет.</value>
+  </data>
+  <data name="HackerAttackDescription" xml:space="preserve">
+    <value>Эта способность позволяет заблокировать способности "Защита" и "Проверка" на один круг голосования. Стоимость: 10 личных монет</value>
+  </data>
+  <data name="AbilityUsageLimitReached" xml:space="preserve">
+    <value>Вы больше не можете использовать эту способность.</value>
+  </data>
+  <data name="NotEnoughCoins" xml:space="preserve">
+    <value>У вас недостаточно денег для использования этой способности</value>
+  </data>
+  <data name="ConfirmAbilityUsage" xml:space="preserve">
+    <value>Вы точно хотите использовать способность?</value>
+  </data>
+  <data name="BankIsEmpty" xml:space="preserve">
+    <value>В общем банке недостаточно денег для применения вашей способности</value>
+  </data>
+  <data name="LiveTeams" xml:space="preserve">
+    <value>Список команд, оставшихся в живых</value>
+  </data>
+  <data name="SelectTeam" xml:space="preserve">
+    <value>Выберите команду</value>
+  </data>
+  <data name="AbilityUsed" xml:space="preserve">
+    <value>Способность успешно применена</value>
+  </data>
+  <data name="YouCanAlsoInputCSVWithResults" xml:space="preserve">
+    <value>Вы также можете загрузить CSV файл с результатами мероприятия</value>
   </data>
 </root>

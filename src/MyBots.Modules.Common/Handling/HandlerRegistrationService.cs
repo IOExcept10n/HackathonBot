@@ -1,16 +1,19 @@
 ﻿using System.Reflection;
+using System.Text.Json;
 using MyBots.Core.Fsm.States;
 using MyBots.Core.Localization;
 using MyBots.Modules.Common.Interactivity;
 using MyBots.Modules.Common.Roles;
 
+#pragma warning disable CS0618 // We should disable usage of JSON property within parent class
 namespace MyBots.Modules.Common.Handling
 {
-    public class HandlerRegistrationService(IButtonLabelProvider buttonProvider, ILocalizationService localization, IRoleProvider roleProvider) : IHandlerRegistrationService
+    public class HandlerRegistrationService(IButtonLabelProvider buttonProvider, ILocalizationService localization, IModelRegistry modelRegistry, IRoleProvider roleProvider) : IHandlerRegistrationService
     {
         private readonly IButtonLabelProvider _buttonProvider = buttonProvider;
         private readonly ILocalizationService _localization = localization;
         private readonly IRoleProvider _roleProvider = roleProvider;
+        private readonly IModelRegistry _modelRegistry = modelRegistry;
 
         private readonly ButtonLabel _back = new(Emoji.BackWithLeftwardsArrowAbove, localization.GetString("Back"));
         private readonly ButtonLabel _cancel = new(Emoji.CrossMark, localization.GetString("Cancel"));
@@ -32,11 +35,22 @@ namespace MyBots.Modules.Common.Handling
                 {
                     MenuStateAttribute menuState => RegisterMenu(registry, module, menuState, candidate.Method, candidate.Method.GetCustomAttributes<MenuRowAttribute>()),
                     PromptStateAttribute promptState => RegisterPrompt(registry, module, promptState, candidate.Method),
+                    ModelPromptStateAttribute modelPromptState => RegisterModelBinding(registry, module, modelPromptState, candidate.Method),
                     _ => throw new InvalidOperationException(
                         "Cannot register method because of unrecognizable state definition." +
                         "Write your oen implementation of the IHandlerRegistrationService to use custom state definitions."),
                 };
             }
+        }
+
+        private StateDefinition RegisterModelBinding(IStateHandlerRegistry registry, ModuleBase module, ModelPromptStateAttribute modelAttr, MethodInfo method)
+        {
+            var handler = CreateModelBindingHandler(module, modelAttr, method);
+            _modelRegistry.TryGetDescription(module.Name, modelAttr.InputType.FullName ?? modelAttr.InputType.Name, out var description);
+            StateDefinition definition = CreateModelDefinition(module, modelAttr, description!.ModelProperties[0].DisplayName, method);
+
+            registry.Register(definition, handler);
+            return definition;
         }
 
         private StateDefinition RegisterPrompt(IStateHandlerRegistry registry, ModuleBase module, PromptStateAttribute promptAttr, MethodInfo method)
@@ -63,11 +77,32 @@ namespace MyBots.Modules.Common.Handling
                 layout);
         }
 
+        private StateDefinition CreateModelDefinition(ModuleBase module, ModelPromptStateAttribute modelAttr, string displayName, MethodInfo method)
+        {
+            var layout = new PromptStateLayout(_cancel)
+            {
+                MessageText = displayName,
+                AllowCancel = modelAttr.BackButton,
+            };
+
+            return new StateDefinition(
+                modelAttr.StateName ?? method.Name,
+                module.Name,
+                $"{module.Name}:{modelAttr.ParentStateName}",
+                layout);
+        }
+
         private IStateHandler CreatePromptStateHandler(ModuleBase module, PromptStateAttribute promptAttr, MethodInfo method)
             => (IStateHandler?)Activator.CreateInstance(
                 typeof(PromptStateHandler<>).MakeGenericType(promptAttr.InputType), 
                 [module, method, _roleProvider, promptAttr.AllowTextInput, promptAttr.AllowFileInput, _cancel]) ??
             throw new InvalidOperationException("Couldn't create prompt state handler. Please, check your prompt handling method definition.");
+
+        private IStateHandler CreateModelBindingHandler(ModuleBase module, ModelPromptStateAttribute promptAttr, MethodInfo method)
+            => (IStateHandler?)Activator.CreateInstance(
+                typeof(ModelBindingStateHandler<>).MakeGenericType(promptAttr.InputType),
+                [module, method, _roleProvider, _modelRegistry, _cancel]) ??
+            throw new InvalidOperationException("Couldn't create model state handler. Please, check your prompt handling method definition.");
 
         private StateDefinition RegisterMenu(IStateHandlerRegistry registry,
                                              ModuleBase module,
@@ -186,6 +221,73 @@ namespace MyBots.Modules.Common.Handling
 
             private Func<PromptStateContext<T>, Task<StateResult>> GetPromptStateExpression(MethodInfo method)
                 => method.CreateDelegate<Func<PromptStateContext<T>, Task<StateResult>>>(_module);
+        }
+
+        private class ModelBindingStateHandler<T> : IStateHandler where T : new()
+        {
+            private static readonly string TypeName = typeof(T).FullName ?? typeof(T).Name;
+
+            private readonly Func<ModelPromptContext<T>, Task<StateResult>> _expr;
+            private readonly ModuleBase _module;
+            private readonly IRoleProvider _roleProvider;
+            private readonly IModelRegistry _models;
+            private readonly ButtonLabel _cancel;
+
+            public ModelBindingStateHandler(ModuleBase module, MethodInfo method, IRoleProvider roleProvider, IModelRegistry models, ButtonLabel cancel)
+            {
+                _module = module;
+                _expr = GetBindingStateExpression(method);
+                _roleProvider = roleProvider;
+                _models = models;
+                _cancel = cancel;
+                _models.Register(module.Name, typeof(T));
+            }
+
+            public async Task<StateResult> ExecuteAsync(StateContext ctx, CancellationToken cancellationToken = default)
+            {
+                var role = await _roleProvider.GetRoleAsync(ctx.User, cancellationToken);
+                var moduleContext = _module.PrepareContext(RoleStateContext.FromContext(ctx, role), cancellationToken);
+
+                if (ctx.Matches(_cancel))
+                    return _module.Back(moduleContext);
+
+                if (!_models.TryGetDescription(_module.Name, TypeName, out var description))
+                    return _module.FailWithMessage("Cannot retrieve model type description to decode.");
+
+                var bindingContext = new ModelBindContext(
+                    moduleContext.User,
+                    moduleContext.Chat,
+                    moduleContext.Role,
+                    moduleContext.Message,
+                    description,
+                    moduleContext.StateData,
+                    moduleContext.BotClient,
+                    moduleContext.CancellationToken);
+
+                var result = await _module.OnBindModelAsync(bindingContext);
+                if (result.HasError)
+                    return _module.InvalidInput(moduleContext);
+
+                if (result.Data.IsCompleted)
+                {
+                    var modelContext = new ModelPromptContext<T>(
+                        moduleContext.User,
+                        moduleContext.Chat,
+                        moduleContext.Role,
+                        moduleContext.Message,
+                        result.Data.Model.Deserialize<T>()!,
+                        moduleContext.StateData,
+                        moduleContext.BotClient,
+                        moduleContext.CancellationToken);
+
+                    return await _expr(modelContext);
+                }
+
+                return ModuleBase.RetryWith(moduleContext, result.Data, description.PropertyByName(result.Data.PropertyName)?.DisplayName);
+            }
+
+            private Func<ModelPromptContext<T>, Task<StateResult>> GetBindingStateExpression(MethodInfo method)
+               => method.CreateDelegate<Func<ModelPromptContext<T>, Task<StateResult>>>(_module);
         }
 
         //private class ModuleRootStateHandler(ModuleBase module, IRoleProvider roleProvider) : IStateHandler

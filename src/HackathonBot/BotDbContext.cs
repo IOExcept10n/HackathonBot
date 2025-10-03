@@ -1,4 +1,5 @@
 ﻿using HackathonBot.Models;
+using HackathonBot.Models.Kmm;
 using Microsoft.EntityFrameworkCore;
 using MyBots.Core.Persistence;
 using MyBots.Core.Persistence.DTO;
@@ -58,12 +59,15 @@ internal class BotDbContext(DbContextOptions<BotDbContext> options) : BasicBotDb
             b.Property(t => t.Case)
              .HasConversion<int>();
 
-            b.Property(t => t.KmmId)
-             .IsRequired();
-
             // Members navigation configured by Participant side
             // Optional: unique constraint on Team.Name per hackathon (single hackathon -> globally unique)
             b.HasIndex(t => t.Name).IsUnique();
+
+            b.HasOne(t => t.KmmTeam)
+             .WithOne(k => k.HackathonTeam)
+             .HasForeignKey<KmmTeam>(x => x.HackathonTeamId)
+             .IsRequired(false)
+             .OnDelete(DeleteBehavior.SetNull);
         });
 
         //
@@ -141,5 +145,110 @@ internal class BotDbContext(DbContextOptions<BotDbContext> options) : BasicBotDb
             .Property(b => b.RoleId)
             .HasConversion<int>()
             .HasDefaultValue(RoleIndex.Unknown);
+
+        // Event <-> Quest (one-to-many)
+        modelBuilder.Entity<Event>()
+            .HasMany(e => e.Quests)
+            .WithOne(q => q.Event)
+            .HasForeignKey(q => q.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // KmmTeam <-> EventEntry (one-to-many)
+        modelBuilder.Entity<KmmTeam>()
+            .HasMany(t => t.EventEntries)
+            .WithOne(en => en.Team)
+            .HasForeignKey(en => en.KmmTeamId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // KmmTeam <-> AbilityUse (one-to-many)
+        modelBuilder.Entity<KmmTeam>()
+            .HasMany(t => t.AbilitiesLog)
+            .WithOne(a => a.Team)
+            .HasForeignKey(a => a.TeamId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // EventEntry: optional Quest relation (if QuestId can be 0/null adjust accordingly)
+        modelBuilder.Entity<EventEntry>()
+            .HasOne(en => en.Quest)
+            .WithMany()
+            .HasForeignKey(en => en.QuestId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Indexes and constraints
+        modelBuilder.Entity<Quest>()
+            .HasIndex(q => q.EventId);
+
+        modelBuilder.Entity<EventEntry>()
+            .HasIndex(e => new { e.KmmTeamId, e.QuestId });
+
+        modelBuilder.Entity<AbilityUse>()
+            .HasIndex(a => new { a.TeamId, a.Ability, a.UsedAt });
+
+        // Enum conversions (optional): store enums as strings for readability
+        modelBuilder.Entity<KmmTeam>()
+            .Property(t => t.Role)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<AbilityUse>()
+            .Property(a => a.Ability)
+            .HasConversion<string>();
+
+        // AbilityUse: Team (already configured) and optional TargetTeam
+        modelBuilder.Entity<AbilityUse>(b =>
+        {
+            b.HasKey(a => a.Id);
+
+            b.Property(a => a.UsedAt)
+             .IsRequired();
+
+            b.HasOne(a => a.Team)
+             .WithMany(t => t.AbilitiesLog)
+             .HasForeignKey(a => a.TeamId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            // TargetTeam: optional many-to-one (many ability uses may reference the same target team)
+            b.HasOne(a => a.TargetTeam)
+             .WithMany()
+             .HasForeignKey(a => a.TargetTeamId)
+             .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<EventAuditEntry>(b =>
+        {
+            b.HasKey(e => e.Id);
+
+            b.Property(e => e.Comment)
+             .HasMaxLength(2000);
+
+            b.Property(e => e.EventType)
+             .HasConversion<int>()
+             .IsRequired();
+
+            b.Property(e => e.LoggedAt)
+             .IsRequired();
+
+            b.HasOne(e => e.Initiator)
+             .WithMany()
+             .HasForeignKey(e => e.InitiatorId)
+             .OnDelete(DeleteBehavior.Restrict);
+
+            b.HasIndex(e => new { e.EventType, e.LoggedAt });
+        });
+
+        // Configure required fields and max lengths
+        modelBuilder.Entity<Event>()
+            .Property(e => e.Name)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Quest>()
+            .Property(q => q.Name)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Bank>()
+            .Property(b => b.Key)
+            .IsRequired()
+            .HasMaxLength(200);
     }
 }

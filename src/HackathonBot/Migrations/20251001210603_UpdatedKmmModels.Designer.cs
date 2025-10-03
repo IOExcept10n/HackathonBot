@@ -3,6 +3,7 @@ using System;
 using HackathonBot;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HackathonBot.Migrations
 {
     [DbContext(typeof(BotDbContext))]
-    partial class BotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251001210603_UpdatedKmmModels")]
+    partial class UpdatedKmmModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -62,9 +65,6 @@ namespace HackathonBot.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("TargetTeamId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long>("TeamId")
                         .HasColumnType("INTEGER");
 
@@ -72,8 +72,6 @@ namespace HackathonBot.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TargetTeamId");
 
                     b.HasIndex("TeamId", "Ability", "UsedAt");
 
@@ -124,38 +122,13 @@ namespace HackathonBot.Migrations
                     b.ToTable("Event");
                 });
 
-            modelBuilder.Entity("HackathonBot.Models.Kmm.EventAuditEntry", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("EventType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("InitiatorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("LoggedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InitiatorId");
-
-                    b.HasIndex("EventType", "LoggedAt");
-
-                    b.ToTable("EventAuditEntry");
-                });
-
             modelBuilder.Entity("HackathonBot.Models.Kmm.EventEntry", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("EventId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool?>("IsQuestCompleted")
@@ -164,17 +137,16 @@ namespace HackathonBot.Migrations
                     b.Property<long>("KmmTeamId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Place")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long>("QuestId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EventId");
+
                     b.HasIndex("QuestId");
 
-                    b.HasIndex("KmmTeamId", "QuestId");
+                    b.HasIndex("KmmTeamId", "EventId", "QuestId");
 
                     b.ToTable("EventEntry");
                 });
@@ -184,10 +156,6 @@ namespace HackathonBot.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("HackathonTeamId")
                         .HasColumnType("TEXT");
@@ -328,7 +296,7 @@ namespace HackathonBot.Migrations
                     b.Property<int>("Case")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("KmmId")
+                    b.Property<long>("KmmId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -389,35 +357,23 @@ namespace HackathonBot.Migrations
 
             modelBuilder.Entity("HackathonBot.Models.Kmm.AbilityUse", b =>
                 {
-                    b.HasOne("HackathonBot.Models.Kmm.KmmTeam", "TargetTeam")
-                        .WithMany()
-                        .HasForeignKey("TargetTeamId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("HackathonBot.Models.Kmm.KmmTeam", "Team")
                         .WithMany("AbilitiesLog")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("TargetTeam");
-
                     b.Navigation("Team");
-                });
-
-            modelBuilder.Entity("HackathonBot.Models.Kmm.EventAuditEntry", b =>
-                {
-                    b.HasOne("MyBots.Core.Persistence.DTO.User", "Initiator")
-                        .WithMany()
-                        .HasForeignKey("InitiatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Initiator");
                 });
 
             modelBuilder.Entity("HackathonBot.Models.Kmm.EventEntry", b =>
                 {
+                    b.HasOne("HackathonBot.Models.Kmm.Event", "Event")
+                        .WithMany("Entries")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("HackathonBot.Models.Kmm.KmmTeam", "Team")
                         .WithMany("EventEntries")
                         .HasForeignKey("KmmTeamId")
@@ -430,6 +386,8 @@ namespace HackathonBot.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Event");
+
                     b.Navigation("Quest");
 
                     b.Navigation("Team");
@@ -440,7 +398,8 @@ namespace HackathonBot.Migrations
                     b.HasOne("HackathonBot.Models.Team", "HackathonTeam")
                         .WithOne("KmmTeam")
                         .HasForeignKey("HackathonBot.Models.Kmm.KmmTeam", "HackathonTeamId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("HackathonTeam");
                 });
@@ -499,6 +458,8 @@ namespace HackathonBot.Migrations
 
             modelBuilder.Entity("HackathonBot.Models.Kmm.Event", b =>
                 {
+                    b.Navigation("Entries");
+
                     b.Navigation("Quests");
                 });
 

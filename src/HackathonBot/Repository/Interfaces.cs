@@ -19,6 +19,8 @@ public interface ITeamRepository : IRepository<Team>
     Task<Team?> GetWithMembersAsync(Guid teamId, CancellationToken ct = default);
 
     Task<Team?> FindByNameAsync(string name, CancellationToken ct = default);
+
+    Task<Team?> GetWithKmmAsync(Guid teamId, CancellationToken ct = default);
 }
 
 public interface ISubmissionRepository : IRepository<Submission>

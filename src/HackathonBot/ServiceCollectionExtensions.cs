@@ -1,5 +1,7 @@
 using System.Reflection;
 using HackathonBot.Models;
+using HackathonBot.Models.Kmm;
+using HackathonBot.Modules;
 using HackathonBot.Properties;
 using HackathonBot.Repository;
 using HackathonBot.Services;
@@ -25,6 +27,7 @@ public static class ServiceCollectionExtensions
         // Configuration
         services.Configure<BotStartupConfig>(configuration.GetSection(nameof(BotStartupConfig)));
         services.Configure<HackathonConfig>(configuration.GetSection(nameof(HackathonConfig)));
+        services.Configure<KmmConfig>(configuration.GetSection(nameof(KmmConfig)));
         services.AddLogging();
 
         // Database
@@ -34,11 +37,12 @@ public static class ServiceCollectionExtensions
                 ?? throw new InvalidOperationException("Database connection string is not configured")));
         services.AddScoped<BasicBotDbContext>(ctx => ctx.GetRequiredService<BotDbContext>());
         services.AddRepositories();
+        services.AddKmmRepositories();
 
         // Common Services
         services.ConfigureCommonServices();
 
-        foreach (var moduleType in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsAssignableTo(typeof(ModuleBase))))
+        foreach (var moduleType in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsAssignableTo(typeof(ModuleBase)) && !x.IsAbstract))
         {
             services.AddSingleton(typeof(ModuleBase), moduleType);
         }
@@ -51,8 +55,49 @@ public static class ServiceCollectionExtensions
         
         services.AddSingleton<IRoleProvider, RoleProvider>();
         services.AddSingleton<ITelegramUserService, TelegramUserService>();
+        services.AddSingleton<IKmmGameService, KmmGameService>();
 
         services.AddSingleton(Localization.ResourceManager);
+
+        return services;
+    }
+
+    public static IServiceCollection AddKmmRepositories(this IServiceCollection services)
+    {
+        // Bank
+        services.AddScoped<BankRepository>();
+        services.AddScoped<IBankRepository>(sp => sp.GetRequiredService<BankRepository>());
+        services.AddScoped<IRepository<Bank>>(sp => sp.GetRequiredService<BankRepository>());
+
+        // KmmTeam
+        services.AddScoped<KmmTeamRepository>();
+        services.AddScoped<IKmmTeamRepository>(sp => sp.GetRequiredService<KmmTeamRepository>());
+        services.AddScoped<IRepository<KmmTeam>>(sp => sp.GetRequiredService<KmmTeamRepository>());
+
+        // AbilityUse
+        services.AddScoped<AbilityUseRepository>();
+        services.AddScoped<IAbilityUseRepository>(sp => sp.GetRequiredService<AbilityUseRepository>());
+        services.AddScoped<IRepository<AbilityUse>>(sp => sp.GetRequiredService<AbilityUseRepository>());
+
+        // Quest
+        services.AddScoped<QuestRepository>();
+        services.AddScoped<IQuestRepository>(sp => sp.GetRequiredService<QuestRepository>());
+        services.AddScoped<IRepository<Quest>>(sp => sp.GetRequiredService<QuestRepository>());
+
+        // EventEntry
+        services.AddScoped<EventEntryRepository>();
+        services.AddScoped<IEventEntryRepository>(sp => sp.GetRequiredService<EventEntryRepository>());
+        services.AddScoped<IRepository<EventEntry>>(sp => sp.GetRequiredService<EventEntryRepository>());
+
+        // Event
+        services.AddScoped<EventRepository>();
+        services.AddScoped<IEventRepository>(sp => sp.GetRequiredService<EventRepository>());
+        services.AddScoped<IRepository<Event>>(sp => sp.GetRequiredService<EventRepository>());
+
+        // EventAuditEntry
+        services.AddScoped<EventAuditRepository>();
+        services.AddScoped<IEventAuditRepository>(sp => sp.GetRequiredService<EventAuditRepository>());
+        services.AddScoped<IRepository<EventAuditEntry>>(sp => sp.GetRequiredService<EventAuditRepository>());
 
         return services;
     }

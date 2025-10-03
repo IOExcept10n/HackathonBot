@@ -1,13 +1,10 @@
-﻿using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text;
 using HackathonBot.Models;
 using HackathonBot.Properties;
-using HackathonBot.Repository;
-using HackathonBot.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MyBots.Core.Fsm.States;
-using MyBots.Core.Localization;
 using MyBots.Modules.Common;
 using MyBots.Modules.Common.Interactivity;
 using MyBots.Modules.Common.Roles;
@@ -18,30 +15,21 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace HackathonBot.Modules;
 
-internal class AdminModule(
-    IStateRegistry states,
-    ILocalizationService localization,
-    ITelegramUserService userService,
-    IBotUserRoleRepository roles,
-    ITeamRepository teams,
-    IParticipantRepository participants,
-    ILogger<AdminModule> logger) :
-    ModuleBase(Labels.Administration, [Roles.Admin], states, localization)
+internal class AdminModule(IServiceProvider services) : BotModule(Labels.Administration, [Roles.Admin], services)
 {
-    private readonly IParticipantRepository _participants = participants;
-    private readonly IBotUserRoleRepository _roles = roles;
-    private readonly ITeamRepository _teams = teams;
-    private readonly ITelegramUserService _users = userService;
-    private readonly ILogger<AdminModule> _logger = logger;
+    private readonly ILogger<AdminModule> _logger = services.GetRequiredService<ILogger<AdminModule>>();
 
     [MenuState(nameof(Localization.ConfirmUserDeletion), BackButton = false)]
     [MenuRow(nameof(Labels.No), nameof(Labels.Yes))]
     public async Task<StateResult> OnConfirmDeleteUserAsync(ModuleStateContext ctx)
     {
+        if (!ctx.TryGetData(out string? username))
+            return Fail();
+
         if (ctx.Matches(Labels.Yes))
         {
-            await _users.DeleteUserAsync(ctx.StateData, ctx.CancellationToken);
-            return ToRoot(message: Localization.UserDeleted);
+            await Users.DeleteUserAsync(username, ctx.CancellationToken);
+            return ToRootWithMessage(Localization.UserDeleted);
         }
         else if (ctx.Matches(Labels.No))
         {
@@ -62,14 +50,14 @@ internal class AdminModule(
         if (ctx.Matches(Labels.DeleteParticipant))
             return ToState(nameof(OnRequestUsernameForDeleteAsync));
         else if (ctx.Matches(Labels.RegisterParticipant))
-            return ToState(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Participant));
+            return ToStateWith(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Participant));
         else if (ctx.Matches(Labels.RegisterAdmin))
-            return ToState(nameof(OnSelectAdminRoleAsync), nameof(Roles.Participant));
+            return ToStateWith(nameof(OnSelectAdminRoleAsync), nameof(Roles.Participant));
         else if (ctx.Matches(Labels.ManageParticipants))
         {
             StringBuilder lst = new();
             lst.AppendLine(Localization.ParticipantsList);
-            var participants = from participant in _participants.GetAll().Include(x => x.Team).AsNoTracking()
+            var participants = from participant in Participants.GetAll().Include(x => x.Team).AsNoTracking()
                                let teamName = participant.Team != null ? participant.Team.Name : "*"
                                orderby teamName
                                group participant by teamName;
@@ -78,7 +66,7 @@ internal class AdminModule(
                 lst.AppendLine(group.Key + ":");
                 foreach (var participant in group)
                 {
-                    lst.AppendLine("- " + participant.FormatDisplay());
+                    lst.Append("- ").Append(participant.FormatDisplay()).Append(' ').AppendLine(participant.IsLoggedIntoBot.AsEmoji().ToUnicode());
                 }
                 lst.AppendLine();
             }
@@ -92,7 +80,7 @@ internal class AdminModule(
 
             List<List<KeyboardButton>> buttonLayout = [];
 
-            foreach (var team in _teams.GetAll().AsNoTracking().OrderBy(x => x.Name))
+            foreach (var team in Teams.GetAll().AsNoTracking().OrderBy(x => x.Name))
             {
                 lst.Append("- ").Append(" [").Append(team.Case).Append("]: ").AppendLine(team.Name);
                 buttonLayout.Add([new(team.Name)]);
@@ -108,7 +96,7 @@ internal class AdminModule(
         {
             StringBuilder lst = new();
             lst.AppendLine(Localization.OrganizersList);
-            var roles = _roles.GetAll().AsNoTracking()
+            var roles = BotRoles.GetAll().AsNoTracking()
                 .Where(x => x.RoleId == RoleIndex.Organizer || x.RoleId == RoleIndex.Admin)
                 .OrderBy(x => x.Username);
             foreach (var role in roles)
@@ -165,7 +153,7 @@ internal class AdminModule(
                 }
 
                 await ctx.ReplyAsync(bd.ToString());
-                return ToState(nameof(OnConfirmUploadUsersAsync), data.ToString());
+                return ToStateWith(nameof(OnConfirmUploadUsersAsync), participants);
             }
             catch (Exception ex)
             {
@@ -182,20 +170,14 @@ internal class AdminModule(
     {
         if (ctx.Matches(Labels.Yes))
         {
-            string[] lines = ctx.StateData.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            foreach (var line in lines)
+            if (!ctx.TryGetData(out List<(string Name, string Tg, string Team)>? participants))
+                return Fail();
+
+            foreach (var (name, tg, team) in participants)
             {
-                var parts = line.Split(';');
-                string name = parts[0].Trim();
-                string tg = parts[1].Trim()
-                    .Replace("https://t.me/", "")
-                    .Replace("http://t.me/", "")
-                    .Replace("t.me/", "")
-                    .Replace("@", "");
-                string team = parts[2].Trim();
-                await _users.RegisterParticipantAsync(team, tg, name, ctx.CancellationToken);
+                await Users.RegisterParticipantAsync(team, tg, name, ctx.CancellationToken);
             }
-            return ToRoot(message: Localization.UploadCompleted);
+            return ToRootWithMessage(Localization.UploadCompleted);
         }
 
         return ToRoot();
@@ -213,10 +195,10 @@ internal class AdminModule(
     {
         if (ctx.Message is not TextMessageContent { Text: string teamName })
             return InvalidInput(ctx);
-        var team = await _teams.FindByNameAsync(teamName, ctx.CancellationToken);
+        var team = await Teams.FindByNameAsync(teamName, ctx.CancellationToken);
         if (team == null)
-            return Fail(message: Localization.TeamNotFound);
-        team = (await _teams.GetWithMembersAsync(team.Id, ctx.CancellationToken))!;
+            return FailWithMessage(Localization.TeamNotFound);
+        team = (await Teams.GetWithMembersAsync(team.Id, ctx.CancellationToken))!;
 
         StringBuilder members = new();
         foreach (var member in team.Members)
@@ -231,10 +213,10 @@ internal class AdminModule(
         await ctx.ReplyAsync(Localization.TeamDetails.FormatInvariant(
             teamName,
             members,
-            _localizationService.GetString(team.Case.ToString()),
+            LocalizationService.GetString(team.Case.ToString()),
             hasPresentation.AsEmoji().ToUnicode(),
             hasRepo.AsEmoji().ToUnicode()));
-        return ToState(nameof(OnTeamMenuAsync), teamName);
+        return ToStateWith(nameof(OnTeamMenuAsync), teamName);
     }
 
     [MenuState(nameof(Localization.SelectTeamAction))]
@@ -243,11 +225,14 @@ internal class AdminModule(
     [MenuItem(nameof(Labels.DeleteTeam))]
     public async Task<StateResult> OnTeamMenuAsync(ModuleStateContext ctx)
     {
+        if (!ctx.TryGetData(out string? teamName))
+            return Fail();
+
         if (ctx.Matches(Labels.GetTeamSubmission))
         {
-            var team = await _teams.FindByNameAsync(ctx.StateData, ctx.CancellationToken);
+            var team = await Teams.FindByNameAsync(teamName, ctx.CancellationToken);
             if (team == null)
-                return Fail(message: Localization.TeamNotFound);
+                return FailWithMessage(message: Localization.TeamNotFound);
             var submission = team.Submission;
 
             if (submission == null)
@@ -284,11 +269,11 @@ internal class AdminModule(
         }
         if (ctx.Matches(Labels.RenameTeam))
         {
-            return ToState(nameof(OnInputNewTeamNameAsync), ctx.StateData);
+            return ToStateWith(nameof(OnInputNewTeamNameAsync), teamName);
         }
         if (ctx.Matches(Labels.DeleteTeam))
         {
-            return ToState(nameof(OnConfirmDeleteTeamAsync), ctx.StateData);
+            return ToStateWith(nameof(OnConfirmDeleteTeamAsync), teamName);
         }
         return InvalidInput(ctx);
     }
@@ -297,13 +282,16 @@ internal class AdminModule(
     [MenuRow(nameof(Labels.No), nameof(Labels.Yes))]
     public async Task<StateResult> OnConfirmDeleteTeamAsync(ModuleStateContext ctx)
     {
+        if (!ctx.TryGetData(out string? teamName))
+            return Fail();
+
         if (ctx.Matches(Labels.Yes))
         {
-            var team = await _teams.FindByNameAsync(ctx.StateData, ctx.CancellationToken);
+            var team = await Teams.FindByNameAsync(teamName, ctx.CancellationToken);
             if (team == null)
-                return Fail(message: Localization.TeamNotFound);
-            await _teams.DeleteAsync(team, ctx.CancellationToken);
-            await _teams.SaveChangesAsync(ctx.CancellationToken);
+                return FailWithMessage(message: Localization.TeamNotFound);
+            await Teams.DeleteAsync(team, ctx.CancellationToken);
+            await Teams.SaveChangesAsync(ctx.CancellationToken);
             return Completed(Localization.TeamDeleted);
         }
         else if (ctx.Matches(Labels.No))
@@ -316,13 +304,16 @@ internal class AdminModule(
     [PromptState<string>(nameof(Localization.InputUserTeam))]
     public async Task<StateResult> OnInputNewTeamNameAsync(PromptStateContext<string> ctx)
     {
+        if (!ctx.TryGetData(out string? oldName))
+            return Fail();
+
         if (!ctx.Input.TryGetValue(out string name))
             return InvalidInput(ctx);
-        var team = await _teams.FindByNameAsync(ctx.StateData);
+        var team = await Teams.FindByNameAsync(oldName);
         if (team == null)
-            return Fail(message: Localization.TeamNotFound);
+            return FailWithMessage(message: Localization.TeamNotFound);
         team.Name = name;
-        await _teams.SaveChangesAsync(ctx.CancellationToken);
+        await Teams.SaveChangesAsync(ctx.CancellationToken);
         return Completed(Localization.TeamRenamed);
     }
 
@@ -332,16 +323,16 @@ internal class AdminModule(
         if (!ctx.Input.TryGetValue(out string name))
             return InvalidInput(ctx);
         name = name.AsCanonicalNickname();
-        var participant = await _participants.FindByUsernameAsync(name, ctx.CancellationToken);
+        var participant = await Participants.FindByUsernameAsync(name, ctx.CancellationToken);
         if (participant == null)
-            return Fail(message: Localization.UserNotFound);
+            return FailWithMessage(Localization.UserNotFound);
 
         await ctx.ReplyAsync(Localization.ParticipantDetails.FormatInvariant(
             participant.FullName,
             participant.Nickname,
             participant.IsLoggedIntoBot.AsEmoji().ToUnicode(),
             participant.Team?.Name));
-        return ToState(nameof(OnParticipantMenuAsync), name);
+        return ToStateWith(nameof(OnParticipantMenuAsync), name);
     }
 
     [MenuState(nameof(Localization.SelectUserAction))]
@@ -349,13 +340,16 @@ internal class AdminModule(
     [MenuItem(nameof(Labels.DeleteParticipant))]
     public async Task<StateResult> OnParticipantMenuAsync(ModuleStateContext ctx)
     {
-        var participant = await _participants.FindByUsernameAsync(ctx.StateData, ctx.CancellationToken);
+        if (!ctx.TryGetData(out string? username))
+            return Fail();
+
+        var participant = await Participants.FindByUsernameAsync(username, ctx.CancellationToken);
         if (participant == null)
-            return Fail(message: Localization.UserNotFound);
+            return FailWithMessage(message: Localization.UserNotFound);
 
         if (ctx.Matches(Labels.ChangeParticipantTeam))
         {
-            var teams = _teams.GetAll().AsNoTracking().Include(t => t.Members).Where(x => x.Members.Count < 5);
+            var teams = Teams.GetAll().AsNoTracking().Include(t => t.Members).Where(x => x.Members.Count < 5);
             StringBuilder availableTeams = new();
             availableTeams.AppendLine(Localization.TeamsList);
             List<List<KeyboardButton>> buttonLayout = [];
@@ -368,11 +362,11 @@ internal class AdminModule(
             ReplyKeyboardMarkup markup = new(buttonLayout);
 
             await ctx.BotClient.SendMessage(ctx.Chat, availableTeams.ToString(), replyMarkup: markup);
-            return ToState(nameof(OnSelectParticipantTeamAsync), ctx.StateData);
+            return ToStateWith(nameof(OnSelectParticipantTeamAsync), username);
         }
         else if (ctx.Matches(Labels.DeleteParticipant))
         {
-            return ToState(nameof(OnConfirmDeleteUserAsync), ctx.StateData);
+            return ToStateWith(nameof(OnConfirmDeleteUserAsync), username);
         }
         return InvalidInput(ctx);
     }
@@ -383,42 +377,52 @@ internal class AdminModule(
     {
         if (ctx.Message is not TextMessageContent text)
             return InvalidInput(ctx);
+        if (!ctx.TryGetData(out string? username))
+            return Fail();
 
-        var participant = await _participants.FindByUsernameAsync(ctx.StateData, ctx.CancellationToken);
+        var participant = await Participants.FindByUsernameAsync(username, ctx.CancellationToken);
         if (participant == null)
-            return Fail(message: Localization.UserNotFound);
+            return FailWithMessage(message: Localization.UserNotFound);
 
-        var team = await _teams.FindByNameAsync(text.Text, ctx.CancellationToken);
+        var team = await Teams.FindByNameAsync(text.Text, ctx.CancellationToken);
         if (team == null)
         {
             team = new()
             {
                 Name = text.Text,
             };
-            await _teams.AddAsync(team, ctx.CancellationToken);
-            await _teams.SaveChangesAsync();
+            await Teams.AddAsync(team, ctx.CancellationToken);
+            await Teams.SaveChangesAsync();
         }
 
         participant.TeamId = team.Id;
-        await _participants.SaveChangesAsync();
+        await Participants.SaveChangesAsync();
         return Completed(Localization.ParticipantTeamChanged);
     }
 
     [PromptState<string>(nameof(Localization.InputUserFullName))]
     public Task<StateResult> OnRequestUserFullNameAsync(PromptStateContext<string> ctx)
-        => Task.FromResult(ToState(nameof(OnRequestUserTeamAsync), $"{ctx.StateData}:{ctx.Input.GetValueOrDefault()}"));
+    {
+        if (!ctx.TryGetData(out ParticipantInputModel participant))
+            return Task.FromResult(Fail());
+        return Task.FromResult(ToStateWith(nameof(OnRequestUserTeamAsync), participant with { FullName = ctx.Input.GetValueOrDefault()}));
+    }
+
+    private readonly record struct ParticipantInputModel(string Username, string FullName);
 
     [PromptState<string>(nameof(Localization.InputUserName))]
     public async Task<StateResult> OnRequestUsernameForCreationAsync(PromptStateContext<string> ctx)
     {
         string name = ctx.Input.GetValueOrDefault();
-        long? existenceCheck = await _users.GetTelegramIdByUsernameAsync(name, ctx.CancellationToken);
+        long? existenceCheck = await Users.GetTelegramIdByUsernameAsync(name, ctx.CancellationToken);
         if (existenceCheck != null)
-            return ToRoot(message: Localization.UserAlreadyExists);
+            return ToRootWithMessage(message: Localization.UserAlreadyExists);
+        if (!ctx.TryGetData(out string? data))
+            return Fail();
 
-        return ctx.StateData switch
+        return data switch
         {
-            nameof(Roles.Participant) => ToState(nameof(OnRequestUserFullNameAsync), name),
+            nameof(Roles.Participant) => ToStateWith(nameof(OnRequestUserFullNameAsync), new ParticipantInputModel(name, string.Empty)),
             nameof(Roles.Organizer) => await CreateWithRole(name, Roles.Organizer, ctx.CancellationToken),
             nameof(Roles.Admin) => await CreateWithRole(name, Roles.Admin, ctx.CancellationToken),
             _ => Fail(),
@@ -429,23 +433,23 @@ internal class AdminModule(
     public async Task<StateResult> OnRequestUsernameForDeleteAsync(PromptStateContext<string> ctx)
     {
         string username = ctx.Input.GetValueOrDefault().ToLowerInvariant();
-        var role = await _users.CheckUserByNameAsync(username, ctx.CancellationToken);
+        var role = await Users.CheckUserByNameAsync(username, ctx.CancellationToken);
         switch (role)
         {
             case RoleIndex.Participant:
                 await ctx.ReplyAsync($"{Localization.UserRoleInfo} {Localization.Participant}");
-                return ToState(nameof(OnConfirmDeleteUserAsync), username);
+                return ToStateWith(nameof(OnConfirmDeleteUserAsync), username);
 
             case RoleIndex.Organizer:
                 await ctx.ReplyAsync($"{Localization.UserRoleInfo} {Localization.Organizer}");
-                return ToState(nameof(OnConfirmDeleteUserAsync), username);
+                return ToStateWith(nameof(OnConfirmDeleteUserAsync), username);
 
             case RoleIndex.Admin:
                 await ctx.ReplyAsync($"{Localization.UserRoleInfo} {Localization.Admin}");
-                return ToState(nameof(OnConfirmDeleteUserAsync), username);
+                return ToStateWith(nameof(OnConfirmDeleteUserAsync), username);
 
             default:
-                return ToRoot(message: Localization.UserNotFound);
+                return ToRootWithMessage(Localization.UserNotFound);
         }
     }
 
@@ -453,11 +457,10 @@ internal class AdminModule(
     public async Task<StateResult> OnRequestUserTeamAsync(PromptStateContext<string> ctx)
     {
         string teamName = ctx.Input.GetValueOrDefault();
-        var parts = ctx.StateData.Split(':');
-        string nickname = parts[0];
-        string name = parts[1];
-        await _users.RegisterParticipantAsync(teamName, nickname, name, ctx.CancellationToken);
-        return ToRoot(message: Localization.UserAdded);
+        if (!ctx.TryGetData(out ParticipantInputModel participant))
+            return Fail();
+        await Users.RegisterParticipantAsync(teamName, participant.Username, participant.FullName, ctx.CancellationToken);
+        return ToRootWithMessage(Localization.UserAdded);
     }
 
     [MenuState(nameof(Localization.SelectRole), ParentStateName = RootStateName)]
@@ -465,9 +468,9 @@ internal class AdminModule(
     public Task<StateResult> OnSelectAdminRoleAsync(ModuleStateContext ctx)
     {
         if (ctx.Matches(Labels.Admin))
-            return Task.FromResult(ToState(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Admin)));
+            return Task.FromResult(ToStateWith(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Admin)));
         if (ctx.Matches(Labels.Organizer))
-            return Task.FromResult(ToState(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Organizer)));
+            return Task.FromResult(ToStateWith(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Organizer)));
         return Task.FromResult(InvalidInput(ctx));
     }
 
@@ -478,8 +481,8 @@ internal class AdminModule(
             Username = username,
             Role = role
         };
-        await _roles.AddAsync(userRole, cancellationToken);
-        await _roles.SaveChangesAsync(cancellationToken);
-        return ToRoot(message: Localization.UserAdded);
+        await BotRoles.AddAsync(userRole, cancellationToken);
+        await BotRoles.SaveChangesAsync(cancellationToken);
+        return ToRootWithMessage(Localization.UserAdded);
     }
 }

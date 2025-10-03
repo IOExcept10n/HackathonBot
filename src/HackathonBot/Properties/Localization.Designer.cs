@@ -61,6 +61,53 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Способности.
+        /// </summary>
+        internal static string Abilities {
+            get {
+                return ResourceManager.GetString("Abilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы больше не можете использовать эту способность..
+        /// </summary>
+        internal static string AbilityUsageLimitReached {
+            get {
+                return ResourceManager.GetString("AbilityUsageLimitReached", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Способность успешно применена.
+        /// </summary>
+        internal static string AbilityUsed {
+            get {
+                return ResourceManager.GetString("AbilityUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Об игре.
+        /// </summary>
+        internal static string AboutKmm {
+            get {
+                return ResourceManager.GetString("AboutKmm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ваша компания оказалась под угрозой: группа инсайдеров под прикрытием конкурента пытается захватить контроль над главным проектом — &quot;Сейфом с инновациями&quot;. За 3 дня команды получают роли (мирные или мафия) и соревнуются — мирные стремятся собрать 100 кредитов в общий сейф, мафия саботирует события, крадёт кредиты и пытается устранить ключевых защитников.
+        ///
+        ///Каждый день команды участвуют в мероприятиях и зарабатывают кредиты; ночью мафия тайно выбирает цель, а все мирные голосуют за подозреваемого. У каждой  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string AboutKmmMessage {
+            get {
+                return ResourceManager.GetString("AboutKmmMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Добавить команду.
         /// </summary>
         internal static string AddTeam {
@@ -97,11 +144,29 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ожидание завершения голосования. Не покидайте это меню, не завершив голосование!.
+        /// </summary>
+        internal static string AwaitVoteEnd {
+            get {
+                return ResourceManager.GetString("AwaitVoteEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Назад.
         /// </summary>
         internal static string Back {
             get {
                 return ResourceManager.GetString("Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to В общем банке недостаточно денег для применения вашей способности.
+        /// </summary>
+        internal static string BankIsEmpty {
+            get {
+                return ResourceManager.GetString("BankIsEmpty", resourceCulture);
             }
         }
         
@@ -196,6 +261,24 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Проверка.
+        /// </summary>
+        internal static string Check {
+            get {
+                return ResourceManager.GetString("Check", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы можете использовать эту способность перед каждым голосованием, чтобы определить, какая команда является мафией. До конца общего голосования вы можете менять выбор, а после него вам придёт сообщение с информацией по выбранной вами команде. После голосования вы снова можете использовать эту способность, чтобы выбирать другие команды.
+        /// </summary>
+        internal static string CheckDescription {
+            get {
+                return ResourceManager.GetString("CheckDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ниже будет представлен список участников, сгруппированный по командам. Проверьте правильность введённых данных.
         /// </summary>
         internal static string CheckTeamUploadFileContents {
@@ -205,11 +288,65 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Сотрудник.
+        /// </summary>
+        internal static string Citizen {
+            get {
+                return ResourceManager.GetString("Citizen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Завершить голосование.
+        /// </summary>
+        internal static string ConcludeVote {
+            get {
+                return ResourceManager.GetString("ConcludeVote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы точно хотите использовать способность?.
+        /// </summary>
+        internal static string ConfirmAbilityUsage {
+            get {
+                return ResourceManager.GetString("ConfirmAbilityUsage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы точно хотите удалить событие?.
+        /// </summary>
+        internal static string ConfirmEventDeletion {
+            get {
+                return ResourceManager.GetString("ConfirmEventDeletion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы точно хотите заново начать игру в мафию? Это удалит все текущие команды и весь прогресс.
+        /// </summary>
+        internal static string ConfirmInitializeKmm {
+            get {
+                return ResourceManager.GetString("ConfirmInitializeKmm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Вы уверены, что хотите отправить сообщение?.
         /// </summary>
         internal static string ConfirmMailing {
             get {
                 return ResourceManager.GetString("ConfirmMailing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы точно хотите удалить квест?.
+        /// </summary>
+        internal static string ConfirmQuestDeletion {
+            get {
+                return ResourceManager.GetString("ConfirmQuestDeletion", resourceCulture);
             }
         }
         
@@ -241,11 +378,76 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ваша команда: {0}
+        ///Вы ещё не сделали голос.
+        /// </summary>
+        internal static string CurrentVoteDefailsNoVote {
+            get {
+                return ResourceManager.GetString("CurrentVoteDefailsNoVote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ваша команда: {0}
+        ///Вы выбрали команду {1}.
+        /// </summary>
+        internal static string CurrentVoteDetails {
+            get {
+                return ResourceManager.GetString("CurrentVoteDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Утечка данных.
+        /// </summary>
+        internal static string DataLeak {
+            get {
+                return ResourceManager.GetString("DataLeak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Эта способность позволяет уменьшить общий счёт мирных жителей на 10 единиц. Стоимость использования: 10 личных монет..
+        /// </summary>
+        internal static string DataLeakDescription {
+            get {
+                return ResourceManager.GetString("DataLeakDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Защита.
+        /// </summary>
+        internal static string Defense {
+            get {
+                return ResourceManager.GetString("Defense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы можете использовать эту способность перед каждым голосованием, чтобы защитить одну команду (в том числе и себя) от нападения мафии. Учтите, что эта способность не подействует, если вас выгонят на голосовании. Вы можете менять свой выбор сколько угодно раз до конца голосования. После голосования не будет раскрыто, за кого вы голосовали, но ваш последний голос учтётся при проверке жертвы мафии.
+        /// </summary>
+        internal static string DefenseDescription {
+            get {
+                return ResourceManager.GetString("DefenseDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Удалить организатора.
         /// </summary>
         internal static string DeleteAdmin {
             get {
                 return ResourceManager.GetString("DeleteAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить событие.
+        /// </summary>
+        internal static string DeleteEvent {
+            get {
+                return ResourceManager.GetString("DeleteEvent", resourceCulture);
             }
         }
         
@@ -259,11 +461,208 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Удалить квест.
+        /// </summary>
+        internal static string DeleteQuest {
+            get {
+                return ResourceManager.GetString("DeleteQuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Удалить команду.
         /// </summary>
         internal static string DeleteTeam {
             get {
                 return ResourceManager.GetString("DeleteTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Тимлид.
+        /// </summary>
+        internal static string Detective {
+            get {
+                return ResourceManager.GetString("Detective", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Детектив столкнулся с помехами и не смог никого вычислить.
+        /// </summary>
+        internal static string DetectiveCheckBlocked {
+            get {
+                return ResourceManager.GetString("DetectiveCheckBlocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Результат проверки команды &apos;{0}&apos;: {1}.
+        /// </summary>
+        internal static string DetectiveCheckResult {
+            get {
+                return ResourceManager.GetString("DetectiveCheckResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Детектив вычислил мирного жителя.
+        /// </summary>
+        internal static string DetectiveFoundCitizen {
+            get {
+                return ResourceManager.GetString("DetectiveFoundCitizen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Детектив вычислил мафию.
+        /// </summary>
+        internal static string DetectiveFoundMafia {
+            get {
+                return ResourceManager.GetString("DetectiveFoundMafia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Специалист по информационной безопасности.
+        /// </summary>
+        internal static string Doctor {
+            get {
+                return ResourceManager.GetString("Doctor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Изменить описание квеста.
+        /// </summary>
+        internal static string EditQuestDescription {
+            get {
+                return ResourceManager.GetString("EditQuestDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Изменить имя квеста.
+        /// </summary>
+        internal static string EditQuestName {
+            get {
+                return ResourceManager.GetString("EditQuestName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Завершить событие.
+        /// </summary>
+        internal static string EndEvent {
+            get {
+                return ResourceManager.GetString("EndEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Событие уже существует.
+        /// </summary>
+        internal static string EventAlreadyExists {
+            get {
+                return ResourceManager.GetString("EventAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Для события &apos;{0}&apos; команде &apos;{1}&apos; назначен индивидуальный квест!
+        ///
+        ///{2}
+        ///{3}
+        ///
+        ///Выполнение этого квеста командой даст бонус к очкам мирным жителям или позволит мафии украсть часть очков. Организатор КММ сам проследит за выполнением этого квеста..
+        /// </summary>
+        internal static string EventAssignedQuest {
+            get {
+                return ResourceManager.GetString("EventAssignedQuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Событие успешно создано.
+        /// </summary>
+        internal static string EventCreated {
+            get {
+                return ResourceManager.GetString("EventCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Событие успешно удалено.
+        /// </summary>
+        internal static string EventDeleted {
+            get {
+                return ResourceManager.GetString("EventDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Событие успешно завершено.
+        /// </summary>
+        internal static string EventEndedSuccessfully {
+            get {
+                return ResourceManager.GetString("EventEndedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Результаты мероприятия &apos;{0}&apos; для команды &apos;{1}&apos;.
+        ///Место: {2}
+        ///Выполнение квеста: {3}
+        ///Итоговый счёт команды: {4}.
+        /// </summary>
+        internal static string EventFinalResultForTeam {
+            get {
+                return ResourceManager.GetString("EventFinalResultForTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to У события нет квестов.
+        /// </summary>
+        internal static string EventHasNoQuests {
+            get {
+                return ResourceManager.GetString("EventHasNoQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список событий:.
+        /// </summary>
+        internal static string EventsList {
+            get {
+                return ResourceManager.GetString("EventsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Событие успешно запущено.
+        /// </summary>
+        internal static string EventStartedSuccessfully {
+            get {
+                return ResourceManager.GetString("EventStartedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Брандмауер.
+        /// </summary>
+        internal static string Firewall {
+            get {
+                return ResourceManager.GetString("Firewall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Эта способность позволяет заблокировать использование способностей мафии при следующем срабатывании. Её можно использовать только один раз за игру. .
+        /// </summary>
+        internal static string FirewallDescription {
+            get {
+                return ResourceManager.GetString("FirewallDescription", resourceCulture);
             }
         }
         
@@ -277,11 +676,128 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Компания-конкурент.
+        /// </summary>
+        internal static string Godfather {
+            get {
+                return ResourceManager.GetString("Godfather", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хакатон уже завершился!.
+        /// </summary>
+        internal static string HackathonEndedWarning {
+            get {
+                return ResourceManager.GetString("HackathonEndedWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Хакатон.
         /// </summary>
         internal static string HackathonModuleText {
             get {
                 return ResourceManager.GetString("HackathonModuleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Хакерская атака.
+        /// </summary>
+        internal static string HackerAttack {
+            get {
+                return ResourceManager.GetString("HackerAttack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Эта способность позволяет заблокировать способности &quot;Защита&quot; и &quot;Проверка&quot; на один круг голосования. Стоимость: 10 личных монет.
+        /// </summary>
+        internal static string HackerAttackDescription {
+            get {
+                return ResourceManager.GetString("HackerAttackDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Раздать роли командам.
+        /// </summary>
+        internal static string InitializeKmm {
+            get {
+                return ResourceManager.GetString("InitializeKmm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите название события.
+        /// </summary>
+        internal static string InputEventName {
+            get {
+                return ResourceManager.GetString("InputEventName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите награду за первое место.
+        /// </summary>
+        internal static string InputFirstPlaceReward {
+            get {
+                return ResourceManager.GetString("InputFirstPlaceReward", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите новое описание квеста.
+        /// </summary>
+        internal static string InputNewQuestDescription {
+            get {
+                return ResourceManager.GetString("InputNewQuestDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите новое имя квеста.
+        /// </summary>
+        internal static string InputNewQuestName {
+            get {
+                return ResourceManager.GetString("InputNewQuestName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите описание квеста.
+        /// </summary>
+        internal static string InputQuestDescription {
+            get {
+                return ResourceManager.GetString("InputQuestDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите имя квеста.
+        /// </summary>
+        internal static string InputQuestName {
+            get {
+                return ResourceManager.GetString("InputQuestName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите награду за второе место.
+        /// </summary>
+        internal static string InputSecondPlaceReward {
+            get {
+                return ResourceManager.GetString("InputSecondPlaceReward", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите награду за третье место.
+        /// </summary>
+        internal static string InputThirdPlaceReward {
+            get {
+                return ResourceManager.GetString("InputThirdPlaceReward", resourceCulture);
             }
         }
         
@@ -313,6 +829,158 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Неверный выбор команды.
+        /// </summary>
+        internal static string InvalidTeamSelection {
+            get {
+                return ResourceManager.GetString("InvalidTeamSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to КММ.
+        /// </summary>
+        internal static string Kmm {
+            get {
+                return ResourceManager.GetString("Kmm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Лог способностей.
+        /// </summary>
+        internal static string KmmAuditAbilities {
+            get {
+                return ResourceManager.GetString("KmmAuditAbilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Создать событие.
+        /// </summary>
+        internal static string KmmCreateEvent {
+            get {
+                return ResourceManager.GetString("KmmCreateEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Создать квест/саботаж.
+        /// </summary>
+        internal static string KmmCreateQuest {
+            get {
+                return ResourceManager.GetString("KmmCreateQuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Игра для КММ успешно инициализирована.
+        /// </summary>
+        internal static string KmmInitializedSuccessfully {
+            get {
+                return ResourceManager.GetString("KmmInitializedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управлять событиями.
+        /// </summary>
+        internal static string KmmManageEvents {
+            get {
+                return ResourceManager.GetString("KmmManageEvents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управление КММ.
+        /// </summary>
+        internal static string KmmManagement {
+            get {
+                return ResourceManager.GetString("KmmManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управлять квестами.
+        /// </summary>
+        internal static string KmmManageQuests {
+            get {
+                return ResourceManager.GetString("KmmManageQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Управление действующим событием. Внимание, не покидайте это меню без завершения события!.
+        /// </summary>
+        internal static string KmmManageRunningEvent {
+            get {
+                return ResourceManager.GetString("KmmManageRunningEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to КММ не инициализировано. Распределите команды по ролям, чтобы использовать остальные функции..
+        /// </summary>
+        internal static string KmmNotInitialized {
+            get {
+                return ResourceManager.GetString("KmmNotInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Извините, но мероприятия ещё не начались, либо вы на них не зарегистрированы. Подождите ещё немного, скоро организаторы зарегистрируют всех желающих. Если вы считаете, что произошла какая-то ошибка, то напишите организаторам: @kkkira_kh.
+        /// </summary>
+        internal static string KmmNotStarted {
+            get {
+                return ResourceManager.GetString("KmmNotStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Начать голосование.
+        /// </summary>
+        internal static string KmmStartVote {
+            get {
+                return ResourceManager.GetString("KmmStartVote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команда {0}:
+        ///Роль: {1}
+        ///Команда жива? {2}
+        ///Счёт: {3}.
+        /// </summary>
+        internal static string KmmTeamDetails {
+            get {
+                return ResourceManager.GetString("KmmTeamDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ваша команда по КММ: {0}
+        ///Роль команды: {1}
+        ///Заработанные очки: {2}
+        ///{3}
+        ///
+        ///Общий банк мирных жителей: {4}/{5}.
+        /// </summary>
+        internal static string KmmTeamInfo {
+            get {
+                return ResourceManager.GetString("KmmTeamInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Статусы команд.
+        /// </summary>
+        internal static string KmmTeamsStatus {
+            get {
+                return ResourceManager.GetString("KmmTeamsStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ЛД.
         /// </summary>
         internal static string LD {
@@ -327,6 +995,78 @@ namespace HackathonBot.Properties {
         internal static string LDCaseInfo {
             get {
                 return ResourceManager.GetString("LDCaseInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Получить список квестов по командам.
+        /// </summary>
+        internal static string ListTeamQuests {
+            get {
+                return ResourceManager.GetString("ListTeamQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список команд, оставшихся в живых.
+        /// </summary>
+        internal static string LiveTeams {
+            get {
+                return ResourceManager.GetString("LiveTeams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Жители изгнали команду &apos;{0}&apos;..
+        /// </summary>
+        internal static string LynchedResult {
+            get {
+                return ResourceManager.GetString("LynchedResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Жители никого не изгнали.
+        /// </summary>
+        internal static string LynchedResultNone {
+            get {
+                return ResourceManager.GetString("LynchedResultNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Инсайдер.
+        /// </summary>
+        internal static string Mafia {
+            get {
+                return ResourceManager.GetString("Mafia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Мафия изгнала команду &apos;{0}&apos;..
+        /// </summary>
+        internal static string MafiaKillResult {
+            get {
+                return ResourceManager.GetString("MafiaKillResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Мафия никого не убила.
+        /// </summary>
+        internal static string MafiaKillResultNone {
+            get {
+                return ResourceManager.GetString("MafiaKillResultNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Личный счёт мафии: {0}.
+        /// </summary>
+        internal static string MafiaPersonalBankInfo {
+            get {
+                return ResourceManager.GetString("MafiaPersonalBankInfo", resourceCulture);
             }
         }
         
@@ -419,6 +1159,15 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Имя уже занято.
+        /// </summary>
+        internal static string NameTaken {
+            get {
+                return ResourceManager.GetString("NameTaken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Нет.
         /// </summary>
         internal static string No {
@@ -446,11 +1195,38 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Нет квестов.
+        /// </summary>
+        internal static string NoQuests {
+            get {
+                return ResourceManager.GetString("NoQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Вы ещё не загрузили ссылку на репозиторий. Не забудьте прикрепить её до стоп-кода.
         /// </summary>
         internal static string NoRepoYet {
             get {
                 return ResourceManager.GetString("NoRepoYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список квестов.
+        /// </summary>
+        internal static string NormalQuestsList {
+            get {
+                return ResourceManager.GetString("NormalQuestsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Нет команд для запуска события.
+        /// </summary>
+        internal static string NoTeamsForEvent {
+            get {
+                return ResourceManager.GetString("NoTeamsForEvent", resourceCulture);
             }
         }
         
@@ -464,11 +1240,29 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to У вас недостаточно денег для использования этой способности.
+        /// </summary>
+        internal static string NotEnoughCoins {
+            get {
+                return ResourceManager.GetString("NotEnoughCoins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Рассылки.
         /// </summary>
         internal static string Notifications {
             get {
                 return ResourceManager.GetString("Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Не реализовано.
+        /// </summary>
+        internal static string NotImplemented {
+            get {
+                return ResourceManager.GetString("NotImplemented", resourceCulture);
             }
         }
         
@@ -482,7 +1276,7 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Извините, но вы не можете выполнить это действие. Попробуйте ещё раз или напишите разработчику: @IOException.
+        ///   Looks up a localized string similar to Извините, но вы не можете выполнить это действие. Попробуйте ещё раз или напишите разработчику: @IOExcept10n.
         /// </summary>
         internal static string OrganizerAccessDenied {
             get {
@@ -566,6 +1360,24 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Выберите команду, занявшую {0} место:.
+        /// </summary>
+        internal static string PickNextPlace {
+            get {
+                return ResourceManager.GetString("PickNextPlace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите команду для регистрации результата.
+        /// </summary>
+        internal static string PickTeamToProcess {
+            get {
+                return ResourceManager.GetString("PickTeamToProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Файл с презентацией команды {0}.
         /// </summary>
         internal static string PresentationFileInfo {
@@ -589,6 +1401,51 @@ namespace HackathonBot.Properties {
         internal static string PresentationUploaded {
             get {
                 return ResourceManager.GetString("PresentationUploaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите место, занятое командой.
+        /// </summary>
+        internal static string PromptPlace {
+            get {
+                return ResourceManager.GetString("PromptPlace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Команда выполнила квест?.
+        /// </summary>
+        internal static string PromptQuestCompleted {
+            get {
+                return ResourceManager.GetString("PromptQuestCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Квест успешно создан.
+        /// </summary>
+        internal static string QuestCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("QuestCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Квест успешно удалён.
+        /// </summary>
+        internal static string QuestDeleted {
+            get {
+                return ResourceManager.GetString("QuestDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Квест успешно обновлён.
+        /// </summary>
+        internal static string QuestUpdated {
+            get {
+                return ResourceManager.GetString("QuestUpdated", resourceCulture);
             }
         }
         
@@ -647,11 +1504,38 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Список саботажей.
+        /// </summary>
+        internal static string SabotageQuestsList {
+            get {
+                return ResourceManager.GetString("SabotageQuestsList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите способность.
+        /// </summary>
+        internal static string SelectAbility {
+            get {
+                return ResourceManager.GetString("SelectAbility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выбрать кейс.
         /// </summary>
         internal static string SelectCase {
             get {
                 return ResourceManager.GetString("SelectCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите событие.
+        /// </summary>
+        internal static string SelectEvent {
+            get {
+                return ResourceManager.GetString("SelectEvent", resourceCulture);
             }
         }
         
@@ -665,11 +1549,38 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Выберите квест.
+        /// </summary>
+        internal static string SelectQuest {
+            get {
+                return ResourceManager.GetString("SelectQuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Это квест для саботажа?.
+        /// </summary>
+        internal static string SelectQuestIsSabotage {
+            get {
+                return ResourceManager.GetString("SelectQuestIsSabotage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выберите роль.
         /// </summary>
         internal static string SelectRole {
             get {
                 return ResourceManager.GetString("SelectRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите команду.
+        /// </summary>
+        internal static string SelectTeam {
+            get {
+                return ResourceManager.GetString("SelectTeam", resourceCulture);
             }
         }
         
@@ -688,6 +1599,15 @@ namespace HackathonBot.Properties {
         internal static string SelectUserAction {
             get {
                 return ResourceManager.GetString("SelectUserAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите следующую команду для записи результатов.
+        /// </summary>
+        internal static string SelectWinners {
+            get {
+                return ResourceManager.GetString("SelectWinners", resourceCulture);
             }
         }
         
@@ -765,6 +1685,33 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Клевета.
+        /// </summary>
+        internal static string Slander {
+            get {
+                return ResourceManager.GetString("Slander", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Эта способность лишает выбранную команду голоса на следующем голосовании. Стоимость использования: 5 личных монет. Каждое повторное использование способности в рамках одного голосования позволяет выбрать ещё одну команду в качестве цели.
+        /// </summary>
+        internal static string SlanderDescription {
+            get {
+                return ResourceManager.GetString("SlanderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Запустить событие.
+        /// </summary>
+        internal static string StartEvent {
+            get {
+                return ResourceManager.GetString("StartEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Т-Банк.
         /// </summary>
         internal static string TBank {
@@ -829,6 +1776,24 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Команда выбыла!.
+        /// </summary>
+        internal static string TeamOut {
+            get {
+                return ResourceManager.GetString("TeamOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Не беспокойтесь, вы всё ещё можете копить очки в общий зачёт, но они не будут засчитываться в банке.
+        /// </summary>
+        internal static string TeamOutNote {
+            get {
+                return ResourceManager.GetString("TeamOutNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Команда успешно переименована.
         /// </summary>
         internal static string TeamRenamed {
@@ -847,7 +1812,7 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Произошла неизвестная ошибка. Пожалуйста, сообщите разработчику @ioexception, приложив историю переписки..
+        ///   Looks up a localized string similar to Произошла неизвестная ошибка. Пожалуйста, сообщите разработчику @ioexcept10n, приложив историю переписки..
         /// </summary>
         internal static string UnknownError {
             get {
@@ -963,6 +1928,15 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Загрузите CSV-файл со списком команд-участников и их цветов.
+        /// </summary>
+        internal static string UploadTeamsPrompt {
+            get {
+                return ResourceManager.GetString("UploadTeamsPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Пользователь успешно создан!.
         /// </summary>
         internal static string UserAdded {
@@ -1008,6 +1982,60 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Голосование.
+        /// </summary>
+        internal static string Vote {
+            get {
+                return ResourceManager.GetString("Vote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ваш голос принят!.
+        /// </summary>
+        internal static string VoteAccepted {
+            get {
+                return ResourceManager.GetString("VoteAccepted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Голосование на данный момент закрыто. Пожалуйста, попробуйте позже.
+        /// </summary>
+        internal static string VoteClosedWarning {
+            get {
+                return ResourceManager.GetString("VoteClosedWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Голосование успешно завершено!.
+        /// </summary>
+        internal static string VoteEndedSuccessfully {
+            get {
+                return ResourceManager.GetString("VoteEndedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Пришло время голосования! Заходи в раздел для КММ и отдай свой голос!.
+        /// </summary>
+        internal static string VoteStartedMessage {
+            get {
+                return ResourceManager.GetString("VoteStartedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите команду, за которую вы голосвуете.
+        /// </summary>
+        internal static string VoteTargetRequest {
+            get {
+                return ResourceManager.GetString("VoteTargetRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Что вы хотите сделать?.
         /// </summary>
         internal static string WhatsYourChoice {
@@ -1017,11 +2045,38 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Трудовая этика.
+        /// </summary>
+        internal static string WorkEthic {
+            get {
+                return ResourceManager.GetString("WorkEthic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы можете использовать эту способность один раз за всю игру, чтобы увеличить число заработанных в следующем мероприятии личных очков в 2 раза.
+        /// </summary>
+        internal static string WorkEthicDescription {
+            get {
+                return ResourceManager.GetString("WorkEthicDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Да.
         /// </summary>
         internal static string Yes {
             get {
                 return ResourceManager.GetString("Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы также можете загрузить CSV файл с результатами мероприятия.
+        /// </summary>
+        internal static string YouCanAlsoInputCSVWithResults {
+            get {
+                return ResourceManager.GetString("YouCanAlsoInputCSVWithResults", resourceCulture);
             }
         }
     }
