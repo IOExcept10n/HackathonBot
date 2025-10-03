@@ -23,10 +23,13 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     [MenuRow(nameof(Labels.No), nameof(Labels.Yes))]
     public async Task<StateResult> OnConfirmDeleteUserAsync(ModuleStateContext ctx)
     {
+        if (!ctx.TryGetData(out string? username))
+            return Fail();
+
         if (ctx.Matches(Labels.Yes))
         {
-            await Users.DeleteUserAsync(ctx.StateData, ctx.CancellationToken);
-            return ToRoot(message: Localization.UserDeleted);
+            await Users.DeleteUserAsync(username, ctx.CancellationToken);
+            return ToRootWithMessage(Localization.UserDeleted);
         }
         else if (ctx.Matches(Labels.No))
         {
@@ -47,9 +50,9 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
         if (ctx.Matches(Labels.DeleteParticipant))
             return ToState(nameof(OnRequestUsernameForDeleteAsync));
         else if (ctx.Matches(Labels.RegisterParticipant))
-            return ToState(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Participant));
+            return ToStateWith(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Participant));
         else if (ctx.Matches(Labels.RegisterAdmin))
-            return ToState(nameof(OnSelectAdminRoleAsync), nameof(Roles.Participant));
+            return ToStateWith(nameof(OnSelectAdminRoleAsync), nameof(Roles.Participant));
         else if (ctx.Matches(Labels.ManageParticipants))
         {
             StringBuilder lst = new();
@@ -150,7 +153,7 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
                 }
 
                 await ctx.ReplyAsync(bd.ToString());
-                return ToState(nameof(OnConfirmUploadUsersAsync), data.ToString());
+                return ToStateWith(nameof(OnConfirmUploadUsersAsync), participants);
             }
             catch (Exception ex)
             {
@@ -167,20 +170,14 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     {
         if (ctx.Matches(Labels.Yes))
         {
-            string[] lines = ctx.StateData.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            foreach (var line in lines)
+            if (!ctx.TryGetData(out List<(string Name, string Tg, string Team)>? participants))
+                return Fail();
+
+            foreach (var (name, tg, team) in participants)
             {
-                var parts = line.Split(';');
-                string name = parts[0].Trim();
-                string tg = parts[1].Trim()
-                    .Replace("https://t.me/", "")
-                    .Replace("http://t.me/", "")
-                    .Replace("t.me/", "")
-                    .Replace("@", "");
-                string team = parts[2].Trim();
                 await Users.RegisterParticipantAsync(team, tg, name, ctx.CancellationToken);
             }
-            return ToRoot(message: Localization.UploadCompleted);
+            return ToRootWithMessage(Localization.UploadCompleted);
         }
 
         return ToRoot();
@@ -200,7 +197,7 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
             return InvalidInput(ctx);
         var team = await Teams.FindByNameAsync(teamName, ctx.CancellationToken);
         if (team == null)
-            return Fail(message: Localization.TeamNotFound);
+            return FailWithMessage(Localization.TeamNotFound);
         team = (await Teams.GetWithMembersAsync(team.Id, ctx.CancellationToken))!;
 
         StringBuilder members = new();
@@ -216,10 +213,10 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
         await ctx.ReplyAsync(Localization.TeamDetails.FormatInvariant(
             teamName,
             members,
-            _localizationService.GetString(team.Case.ToString()),
+            LocalizationService.GetString(team.Case.ToString()),
             hasPresentation.AsEmoji().ToUnicode(),
             hasRepo.AsEmoji().ToUnicode()));
-        return ToState(nameof(OnTeamMenuAsync), teamName);
+        return ToStateWith(nameof(OnTeamMenuAsync), teamName);
     }
 
     [MenuState(nameof(Localization.SelectTeamAction))]
@@ -228,11 +225,14 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     [MenuItem(nameof(Labels.DeleteTeam))]
     public async Task<StateResult> OnTeamMenuAsync(ModuleStateContext ctx)
     {
+        if (!ctx.TryGetData(out string? teamName))
+            return Fail();
+
         if (ctx.Matches(Labels.GetTeamSubmission))
         {
-            var team = await Teams.FindByNameAsync(ctx.StateData, ctx.CancellationToken);
+            var team = await Teams.FindByNameAsync(teamName, ctx.CancellationToken);
             if (team == null)
-                return Fail(message: Localization.TeamNotFound);
+                return FailWithMessage(message: Localization.TeamNotFound);
             var submission = team.Submission;
 
             if (submission == null)
@@ -269,11 +269,11 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
         }
         if (ctx.Matches(Labels.RenameTeam))
         {
-            return ToState(nameof(OnInputNewTeamNameAsync), ctx.StateData);
+            return ToStateWith(nameof(OnInputNewTeamNameAsync), teamName);
         }
         if (ctx.Matches(Labels.DeleteTeam))
         {
-            return ToState(nameof(OnConfirmDeleteTeamAsync), ctx.StateData);
+            return ToStateWith(nameof(OnConfirmDeleteTeamAsync), teamName);
         }
         return InvalidInput(ctx);
     }
@@ -282,11 +282,14 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     [MenuRow(nameof(Labels.No), nameof(Labels.Yes))]
     public async Task<StateResult> OnConfirmDeleteTeamAsync(ModuleStateContext ctx)
     {
+        if (!ctx.TryGetData(out string? teamName))
+            return Fail();
+
         if (ctx.Matches(Labels.Yes))
         {
-            var team = await Teams.FindByNameAsync(ctx.StateData, ctx.CancellationToken);
+            var team = await Teams.FindByNameAsync(teamName, ctx.CancellationToken);
             if (team == null)
-                return Fail(message: Localization.TeamNotFound);
+                return FailWithMessage(message: Localization.TeamNotFound);
             await Teams.DeleteAsync(team, ctx.CancellationToken);
             await Teams.SaveChangesAsync(ctx.CancellationToken);
             return Completed(Localization.TeamDeleted);
@@ -301,11 +304,14 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     [PromptState<string>(nameof(Localization.InputUserTeam))]
     public async Task<StateResult> OnInputNewTeamNameAsync(PromptStateContext<string> ctx)
     {
+        if (!ctx.TryGetData(out string? oldName))
+            return Fail();
+
         if (!ctx.Input.TryGetValue(out string name))
             return InvalidInput(ctx);
-        var team = await Teams.FindByNameAsync(ctx.StateData);
+        var team = await Teams.FindByNameAsync(oldName);
         if (team == null)
-            return Fail(message: Localization.TeamNotFound);
+            return FailWithMessage(message: Localization.TeamNotFound);
         team.Name = name;
         await Teams.SaveChangesAsync(ctx.CancellationToken);
         return Completed(Localization.TeamRenamed);
@@ -319,14 +325,14 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
         name = name.AsCanonicalNickname();
         var participant = await Participants.FindByUsernameAsync(name, ctx.CancellationToken);
         if (participant == null)
-            return Fail(message: Localization.UserNotFound);
+            return FailWithMessage(Localization.UserNotFound);
 
         await ctx.ReplyAsync(Localization.ParticipantDetails.FormatInvariant(
             participant.FullName,
             participant.Nickname,
             participant.IsLoggedIntoBot.AsEmoji().ToUnicode(),
             participant.Team?.Name));
-        return ToState(nameof(OnParticipantMenuAsync), name);
+        return ToStateWith(nameof(OnParticipantMenuAsync), name);
     }
 
     [MenuState(nameof(Localization.SelectUserAction))]
@@ -334,9 +340,12 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     [MenuItem(nameof(Labels.DeleteParticipant))]
     public async Task<StateResult> OnParticipantMenuAsync(ModuleStateContext ctx)
     {
-        var participant = await Participants.FindByUsernameAsync(ctx.StateData, ctx.CancellationToken);
+        if (!ctx.TryGetData(out string? username))
+            return Fail();
+
+        var participant = await Participants.FindByUsernameAsync(username, ctx.CancellationToken);
         if (participant == null)
-            return Fail(message: Localization.UserNotFound);
+            return FailWithMessage(message: Localization.UserNotFound);
 
         if (ctx.Matches(Labels.ChangeParticipantTeam))
         {
@@ -353,11 +362,11 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
             ReplyKeyboardMarkup markup = new(buttonLayout);
 
             await ctx.BotClient.SendMessage(ctx.Chat, availableTeams.ToString(), replyMarkup: markup);
-            return ToState(nameof(OnSelectParticipantTeamAsync), ctx.StateData);
+            return ToStateWith(nameof(OnSelectParticipantTeamAsync), username);
         }
         else if (ctx.Matches(Labels.DeleteParticipant))
         {
-            return ToState(nameof(OnConfirmDeleteUserAsync), ctx.StateData);
+            return ToStateWith(nameof(OnConfirmDeleteUserAsync), username);
         }
         return InvalidInput(ctx);
     }
@@ -368,10 +377,12 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     {
         if (ctx.Message is not TextMessageContent text)
             return InvalidInput(ctx);
+        if (!ctx.TryGetData(out string? username))
+            return Fail();
 
-        var participant = await Participants.FindByUsernameAsync(ctx.StateData, ctx.CancellationToken);
+        var participant = await Participants.FindByUsernameAsync(username, ctx.CancellationToken);
         if (participant == null)
-            return Fail(message: Localization.UserNotFound);
+            return FailWithMessage(message: Localization.UserNotFound);
 
         var team = await Teams.FindByNameAsync(text.Text, ctx.CancellationToken);
         if (team == null)
@@ -391,7 +402,13 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
 
     [PromptState<string>(nameof(Localization.InputUserFullName))]
     public Task<StateResult> OnRequestUserFullNameAsync(PromptStateContext<string> ctx)
-        => Task.FromResult(ToState(nameof(OnRequestUserTeamAsync), $"{ctx.StateData}:{ctx.Input.GetValueOrDefault()}"));
+    {
+        if (!ctx.TryGetData(out ParticipantInputModel participant))
+            return Task.FromResult(Fail());
+        return Task.FromResult(ToStateWith(nameof(OnRequestUserTeamAsync), participant with { FullName = ctx.Input.GetValueOrDefault()}));
+    }
+
+    private readonly record struct ParticipantInputModel(string Username, string FullName);
 
     [PromptState<string>(nameof(Localization.InputUserName))]
     public async Task<StateResult> OnRequestUsernameForCreationAsync(PromptStateContext<string> ctx)
@@ -399,11 +416,13 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
         string name = ctx.Input.GetValueOrDefault();
         long? existenceCheck = await Users.GetTelegramIdByUsernameAsync(name, ctx.CancellationToken);
         if (existenceCheck != null)
-            return ToRoot(message: Localization.UserAlreadyExists);
+            return ToRootWithMessage(message: Localization.UserAlreadyExists);
+        if (!ctx.TryGetData(out string? data))
+            return Fail();
 
-        return ctx.StateData switch
+        return data switch
         {
-            nameof(Roles.Participant) => ToState(nameof(OnRequestUserFullNameAsync), name),
+            nameof(Roles.Participant) => ToStateWith(nameof(OnRequestUserFullNameAsync), new ParticipantInputModel(name, string.Empty)),
             nameof(Roles.Organizer) => await CreateWithRole(name, Roles.Organizer, ctx.CancellationToken),
             nameof(Roles.Admin) => await CreateWithRole(name, Roles.Admin, ctx.CancellationToken),
             _ => Fail(),
@@ -419,18 +438,18 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
         {
             case RoleIndex.Participant:
                 await ctx.ReplyAsync($"{Localization.UserRoleInfo} {Localization.Participant}");
-                return ToState(nameof(OnConfirmDeleteUserAsync), username);
+                return ToStateWith(nameof(OnConfirmDeleteUserAsync), username);
 
             case RoleIndex.Organizer:
                 await ctx.ReplyAsync($"{Localization.UserRoleInfo} {Localization.Organizer}");
-                return ToState(nameof(OnConfirmDeleteUserAsync), username);
+                return ToStateWith(nameof(OnConfirmDeleteUserAsync), username);
 
             case RoleIndex.Admin:
                 await ctx.ReplyAsync($"{Localization.UserRoleInfo} {Localization.Admin}");
-                return ToState(nameof(OnConfirmDeleteUserAsync), username);
+                return ToStateWith(nameof(OnConfirmDeleteUserAsync), username);
 
             default:
-                return ToRoot(message: Localization.UserNotFound);
+                return ToRootWithMessage(Localization.UserNotFound);
         }
     }
 
@@ -438,11 +457,10 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     public async Task<StateResult> OnRequestUserTeamAsync(PromptStateContext<string> ctx)
     {
         string teamName = ctx.Input.GetValueOrDefault();
-        var parts = ctx.StateData.Split(':');
-        string nickname = parts[0];
-        string name = parts[1];
-        await Users.RegisterParticipantAsync(teamName, nickname, name, ctx.CancellationToken);
-        return ToRoot(message: Localization.UserAdded);
+        if (!ctx.TryGetData(out ParticipantInputModel participant))
+            return Fail();
+        await Users.RegisterParticipantAsync(teamName, participant.Username, participant.FullName, ctx.CancellationToken);
+        return ToRootWithMessage(Localization.UserAdded);
     }
 
     [MenuState(nameof(Localization.SelectRole), ParentStateName = RootStateName)]
@@ -450,9 +468,9 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
     public Task<StateResult> OnSelectAdminRoleAsync(ModuleStateContext ctx)
     {
         if (ctx.Matches(Labels.Admin))
-            return Task.FromResult(ToState(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Admin)));
+            return Task.FromResult(ToStateWith(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Admin)));
         if (ctx.Matches(Labels.Organizer))
-            return Task.FromResult(ToState(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Organizer)));
+            return Task.FromResult(ToStateWith(nameof(OnRequestUsernameForCreationAsync), nameof(Roles.Organizer)));
         return Task.FromResult(InvalidInput(ctx));
     }
 
@@ -465,6 +483,6 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
         };
         await BotRoles.AddAsync(userRole, cancellationToken);
         await BotRoles.SaveChangesAsync(cancellationToken);
-        return ToRoot(message: Localization.UserAdded);
+        return ToRootWithMessage(Localization.UserAdded);
     }
 }

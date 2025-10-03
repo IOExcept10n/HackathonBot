@@ -33,6 +33,7 @@ public static class ServiceExtensions
         services.AddSingleton<IStateHandlerRegistry, StateHandlerRegistry>();
         services.AddSingleton<IReplyService, ReplyService>();
         services.AddSingleton<IButtonLabelProvider, ButtonLabelProvider>();
+        services.AddSingleton<IModelRegistry, ModelRegistry>();
 
         return services;
     }

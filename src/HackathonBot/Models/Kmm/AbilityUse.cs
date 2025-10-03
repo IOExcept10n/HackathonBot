@@ -10,11 +10,9 @@ public enum Ability
 
     #region Citizen
     WorkEthic,
-    Waterfall,
     #endregion
 
     #region Mafia
-    Sabotage,
     DataLeak,
     HackerAttack,
     #endregion
@@ -29,7 +27,6 @@ public enum Ability
     #endregion
 
     #region Godfather
-    KillOrder,
     Slander,
     #endregion
 }
@@ -41,4 +38,6 @@ public class AbilityUse
     public Ability Ability { get; set; }
     public DateTime UsedAt { get; set; }
     public KmmTeam Team { get; set; } = null!;
+    public long? TargetTeamId { get; set; }
+    public KmmTeam? TargetTeam { get; set; } = null!;
 }

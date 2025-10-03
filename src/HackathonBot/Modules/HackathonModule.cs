@@ -31,7 +31,7 @@ internal class HackathonModule(IServiceProvider services) : BotModule(Labels.Hac
             if (DateTime.UtcNow > _config.HackathonStart)
             {
                 if (participant.Team == null)
-                    return Fail(message: Localization.NoTeamWarning);
+                    return FailWithMessage(message: Localization.NoTeamWarning);
 
                 bool presentationUploaded = false, repoUploaded = false;
                 string lastUpd = "-";
@@ -66,7 +66,7 @@ internal class HackathonModule(IServiceProvider services) : BotModule(Labels.Hac
         {
             if (participant.Team == null)
             {
-                return Retry(ctx, message: Localization.NoTeamWarning);
+                return RetryWithMessage(ctx, message: Localization.NoTeamWarning);
             }
 
             var team = (await Teams.GetWithMembersAsync(participant.TeamId!.Value))!;
@@ -79,7 +79,7 @@ internal class HackathonModule(IServiceProvider services) : BotModule(Labels.Hac
                 teamInfo.Append("- ").AppendLine(member.FormatDisplay());
             }
 
-            return Retry(ctx, message: string.Format(Localization.TeamInfo, participant.GetNameOnly(), teamInfo.ToString(), _localizationService.GetString(team.Case.ToString())));
+            return RetryWithMessage(ctx, Localization.TeamInfo.FormatInvariant(participant.GetNameOnly(), teamInfo.ToString(), LocalizationService.GetString(team.Case.ToString())));
         }
         return InvalidInput(ctx);
     }
@@ -111,7 +111,7 @@ internal class HackathonModule(IServiceProvider services) : BotModule(Labels.Hac
 
             return (exceedLD, exceedTBank) switch
             {
-                (true, true) => ToRoot(message: Localization.CaseSelectionUnavailable),
+                (true, true) => ToRootWithMessage(Localization.CaseSelectionUnavailable),
                 (true, false) => ToState(nameof(OnSelectCaseAsync_TBankOnly)),
                 (false, true) => ToState(nameof(OnSelectCaseAsync_LDOnly)),
                 (false, false) => ToState(nameof(OnSelectCaseAsync_FullSelection)),
@@ -161,7 +161,7 @@ internal class HackathonModule(IServiceProvider services) : BotModule(Labels.Hac
         {
             var participant = await GetParticipantAsync(ctx);
             if (participant.Team == null)
-                return Fail(message: Localization.NoTeamWarning);
+                return FailWithMessage(message: Localization.NoTeamWarning);
             var submission = participant.Team.Submission;
 
             if (submission == null)
@@ -204,7 +204,7 @@ internal class HackathonModule(IServiceProvider services) : BotModule(Labels.Hac
     {
         var participant = await GetParticipantAsync(ctx);
         if (participant.Team == null)
-            return Fail(message: Localization.NoTeamWarning);
+            return FailWithMessage(message: Localization.NoTeamWarning);
         var submission = participant.Team.Submission;
         if (submission == null)
         {
@@ -243,7 +243,7 @@ internal class HackathonModule(IServiceProvider services) : BotModule(Labels.Hac
     {
         var participant = await GetParticipantAsync(ctx);
         if (participant.Team == null)
-            return Fail(message: Localization.NoTeamWarning);
+            return FailWithMessage(message: Localization.NoTeamWarning);
         var submission = participant.Team.Submission;
         if (submission == null)
         {

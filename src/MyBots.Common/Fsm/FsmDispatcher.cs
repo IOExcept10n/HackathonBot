@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MyBots.Core.Fsm.States;
+using MyBots.Core.Localization;
 using MyBots.Core.Persistence.Repository;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -15,6 +16,7 @@ public class FsmDispatcher(
     IReplyService replyService,
     IUserStateService userStates,
     IUserRepository users,
+    ILocalizationService localization,
     ILogger<FsmDispatcher> logger) : IFsmDispatcher
 {
     private readonly IStateHandlerProvider _handlerProvider = handlerProvider;
@@ -23,6 +25,7 @@ public class FsmDispatcher(
     private readonly IReplyService _replyService = replyService;
     private readonly IUserRepository _users = users;
     private readonly IUserStateService _userStates = userStates;
+    private readonly ILocalizationService _localization = localization;
 
     private ITelegramBotClient? _client;
 
@@ -92,7 +95,7 @@ public class FsmDispatcher(
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Couldn't process request. User state: {State}", ctx.User.State);
-                result = new("start", $"Error: {ex.Message}", "UnknownError");
+                result = new("start", $"Error: {ex.Message}", _localization.GetString("UnknownError"));
             }
 
             nextMessage = result.OverrideNextStateMessage;

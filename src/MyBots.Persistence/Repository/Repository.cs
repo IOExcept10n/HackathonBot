@@ -26,7 +26,7 @@ public class Repository<TContext, T>(TContext context) : IRepository<T>
     public virtual IQueryable<T> GetAll() => _dbSet;
 
     /// <inheritdoc />
-    public virtual async Task<T?> GetByIdAsync<TKey>(TKey id, CancellationToken ct = default) => await _dbSet.FindAsync([id], cancellationToken: ct);
+    public virtual async Task<T?> GetByIdAsync<TKey>(TKey id) => await _dbSet.FindAsync(id);
 
     /// <inheritdoc />
     public virtual async Task AddAsync(T entity, CancellationToken ct = default) => await _dbSet.AddAsync(entity, ct);
@@ -47,4 +47,7 @@ public class Repository<TContext, T>(TContext context) : IRepository<T>
 
     /// <inheritdoc />
     public virtual async Task SaveChangesAsync(CancellationToken ct = default) => await _context.SaveChangesAsync(ct);
+
+    /// <inheritdoc />
+    public virtual async Task TruncateAsync(CancellationToken ct = default) => await _dbSet.ExecuteDeleteAsync(ct);
 }

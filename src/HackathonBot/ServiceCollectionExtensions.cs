@@ -55,6 +55,7 @@ public static class ServiceCollectionExtensions
         
         services.AddSingleton<IRoleProvider, RoleProvider>();
         services.AddSingleton<ITelegramUserService, TelegramUserService>();
+        services.AddSingleton<IKmmGameService, KmmGameService>();
 
         services.AddSingleton(Localization.ResourceManager);
 
@@ -92,6 +93,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<EventRepository>();
         services.AddScoped<IEventRepository>(sp => sp.GetRequiredService<EventRepository>());
         services.AddScoped<IRepository<Event>>(sp => sp.GetRequiredService<EventRepository>());
+
+        // EventAuditEntry
+        services.AddScoped<EventAuditRepository>();
+        services.AddScoped<IEventAuditRepository>(sp => sp.GetRequiredService<EventAuditRepository>());
+        services.AddScoped<IRepository<EventAuditEntry>>(sp => sp.GetRequiredService<EventAuditRepository>());
 
         return services;
     }

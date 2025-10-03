@@ -1,8 +1,6 @@
 ﻿using HackathonBot.Repository;
 using HackathonBot.Services;
 using Microsoft.Extensions.DependencyInjection;
-using MyBots.Core.Fsm.States;
-using MyBots.Core.Localization;
 using MyBots.Core.Persistence.Repository;
 using MyBots.Modules.Common;
 using MyBots.Modules.Common.Interactivity;
@@ -11,7 +9,7 @@ using MyBots.Modules.Common.Roles;
 namespace HackathonBot.Modules;
 
 internal abstract class BotModule(ButtonLabel label, IEnumerable<Role> allowedRoles, IServiceProvider services)
-    : ModuleBase(label, allowedRoles, services.GetRequiredService<IStateRegistry>(), services.GetRequiredService<ILocalizationService>())
+    : ModuleBase(label, allowedRoles, services)
 {
     protected readonly Lazy<IBankRepository> _bankRepository = CreateLazy<IBankRepository>(services);
     protected readonly Lazy<IKmmTeamRepository> _kmmTeamRepository = CreateLazy<IKmmTeamRepository>(services);
@@ -19,6 +17,7 @@ internal abstract class BotModule(ButtonLabel label, IEnumerable<Role> allowedRo
     protected readonly Lazy<IQuestRepository> _questRepository = CreateLazy<IQuestRepository>(services);
     protected readonly Lazy<IEventRepository> _eventRepository = CreateLazy<IEventRepository>(services);
     protected readonly Lazy<IEventEntryRepository> _eventEntryRepository = CreateLazy<IEventEntryRepository>(services);
+    protected readonly Lazy<IEventAuditRepository> _auditRepository = CreateLazy<IEventAuditRepository>(services);
 
     protected readonly Lazy<IUserRepository> _FsmUserRepository = CreateLazy<IUserRepository>(services);
     protected readonly Lazy<IParticipantRepository> _iParticipantRepository = CreateLazy<IParticipantRepository>(services);
@@ -28,6 +27,7 @@ internal abstract class BotModule(ButtonLabel label, IEnumerable<Role> allowedRo
 
     protected readonly Lazy<ITelegramUserService> _userService = CreateLazy<ITelegramUserService>(services);
 
+    protected IEventAuditRepository Audit => _auditRepository.Value;
     protected IBankRepository Banks => _bankRepository.Value;
     protected IKmmTeamRepository KmmTeams => _kmmTeamRepository.Value;
     protected IAbilityUseRepository AbilityUses => _abilityUseRepository.Value;

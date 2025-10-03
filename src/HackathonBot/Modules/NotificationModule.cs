@@ -28,11 +28,11 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
     public override async Task<StateResult> OnModuleRootAsync(ModuleStateContext ctx)
     {
         if (ctx.Matches(Labels.MailingToAll))
-            return ToState(nameof(OnInputMessageAsync), All);
+            return ToStateWith(nameof(OnInputMessageAsync), All);
         else if (ctx.Matches(Labels.MailingToParticipants))
-            return ToState(nameof(OnInputMessageAsync), AllParticipants);
+            return ToStateWith(nameof(OnInputMessageAsync), AllParticipants);
         else if (ctx.Matches(Labels.MailingToOrganizers))
-            return ToState(nameof(OnInputMessageAsync), Organizers);
+            return ToStateWith(nameof(OnInputMessageAsync), Organizers);
         else if (ctx.Matches(Labels.MailingToTeam))
         {
             StringBuilder teams = new();
@@ -52,10 +52,14 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
     [PromptState<string>(nameof(Localization.MessageRequestPrompt))]
     public Task<StateResult> OnInputMessageAsync(PromptStateContext<string> ctx)
     {
+        if (!ctx.TryGetData(out string? target))
+            return Task.FromResult(Fail());
         if (!ctx.Input.TryGetValue(out string message))
             return Task.FromResult(InvalidInput(ctx));
-        return Task.FromResult(ToState(nameof(OnShowSenderNameAsync), ctx.StateData + Environment.NewLine + message));
+        return Task.FromResult(ToStateWith(nameof(OnShowSenderNameAsync), new MailingInputDetails(target, message, false)));
     }
+
+    private readonly record struct MailingInputDetails(string Targets, string Message, bool ShowSender);
 
     [MenuState(nameof(Localization.ShowSenderNameRequest))]
     [MenuRow(nameof(Labels.No), nameof(Labels.Yes))]
@@ -66,10 +70,11 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
         else if (ctx.Matches(Labels.No)) show = false;
         else return InvalidInput(ctx);
 
-        int firstLine = ctx.StateData.IndexOf(Environment.NewLine);
+        if (!ctx.TryGetData(out MailingInputDetails data))
+            return Fail();
 
-        string to = ctx.StateData[..firstLine];
-        string message = ctx.StateData[(firstLine + Environment.NewLine.Length)..];
+        string to = data.Targets;
+        string message = data.Message;
 
         int targets = 0;
         int actualTargets = 0;
@@ -140,7 +145,7 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
             targets, // Targets: {4}
             actualTargets)); // Actual targets: {5}
 
-        return ToState(nameof(OnConfirmMailing), ctx.StateData + Environment.NewLine + show);
+        return ToStateWith(nameof(OnConfirmMailing), data with { ShowSender = show });
     }
 
     [MenuState(nameof(Localization.ConfirmMailing))]
@@ -166,14 +171,10 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
 
         IEnumerable<long?> targets = [];
 
-        int firstLine = ctx.StateData.IndexOf(Environment.NewLine);
-        int lastLine = ctx.StateData.LastIndexOf(Environment.NewLine);
+        if (!ctx.TryGetData(out MailingInputDetails data))
+            return (0, 0);
 
-        string to = ctx.StateData[..firstLine];
-        string message = ctx.StateData[(firstLine + Environment.NewLine.Length)..lastLine];
-        if (!bool.TryParse(ctx.StateData[(lastLine + Environment.NewLine.Length)..].Trim(), out bool show)) show = false;
-
-        switch (to)
+        switch (data.Targets)
         {
             case All:
                 targets = [.. from user in BotRoles.GetAll().AsNoTracking() where user.RoleId != RoleIndex.Participant select user.TelegramId, 
@@ -183,8 +184,8 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
                 targets = from participant in Participants.GetAll().AsNoTracking() select participant.TelegramId; break;
             case Organizers:
                 targets = from user in BotRoles.GetAll().AsNoTracking() where user.RoleId != RoleIndex.Participant select user.TelegramId; break;
-            case { } when to.StartsWith("team:"):
-                var team = await Teams.FindByNameAsync(to[5..]); // Skip 'team:' from tag
+            case { } when data.Targets.StartsWith("team:"):
+                var team = await Teams.FindByNameAsync(data.Targets[5..]); // Skip 'team:' from tag
                 if (team == null)
                 {
                     targets = [];
@@ -195,8 +196,8 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
                     targets = from member in team!.Members select member.TelegramId;
                 }
                 break;
-            case { } when to.StartsWith("user:"):
-                var target = await BotRoles.FindByUsernameAsync(to[5..]); // Skip 'user:' from tag
+            case { } when data.Targets.StartsWith("user:"):
+                var target = await BotRoles.FindByUsernameAsync(data.Targets[5..]); // Skip 'user:' from tag
                 if (target == null)
                 {
                     targets = [];
@@ -210,9 +211,10 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
                 return (0, 0);
         }
 
-        if (show)
+        string message = data.Message;
+        if (data.ShowSender)
         {
-            message = message + Environment.NewLine + Environment.NewLine + $"> @{ctx.User.Name}";
+            message = data.Message + Environment.NewLine + Environment.NewLine + $"> @{ctx.User.Name}";
         }
 
         foreach (var tgId in targets)
@@ -242,7 +244,7 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
         var containsTeam = await Teams.GetAll().AsNoTracking().AnyAsync(x => x.Name == teamName);
         if (!containsTeam)
             return InvalidInput(ctx);
-        return ToState(nameof(OnInputMessageAsync), $"team:{teamName}");
+        return ToStateWith(nameof(OnInputMessageAsync), $"team:{teamName}");
     }
 
     [PromptState<string>(nameof(Localization.InputUserName))]
@@ -256,6 +258,6 @@ internal class NotificationModule(IServiceProvider services) : BotModule(Labels.
         var containsTeam = await BotRoles.GetAll().AsNoTracking().AnyAsync(x => x.Username == userName);
         if (!containsTeam)
             return InvalidInput(ctx);
-        return ToState(nameof(OnInputMessageAsync), $"user:{userName}");
+        return ToStateWith(nameof(OnInputMessageAsync), $"user:{userName}");
     }
 }

@@ -40,4 +40,15 @@ public interface IEventEntryRepository : IRepository<EventEntry>
 public interface IBankRepository : IRepository<Bank>
 {
     Task<Bank?> FindByKeyAsync(string key, CancellationToken ct = default);
+    Task<int> GetCoinsAsync(string key, CancellationToken ct = default);
+    Task<int> GetParticipantCoinsAsync(CancellationToken ct = default);
+    Task SetCoinsAsync(string key, int value, CancellationToken ct = default);
+    Task SetParticipantCoinsAsync(int value, CancellationToken ct = default);
+}
+
+public interface IEventAuditRepository : IRepository<EventAuditEntry>
+{
+    Task<IEnumerable<EventAuditEntry>> GetByInitiatorIdAsync(long initiatorId, CancellationToken ct = default);
+    Task<IEnumerable<EventAuditEntry>> GetByTypeAsync(EventType type, CancellationToken ct = default);
+    Task<IEnumerable<EventAuditEntry>> GetRecentAsync(int limit = 50, CancellationToken ct = default);
 }

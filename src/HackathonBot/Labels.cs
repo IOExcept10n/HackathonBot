@@ -51,10 +51,23 @@ namespace HackathonBot
         public static ButtonLabel KmmStartVote { get; } = new(Emoji.PoliceCarsRevolvingLight, Localization.KmmStartVote);
         public static ButtonLabel KmmAuditAbilities { get; } = new(Emoji.PageWithCurl, Localization.KmmAuditAbilities);
         public static ButtonLabel InitializeKmm { get; } = new(Emoji.SlotMachine, Localization.InitializeKmm);
-        public static ButtonLabel StartEvent { get; } = new(Emoji.ChequeredFlag, Localization.StartEvent);
+        public static ButtonLabel StartEvent { get; } = new(Emoji.PerformingArts, Localization.StartEvent);
         public static ButtonLabel DeleteEvent { get; } = new(Emoji.CrossMark, Localization.DeleteEvent);
         public static ButtonLabel EditQuestName { get; } = new(Emoji.Notebook, Localization.EditQuestName);
         public static ButtonLabel EditQuestDescription { get; } = new(Emoji.OpenBook, Localization.EditQuestDescription);
         public static ButtonLabel DeleteQuest { get; } = new(Emoji.CrossMark, Localization.DeleteQuest);
+        public static ButtonLabel EndEvent { get; } = new(Emoji.ChequeredFlag, Localization.EndEvent);
+        public static ButtonLabel ConcludeVote { get; } = new(Emoji.DirectHit, Localization.ConcludeVote);
+        public static ButtonLabel ListTeamQuests { get; } = new(Emoji.Clipboard, Localization.ListTeamQuests);
+        public static ButtonLabel AboutKmm { get; } = new(Emoji.InformationSource, Localization.AboutKmm);
+        public static ButtonLabel Abilities { get; } = new(Emoji.HighVoltageSign, Localization.Abilities);
+        public static ButtonLabel Vote { get; } = new(Emoji.BallotBoxWithCheck, Localization.Vote);
+        public static ButtonLabel WorkEthic { get; } = new(Emoji.OfficeBuilding, Localization.WorkEthic);
+        public static ButtonLabel Check { get; } = new(Emoji.LeftPointingMagnifyingGlass, Localization.Check);
+        public static ButtonLabel Defense { get; } = new(Emoji.WhiteFlower, Localization.Defense);
+        public static ButtonLabel Firewall { get; } = new(Emoji.NameBadge, Localization.Firewall);
+        public static ButtonLabel Slander { get; } = new(Emoji.EnvelopeWithDownwardsArrowAbove, Localization.Slander);
+        public static ButtonLabel DataLeak { get; } = new(Emoji.ChartWithDownwardsTrend, Localization.DataLeak);
+        public static ButtonLabel HackerAttack { get; } = new(Emoji.NoMobilePhones, Localization.HackerAttack);
     }
 }

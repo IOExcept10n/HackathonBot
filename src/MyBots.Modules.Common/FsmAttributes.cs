@@ -49,6 +49,16 @@ public abstract class PromptStateAttribute(Type inputType, string messageResourc
 [AttributeUsage(AttributeTargets.Method)]
 public sealed class PromptStateAttribute<T>(string messageResourceKey) : PromptStateAttribute(typeof(T), messageResourceKey);
 
+[AttributeUsage(AttributeTargets.Method)]
+public abstract class ModelPromptStateAttribute(Type inputType) : FsmStateAttribute(string.Empty)
+{
+    public Type InputType { get; } = inputType;
+    public bool BackButton { get; init; } = true;
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class ModelPromptStateAttribute<T>() : ModelPromptStateAttribute(typeof(T)) where T : new();
+
 public readonly record struct Unit : IParsable<Unit>
 {
     public static Unit Parse(string s, IFormatProvider? provider) => default;

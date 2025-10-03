@@ -3,7 +3,12 @@ using Telegram.Bot;
 
 namespace MyBots.Core.Fsm.States;
 
-public record StateContext(User User, MessageContent Message, string StateData, ITelegramBotClient BotClient);
+public record StateContext(
+    User User,
+    MessageContent Message,
+    [property: Obsolete("Do not use this property directly, use StateContext.TryGetData() instead. This property is JSON-serialized field to store in database.")]
+    string StateData,
+    ITelegramBotClient BotClient);
 
 public abstract record MessageContent 
 {

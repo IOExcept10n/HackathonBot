@@ -3,9 +3,9 @@
 public enum MafiaRole
 {
     Citizen,
-    Mafia,
     Detective,
     Doctor,
+    Mafia,
     Godfather,
 }
 
@@ -20,6 +20,8 @@ public class KmmTeam
     public int Score { get; set; }
 
     public bool IsAlive { get; set; }
+
+    public string Color { get; set; } = string.Empty;
 
     public Team HackathonTeam { get; set; } = null!;
 

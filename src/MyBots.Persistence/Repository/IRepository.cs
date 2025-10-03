@@ -20,7 +20,7 @@ public interface IRepository<T> where T : class
     /// <param name="id">The identifier of the entity to retrieve.</param>
     /// <param name="ct">An instance of the <see cref="CancellationToken"/> to cancel operation.</param>
     /// <returns>The entity if found; otherwise, null.</returns>
-    Task<T?> GetByIdAsync<TKey>(TKey id, CancellationToken ct = default);
+    Task<T?> GetByIdAsync<TKey>(TKey id);
 
     /// <summary>
     /// Asynchronously adds a new entity to the repository.
@@ -52,4 +52,14 @@ public interface IRepository<T> where T : class
     /// <param name="ct">An instance of the <see cref="CancellationToken"/> to cancel operation.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     Task SaveChangesAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Asynchronously truncates repository table with deleting all items from it.
+    /// </summary>
+    /// <remarks>
+    /// Use this method only when you're absolutely sure what you're doing! This method call will remove ALL items from the table.
+    /// </remarks>
+    /// <param name="ct">An instance of the <see cref="CancellationToken"/> to cancel operation.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task TruncateAsync(CancellationToken ct = default);
 }

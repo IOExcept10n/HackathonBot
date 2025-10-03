@@ -59,17 +59,15 @@ internal class BotDbContext(DbContextOptions<BotDbContext> options) : BasicBotDb
             b.Property(t => t.Case)
              .HasConversion<int>();
 
-            b.Property(t => t.KmmId)
-             .IsRequired();
-
             // Members navigation configured by Participant side
             // Optional: unique constraint on Team.Name per hackathon (single hackathon -> globally unique)
             b.HasIndex(t => t.Name).IsUnique();
 
             b.HasOne(t => t.KmmTeam)
              .WithOne(k => k.HackathonTeam)
-             .HasForeignKey<Team>(t => t.KmmId)
-             .OnDelete(DeleteBehavior.Cascade);
+             .HasForeignKey<KmmTeam>(x => x.HackathonTeamId)
+             .IsRequired(false)
+             .OnDelete(DeleteBehavior.SetNull);
         });
 
         //
@@ -169,16 +167,6 @@ internal class BotDbContext(DbContextOptions<BotDbContext> options) : BasicBotDb
             .HasForeignKey(a => a.TeamId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // KmmTeam <-> Team (one-to-one)
-        modelBuilder.Entity<KmmTeam>()
-            .Property(k => k.HackathonTeamId)
-            .IsRequired();
-        modelBuilder.Entity<KmmTeam>()
-            .HasOne(k => k.HackathonTeam)
-            .WithOne(t => t.KmmTeam)
-            .HasForeignKey<KmmTeam>(t => t.HackathonTeamId)
-            .OnDelete(DeleteBehavior.SetNull);
-
         // EventEntry: optional Quest relation (if QuestId can be 0/null adjust accordingly)
         modelBuilder.Entity<EventEntry>()
             .HasOne(en => en.Quest)
@@ -204,6 +192,48 @@ internal class BotDbContext(DbContextOptions<BotDbContext> options) : BasicBotDb
         modelBuilder.Entity<AbilityUse>()
             .Property(a => a.Ability)
             .HasConversion<string>();
+
+        // AbilityUse: Team (already configured) and optional TargetTeam
+        modelBuilder.Entity<AbilityUse>(b =>
+        {
+            b.HasKey(a => a.Id);
+
+            b.Property(a => a.UsedAt)
+             .IsRequired();
+
+            b.HasOne(a => a.Team)
+             .WithMany(t => t.AbilitiesLog)
+             .HasForeignKey(a => a.TeamId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            // TargetTeam: optional many-to-one (many ability uses may reference the same target team)
+            b.HasOne(a => a.TargetTeam)
+             .WithMany()
+             .HasForeignKey(a => a.TargetTeamId)
+             .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<EventAuditEntry>(b =>
+        {
+            b.HasKey(e => e.Id);
+
+            b.Property(e => e.Comment)
+             .HasMaxLength(2000);
+
+            b.Property(e => e.EventType)
+             .HasConversion<int>()
+             .IsRequired();
+
+            b.Property(e => e.LoggedAt)
+             .IsRequired();
+
+            b.HasOne(e => e.Initiator)
+             .WithMany()
+             .HasForeignKey(e => e.InitiatorId)
+             .OnDelete(DeleteBehavior.Restrict);
+
+            b.HasIndex(e => new { e.EventType, e.LoggedAt });
+        });
 
         // Configure required fields and max lengths
         modelBuilder.Entity<Event>()
