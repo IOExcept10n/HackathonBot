@@ -1666,6 +1666,15 @@ namespace HackathonBot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Выбрать кейс команды.
+        /// </summary>
+        internal static string SetTeamCase {
+            get {
+                return ResourceManager.GetString("SetTeamCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Отобразить список участников.
         /// </summary>
         internal static string ShowParticipantsList {
@@ -1726,6 +1735,15 @@ namespace HackathonBot.Properties {
         internal static string TBankCaseInfo {
             get {
                 return ResourceManager.GetString("TBankCaseInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Кейс команды выбран успешно.
+        /// </summary>
+        internal static string TeamCaseSet {
+            get {
+                return ResourceManager.GetString("TeamCaseSet", resourceCulture);
             }
         }
         

@@ -825,4 +825,10 @@
   <data name="YouCanAlsoInputCSVWithResults" xml:space="preserve">
     <value>Вы также можете загрузить CSV файл с результатами мероприятия</value>
   </data>
+  <data name="SetTeamCase" xml:space="preserve">
+    <value>Выбрать кейс команды</value>
+  </data>
+  <data name="TeamCaseSet" xml:space="preserve">
+    <value>Кейс команды выбран успешно</value>
+  </data>
 </root>

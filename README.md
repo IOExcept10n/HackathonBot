@@ -1,61 +1,57 @@
 # HackathonBot
 
-HackathonBot — это многофункциональный бот для автоматизации задач, связанных с проведением хакатонов и управлением командами. Проект поддерживает расширяемую архитектуру, интеграцию с базой данных, планирование задач и различные модули для гибкой настройки.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-## Возможности
-- Управление ролями и пользователями
-- Модули для расширения функциональности
-- Поддержка миграций базы данных
-- Планирование и выполнение задач (Quartz)
-- Локализация и FSM
-- Интеграция с внешними сервисами
+Simple cross-platform Telegram bot for hackathon management.
 
-## Структура проекта
+## Quick start (Docker)
+
+Assumes Linux host, repository checked out, and host directory /srv/hackathonbot/data mounted into the container as /app/data.
+
+1. Build image:
+```sh
+docker build -f src/HackathonBot/Dockerfile -t hackathonbot:release .
 ```
-src/
-  HackathonBot/           # Основной бот и конфигурация
-  MyBots.Analyzers/       # Анализаторы и фиксы
-  MyBots.Common/          # Общие компоненты и утилиты
-  MyBots.Modules.Common/  # Общие модули и расширения
-  MyBots.Persistence/     # Работа с базой данных
-  MyBots.Scheduling/      # Планировщик задач
+2. Run container:
+```sh
+docker run -d --name hackathonbot \
+  -v /srv/hackathonbot/data:/app/data \
+  -e ASPNETCORE_ENVIRONMENT=Production \
+  --restart unless-stopped \
+  hackathonbot:release
 ```
 
-## Быстрый старт
-1. Клонируйте репозиторий:
-   ```sh
-   git clone https://github.com/IOExcept10n/HackathonBot.git
-   ```
-2. Перейдите в папку проекта:
-   ```sh
-   cd HackathonBot/src/HackathonBot
-   ```
-3. Установите зависимости и выполните миграции:
-   ```sh
-   dotnet restore
-   dotnet ef database update
-   ```
-4. Запустите бота:
-   ```sh
-   dotnet run
-   ```
+## Configuration
 
-## Конфигурация
-- Основные настройки находятся в файлах `appsettings.json`, `appsettings.Development.json`, `appsettings.Secrets.json`.
-- Для работы с базой данных используется Entity Framework Core.
-- Dockerfile доступен для контейнеризации приложения.
+Create appsettings.Secrets.json in src/HackathonBot (example):
+```json
+{
+  "BotStartupConfig": {
+    "Token": "<your_token_here>",
+    "BotCreator": "<your_telegram_username>"
+  }
+}
+```
+For debugging locally, create appsettings.Development.json. You can copy contents from appsettings.json and adjust values as needed.
 
-## Использование
-- Для добавления новых модулей используйте папку `Modules`.
-- Для расширения функционала реализуйте сервисы в папке `Services`.
-- Для настройки планировщика задач используйте `MyBots.Scheduling`.
+## Build from source
 
-## Вклад
-Pull Request'ы приветствуются! Открывайте Issues для предложений и багов.
+Project is cross-platform (.NET) and can run in Docker. There are no prebuilt releases — build from sources using the included Dockerfile or your preferred dotnet tooling.
 
-## Лицензия
-MIT
+## Project layout (important parts)
 
-## Контакты
-- Автор: IOExcept10n
-- GitHub: [IOExcept10n/HackathonBot](https://github.com/IOExcept10n/HackathonBot)
+    src/HackathonBot — main application
+        Migrations, Models, Modules, Repository, Services
+        Dockerfile, appsettings*.json, hackbot.db (SQLite)
+    src/MyBots.* — shared libraries (Common, Persistence, Analyzers)
+
+(Repository contains additional test and analyzer projects; some subprojects are not used by runtime.)
+
+## Notes
+
+    Quartz scheduling code exists under MyBots.Scheduling but is not used by the main bot (left as TODO).
+    Keep configuration minimal; the app reads appsettings*.json from src/HackathonBot.
+
+## License
+
+MIT — see LICENSE file in repository.

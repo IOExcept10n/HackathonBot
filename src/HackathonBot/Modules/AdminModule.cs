@@ -267,6 +267,10 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
 
             return ToRoot();
         }
+        if (ctx.Matches(Labels.SetTeamCase))
+        {
+            return ToStateWith(nameof(OnSetTeamCaseAsync), teamName);
+        }
         if (ctx.Matches(Labels.RenameTeam))
         {
             return ToStateWith(nameof(OnInputNewTeamNameAsync), teamName);
@@ -276,6 +280,30 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
             return ToStateWith(nameof(OnConfirmDeleteTeamAsync), teamName);
         }
         return InvalidInput(ctx);
+    }
+
+    [MenuState(nameof(Localization.SelectCase))]
+    [MenuItem(nameof(Labels.CaseLD))]
+    [MenuItem(nameof(Labels.CaseTBank))]
+    public async Task<StateResult> OnSetTeamCaseAsync(ModuleStateContext ctx)
+    {
+        if (!ctx.TryGetData(out string? teamName))
+            return Fail();
+
+        var team = await Teams.FindByNameAsync(teamName, ctx.CancellationToken);
+        if (team == null)
+            return Fail();
+
+        if (ctx.Matches(Labels.CaseLD))
+        {
+            team.Case = Case.LD;
+        }
+        else if (ctx.Matches(Labels.CaseTBank))
+        {
+            team.Case = Case.TBank;
+        }
+        await Teams.SaveChangesAsync(ctx.CancellationToken);
+        return Completed(Localization.TeamCaseSet);
     }
 
     [MenuState(nameof(Localization.ConfirmTeamDeletion), BackButton = false)]
