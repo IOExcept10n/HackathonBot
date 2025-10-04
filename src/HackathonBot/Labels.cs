@@ -69,5 +69,6 @@ namespace HackathonBot
         public static ButtonLabel Slander { get; } = new(Emoji.EnvelopeWithDownwardsArrowAbove, Localization.Slander);
         public static ButtonLabel DataLeak { get; } = new(Emoji.ChartWithDownwardsTrend, Localization.DataLeak);
         public static ButtonLabel HackerAttack { get; } = new(Emoji.NoMobilePhones, Localization.HackerAttack);
+        public static ButtonLabel SetTeamCase { get; } = new(Emoji.BlackNib, Localization.SetTeamCase);
     }
 }
