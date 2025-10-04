@@ -221,6 +221,7 @@ internal class AdminModule(IServiceProvider services) : BotModule(Labels.Adminis
 
     [MenuState(nameof(Localization.SelectTeamAction))]
     [MenuItem(nameof(Labels.GetTeamSubmission))]
+    [MenuItem(nameof(Labels.SetTeamCase))]
     [MenuItem(nameof(Labels.RenameTeam))]
     [MenuItem(nameof(Labels.DeleteTeam))]
     public async Task<StateResult> OnTeamMenuAsync(ModuleStateContext ctx)
